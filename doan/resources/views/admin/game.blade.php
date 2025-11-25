@@ -14,8 +14,8 @@
                 <div class="col-auto">
                     <select class="form-select" name="status" id="searchStatus">
                         <option value="">All</option>
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
+                        <option value="0">Active</option>
+                        <option value="1">Inactive</option>
                     </select>
                 </div>
 
@@ -88,7 +88,7 @@
                                         data-duration="{{ $game->duration }}"
                                         data-instructions="{{ $game->instructions }}"
                                         data-image="{{ $game->image ? asset('storage/games/images/'.$game->image) : asset('storage/games/images/no-image.jpg') }}"
-                                        data-video="{{ $game->video_url ?? '' }}"
+                                        data-video="{{ $game->video_url ? asset('storage/games/videos/'.$game->video_url) : '' }}"
                                         data-file="{{ $game->download_file }}"
                                         data-status="{{ $game->status }}">
                                         <i class="fa-regular fa-eye"></i>
@@ -105,7 +105,7 @@
                                         data-duration="{{ $game->duration }}"
                                         data-instructions="{{ $game->instructions }}"
                                         data-image="{{ $game->image ? asset('storage/games/images/'.$game->image) : asset('storage/games/images/no-image.jpg') }}"
-                                        data-video="{{ $game->video_url ?? '' }}"
+                                        data-video="{{ $game->video_url ? asset('storage/games/videos/'.$game->video_url) : '' }}"
                                         data-file="{{ $game->download_file }}"
                                         data-status="{{ $game->status }}">
                                         <i class="fa-solid fa-pencil"></i>
@@ -297,9 +297,65 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
 
-    // Preview Add Game Image
+const rowsPerPage = 4;
+let currentPage = 1;
+let filteredRows = [];
+
+function filterRows() {
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const selectedStatus = document.getElementById('searchStatus').value;
+
+    filteredRows = Array.from(document.querySelectorAll("#gameTable tbody tr")).filter(row => {
+        const name = row.cells[1].innerText.toLowerCase();
+        const statusText = row.cells[8].innerText.toLowerCase(); // Active / Inactive
+        const status = statusText === 'active' ? '1' : '0';
+
+        const matchName = name.includes(searchText);
+        const matchStatus = selectedStatus === "" || status === selectedStatus;
+
+        return matchName && matchStatus;
+    });
+
+    currentPage = 1;
+    paginationTable();
+}
+
+function paginationTable() {
+    const totalRows = filteredRows.length;
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+    document.querySelectorAll("#gameTable tbody tr").forEach(row => row.style.display = "none");
+
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    filteredRows.slice(start, end).forEach(row => row.style.display = "");
+
+    renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = i;
+        btn.className = "btn btn-sm btn-outline-primary mx-1";
+        if (i === currentPage) btn.classList.add("active");
+
+        btn.onclick = () => {
+            currentPage = i;
+            paginationTable();
+        };
+
+        pagination.appendChild(btn);
+    }
+}
+
+function initGameModals() {
+    // Add Game Image Preview
     const addImageInput = document.getElementById('addGameImageInput');
     const addImagePreview = document.getElementById('addGameImagePreview');
     addImageInput.addEventListener('change', e => {
@@ -313,60 +369,53 @@ document.addEventListener('DOMContentLoaded', () => {
         new bootstrap.Modal(document.getElementById('addGameModal')).show();
     });
 
+    // View Game Modal
     document.querySelectorAll('.viewGameBtn').forEach(btn => {
         btn.addEventListener('click', function() {
-            // Basic info
             document.getElementById('viewGameId').textContent = this.dataset.id;
             document.getElementById('viewGameName').textContent = this.dataset.name;
             document.getElementById('viewGameSlug').textContent = this.dataset.slug;
             document.getElementById('viewGameDuration').textContent = this.dataset.duration;
             document.getElementById('viewGameInstructions').textContent = this.dataset.instructions;
-            document.getElementById('viewGameStatus').textContent = this.dataset.status == 1 ? 'Active' : 'Inactive';
-
-            // Image
+            document.getElementById('viewGameStatus').textContent = this.dataset.status === '1' ? 'Active' : 'Inactive';
             document.getElementById('viewGameImage').src = this.dataset.image;
 
             // Video
             const videoContainer = document.getElementById('viewGameVideoContainer');
             const video = document.getElementById('viewGameVideo');
-
             if(this.dataset.video){
-                const videoSource = `/storage/games/videos/${this.dataset.video}`;
-                video.innerHTML = `<source src="${videoSource}" type="video/mp4">`;
+                video.innerHTML = `<source src="${this.dataset.video}" type="video/mp4">`;
                 video.load();
                 videoContainer.style.display = 'block';
             } else {
-                videoContainer.style.display = 'none';
                 video.innerHTML = '';
+                videoContainer.style.display = 'none';
             }
-
 
             // File
             const fileContainer = document.getElementById('viewGameFileContainer');
             const file = document.getElementById('viewGameFile');
             if(this.dataset.file){
-                const fileUrl = `/storage/games/files/${this.dataset.file}`;
+                const fileUrl = this.dataset.file.startsWith('http') ? this.dataset.file : `/storage/games/files/${this.dataset.file}`;
                 const ext = this.dataset.file.split('.').pop().toLowerCase();
-
-                fileContainer.style.display = 'block';
                 if(ext === 'pdf'){
-                    fileContainer.innerHTML = '<strong>File:</strong><br>';
                     file.src = fileUrl;
+                    fileContainer.style.display = 'block';
+                    fileContainer.innerHTML = '<strong>File:</strong><br>';
                     fileContainer.appendChild(file);
                 } else {
                     fileContainer.innerHTML = `<strong>File:</strong> <a href="${fileUrl}" target="_blank">Open File</a>`;
                     file.src = '';
+                    fileContainer.style.display = 'block';
                 }
             } else {
-                fileContainer.style.display = 'none';
                 file.src = '';
+                fileContainer.style.display = 'none';
             }
 
-            // Show modal
             new bootstrap.Modal(document.getElementById('viewGameModal')).show();
         });
     });
-
 
     // Edit Game Modal
     document.querySelectorAll('.editGameBtn').forEach(btn => {
@@ -390,8 +439,19 @@ document.addEventListener('DOMContentLoaded', () => {
             new bootstrap.Modal(document.getElementById('deleteGameModal')).show();
         });
     });
+}
 
+// Khi DOM load xong
+document.addEventListener("DOMContentLoaded", () => {
+    filteredRows = Array.from(document.querySelectorAll("#gameTable tbody tr"));
+    paginationTable();
+
+    document.getElementById('searchInput').addEventListener('input', filterRows);
+    document.getElementById('searchStatus').addEventListener('change', filterRows);
+
+    initGameModals();
 });
 </script>
+
 
 @endsection

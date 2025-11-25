@@ -53,28 +53,6 @@ class UserController extends Controller
         ];
         return view('admin/trashUser')->with($data);
     }
-    public function index(Request $request)
-{
-    $query = User::query();
-
-    // Lọc theo từ khóa search
-    if ($request->filled('keyword')) {
-        $keyword = $request->keyword;
-        $query->where(function($q) use ($keyword){
-            $q->where('name', 'like', "%{$keyword}%")
-              ->orWhere('email', 'like', "%{$keyword}%");
-        });
-    }
-
-    // Lọc theo role
-    if ($request->filled('role')) {
-        $query->where('role_id', $request->role);
-    }
-
-    $users = $query->orderBy('id', 'desc')->paginate(4)->withQueryString();
-
-    return view('admin.dashboard', compact('users'));
-    }
     public function store(Request $request)
     {
     // Validate dữ liệu

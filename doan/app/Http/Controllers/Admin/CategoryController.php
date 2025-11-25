@@ -48,7 +48,7 @@ public function store(Request $request)
         $category->update([
             'name' => $request->name,
             'slug' => $request->slug,
-            'description' => $request->description, // thêm dòng này
+            'description' => $request->description,
         ]);
 
 
