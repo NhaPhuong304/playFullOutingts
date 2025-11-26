@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\RecycleUserController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GameController as ControllersGameController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SetPasswordController;
@@ -22,8 +23,18 @@ use App\Http\Controllers\SetPasswordController;
 */
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('user.dashboard');
 });
+
+Route::get('user/dashboard', function () {
+        return view('user.dashboard');
+    })->name('user.dashboard');
+Route::get('user/game', [ControllersGameController::class, 'game'])->name('user.game');
+Route::get('user/outdoorsGame', [ControllersGameController::class, 'outdoorsGame'])->name('user.outdoorsGame');
+Route::get('user/kidsGame', [ControllersGameController::class, 'kidsGame'])->name('user.kidsGame');
+Route::get('user/malesGame', [ControllersGameController::class, 'malesGame'])->name('user.malesGame');
+Route::get('user/femalesGame', [ControllersGameController::class, 'femalesGame'])->name('user.femalesGame');
+Route::get('user/familyGame', [ControllersGameController::class, 'familyGame'])->name('user.familyGame');
 
 
 // Authentication
@@ -37,9 +48,9 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 // Protected dashboards
 Route::middleware(['role:user', 'check.password'])->group(function () {
-    Route::get('user/dashboard', function () {
-        return view('user.dashboard');
-    })->name('user.dashboard');
+    // Route::get('user/dashboard', function () {
+    //     return view('user.dashboard');
+    // })->name('user.dashboard');
     
     // Set password for Google OAuth users
     Route::get('set-password', [SetPasswordController::class, 'show'])->name('set-password.show');
