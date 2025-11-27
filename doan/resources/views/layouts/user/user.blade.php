@@ -15,7 +15,7 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <script src="{{ asset('user/js/layout.js') }}"></script>
+    <script src="{{ asset('user/js/layout.js') }}" ></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -112,18 +112,18 @@
                             <li class="relative nav-item">
                                 <button id="games-button"
                                     class="flex items-center gap-1 hover:text-primary transition-colors">
-                                    <a href="{{route('user.game')}}">Games</a>
+                                    <a href="{{route('user.game')}}#picnic-title">Games</a>
                                     <span class="material-symbols-outlined text-base">expand_more</span>
                                 </button>
 
                                 <div id="games-menu"
                                     class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Indoor Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Outdoor Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Kids Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Male Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Female Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Family Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.game')}}#picnic-title">Indoor Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.outdoorsGame')}}#picnic-title">Outdoor Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.kidsGame')}}#picnic-title">Kids Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.malesGame')}}#picnic-title">Male Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.femalesGame')}}#picnic-title">Female Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.familyGame')}}#picnic-title">Family Games</a>
                                 </div>
                             </li>
 

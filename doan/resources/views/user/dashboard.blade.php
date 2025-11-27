@@ -1,4 +1,4 @@
-@extends('layouts.user')
+@extends('layouts.user.user')
 
 @section('content')
     <div class="flex justify-center py-5 px-4 sm:px-8 lg:px-10">
