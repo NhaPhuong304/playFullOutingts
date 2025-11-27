@@ -14,20 +14,21 @@ class UserController extends Controller
         ];
         return view('admin/user')->with($data);
     }
-    public function delete($id){
-        $user = User::findOrFail($id);
-        $user->is_delete = 1;
-        $user->status = 0;
+    public function block(User $user)
+    {
+        $user->status = $user->status == 1 ? 0 : 1;
         $user->save();
 
-        return redirect()->back()->with('success', 'User deleted successfully!');
+        return redirect()->back()->with('success', 'User status updated successfully.');
     }
+
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-
         $user->name = $request->name;
-        $user->email = $request->email;
+        $user->fullname = $request->fullname;
+        $user->birthday = $request->birthday;
+        $user->gender = $request->gender;
         $user->status = $request->status;
         $user->role_id = $request->role_id;
 

@@ -59,7 +59,7 @@ class AuthController extends Controller
             Auth::login($user, true);
             $request->session()->regenerate();
             
-            if ($user->role_id == 2) {
+            if ($user->role_id == 2 || $user->role_id == 3) {
                 return redirect()->route('admin.dashboard');
             }
 

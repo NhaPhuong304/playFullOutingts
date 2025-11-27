@@ -16,13 +16,16 @@
                         <option value="">All</option>
                         <option value="1" {{ request('role') == 1 ? 'selected' : '' }}>User</option>
                         <option value="2" {{ request('role') == 2 ? 'selected' : '' }}>Admin</option>
+                        <option value="3" {{ request('role') == 3 ? 'selected' : '' }}>SupperAdmin</option>
                     </select>
                 </div>
 
                 <div class="col-auto">
-                    <button class="btn btn-success" id="addUserBtn">
-                        Add
-                    </button>
+                    @if(Auth::user()->role_id == 3)
+                        <button class="btn btn-success" id="addUserBtn">
+                            Add
+                        </button>
+                    @endif
                 </div>
 
                 <div class="col-auto ms-auto">
@@ -35,11 +38,14 @@
 
                 
             <div class="table-responsive" >
-                <table class="table table-hover" id="userTable">
+                <table class="table table-hover table-sm" id="userTable">
                     <thead>
                         <tr>
                             <th>Photo</th>
                             <th>Name</th>
+                            <th>Fullname</th>
+                            <th>Birthday</th>
+                            <th>Gender</th>
                             <th>Email</th>
                             <th>Role</th>
                             <th>Status</th>
@@ -56,13 +62,22 @@
                                 <img src="{{asset('storage/avatars/no-image.jpg')}}" class="rounded-circle me-2"  width="40" height="40">
                                 @endif
                             </td>
-                            <td>
-                            <div class="d-flex align-items-center">
+                            <td>                        
                                 <div>{{$user -> name}}</div>
-                            </div>
                             </td>
+                            <td>{{$user->fullname}}</td>
+                            <td>{{$user->birthday}}</td>
+                            <td>{{$user -> gender}}</td>
                             <td>{{$user -> email }}</td>
-                            <td>{{$user -> role_id}}</td>
+                            <td>
+                                @if($user->role_id == 1)
+                                    User
+                                @elseif($user->role_id == 2)
+                                    Admin
+                                @else
+                                    SupperAdmin
+                                @endif
+                            </td>
                             <td>
                                 @if($user->status == 1)
                                     <span class="badge bg-success">Active</span>
@@ -72,27 +87,42 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-outline-info viewUserBtn" data-bs-toggle="tooltip" title="View"
-                                        data-id="{{ $user->id }}"
-                                        data-name="{{ $user->name }}"
-                                        data-email="{{ $user->email }}"
-                                        data-photo="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('storage/avatars/no-image.jpg') }}"
-                                        data-status="{{ $user->status }}"
-                                        data-role_id="{{ $user->role_id }}">
-                                    <i class="fa-regular fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger deleteUserBtn" data-bs-toggle="tooltip" title="Delete"
-                                        data-id="{{ $user->id }}"
-                                        data-name="{{ $user->name }}">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                                <button  class="btn btn-sm btn-outline-success editUserBtn" data-bs-toggle="tooltip" title="Edit"
-                                        data-id="{{$user->id}}"
-                                        data-name="{{$user->name }}">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </button>
+                                    <button class="btn btn-sm btn-outline-info viewUserBtn" data-bs-toggle="tooltip" title="View"
+                                            data-id="{{ $user->id }}"
+                                            data-name="{{ $user->name }}"
+                                            data-fullname="{{ $user->fullname }}"
+                                            data-birthday="{{ $user->birthday }}"
+                                            data-gender="{{ $user->gender }}"
+                                            data-email="{{ $user->email }}"
+                                            data-photo="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('storage/avatars/no-image.jpg') }}"
+                                            data-status="{{ $user->status }}"
+                                            data-role_id="{{ $user->role_id }}">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+
+                                    <button  class="btn btn-sm btn-outline-success editUserBtn" data-bs-toggle="tooltip" title="Edit"
+                                            data-id="{{ $user->id }}"
+                                            data-name="{{ $user->name }}"
+                                            data-fullname="{{ $user->fullname }}"
+                                            data-birthday="{{ $user->birthday }}"
+                                            data-gender="{{ $user->gender }}"
+                                            data-email="{{ $user->email }}"
+                                            data-photo="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('storage/avatars/no-image.jpg') }}"
+                                            data-status="{{ $user->status }}"
+                                            data-role_id="{{ $user->role_id }}">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </button>
+                                        @if(Auth::user()->id != $user->id)
+                                            <button class="btn btn-sm btn-outline-danger blockUserBtn" data-bs-toggle="tooltip" title="Block"
+                                                data-id="{{ $user->id }}"
+                                                data-name="{{ $user->name }}"
+                                                data-status="{{ $user->status }}">
+                                                <i class="fa fa-ban"></i>
+                                            </button>
+                                        @endif
                                 </div>
                             </td>
+
                         </tr>
                         @endforeach
                     </tbody>
@@ -138,6 +168,21 @@
                                 </div>
 
                                 <div class="mb-2">
+                                    <strong>Fullname:</strong>
+                                    <span id="viewFullname"></span>
+                                </div>
+
+                                <div class="mb-2">
+                                    <strong>Birthday:</strong>
+                                    <span id="viewBirthday"></span>
+                                </div>
+
+                                <div class="mb-2">
+                                    <strong>Gender:</strong>
+                                    <span id="viewGender"></span>
+                                </div>
+
+                                <div class="mb-2">
                                     <strong>Email:</strong>
                                     <span id="viewEmail"></span>
                                 </div>
@@ -149,43 +194,39 @@
                                     <strong>Role:</strong>
                                     <span id="viewRole"></span>
                                 </div>
-
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!-- Block -->
+            <div class="modal fade" id="blockUserModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
 
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">Confirm Block</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <p>Are you sure you want to <strong id="blockUserAction"></strong> <strong id="blockUserName"></strong>?</p>
+                        </div>
+
+                        <div class="modal-footer">
+                            <form id="blockUserForm" method="POST" action="">
+                                @csrf
+                                @method('PUT')
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-danger">Yes</button>
+                            </form>
                         </div>
 
                     </div>
-
                 </div>
             </div>
-        </div>
 
-        <!-- Delete -->
-        <div class="modal fade" id="deleteUserModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title">Confirm Delete</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete <strong id="deleteUserName"></strong>?</p>
-                    </div>
-
-                    <div class="modal-footer">
-                        <form id="deleteUserForm" method="POST" action="">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-        </div>
 <!-- Add -->
 <div class="modal fade" id="addUserModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -207,6 +248,22 @@
                             <input type="text" class="form-control" name="name" required>
                         </div>
                         <div class="mb-3">
+                            <label>Fullname</label>
+                            <input type="text" class="form-control" name="fullname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Birthday</label>
+                            <input type="date" class="form-control" name="birthday">
+                        </div>
+                        <div class="mb-3">
+                            <label>Gender</label>
+                            <select class="form-control" name="gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label>Username</label>
                             <input type="text" class="form-control" name="username" required>
                         </div>
@@ -221,7 +278,6 @@
                         <div class="mb-3">
                             <label>Role</label>
                             <select class="form-control" name="role_id">
-                                <option value="1">User</option>
                                 <option value="2">Admin</option>
                             </select>
                         </div>
@@ -236,7 +292,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Add User/Admin</button>
+                    <button type="submit" class="btn btn-success">Add Admin</button>
                 </div>
             </form>
         </div>
@@ -265,12 +321,25 @@
                         </div>
                         <div class="col-md-8">
                             <div class="mb-3">
-                                <label>Name</label>
-                                <input type="text" class="form-control" name="name" id="editName">
+                                <label>Fullname</label>
+                                <input type="text" class="form-control" name="fullname" id="editFullname">
                             </div>
                             <div class="mb-3">
+                                <label>Birthday</label>
+                                <input type="date" class="form-control" name="birthday" id="editBirthday">
+                            </div>
+                            <div class="mb-3">
+                                <label>Gender</label>
+                                <select class="form-control" name="gender" id="editGender">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
                                 <label>Email</label>
-                                <input type="email" class="form-control" name="email" id="editEmail">
+                                <input type="email" class="form-control" id="editEmail" value="{{ $user->email }}" disabled>
                             </div>
                             <div class="mb-3">
                                 <label>Status</label>
@@ -284,6 +353,7 @@
                                 <select class="form-control" name="role_id" id="editRole">
                                     <option value="2">Admin</option>
                                     <option value="1">User</option>
+                                    <option value="3">SupperAdmin</option>
                                 </select>
                             </div>
                         </div>
@@ -377,49 +447,62 @@ document.addEventListener("DOMContentLoaded", () => {
 function initUserModals() {
     // view
     document.querySelectorAll(".viewUserBtn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            const id = this.dataset.id;
-            const name = this.dataset.name;
-            const email = this.dataset.email;
-            const photo = this.dataset.photo;
-            const status = this.dataset.status == 1 ? 'Active' : 'Inactive';
-            const role_id = this.dataset.role_id;
+    btn.addEventListener("click", function () {
+        const photo = this.dataset.photo;
+        const status = this.dataset.status == 1 ? 'Active' : 'Inactive';
+        let roleName = 'Unknown';
+        if(this.dataset.role_id == 1) roleName = 'User';
+        else if(this.dataset.role_id == 2) roleName = 'Admin';
+        else if(this.dataset.role_id == 3) roleName = 'SupperAdmin';
 
-            document.getElementById("viewId").textContent = id;
-            document.getElementById("viewName").textContent = name;
-            document.getElementById("viewEmail").textContent = email;
-            document.getElementById("viewStatus").textContent = status;
-            document.getElementById("viewRole").textContent = role_id;
-            document.getElementById("viewPhoto").src = photo;
+        document.getElementById("viewId").textContent = this.dataset.id;
+        document.getElementById("viewName").textContent = this.dataset.name;
+        document.getElementById("viewFullname").textContent = this.dataset.fullname;
+        document.getElementById("viewBirthday").textContent = this.dataset.birthday || '-';
+        document.getElementById("viewGender").textContent = this.dataset.gender;
+        document.getElementById("viewEmail").textContent = this.dataset.email;
+        document.getElementById("viewStatus").textContent = status;
+        document.getElementById("viewRole").textContent = this.dataset.role_id;
+        document.getElementById("viewPhoto").src = photo;
 
-            new bootstrap.Modal(document.getElementById("viewUserModal")).show();
-        });
+        new bootstrap.Modal(document.getElementById("viewUserModal")).show();
     });
+});
 
-    // delete
-    document.querySelectorAll(".deleteUserBtn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            const id = this.dataset.id;
-            const name = this.dataset.name;
 
-            document.getElementById("deleteUserName").textContent = name;
-            document.getElementById("deleteUserForm").action = `/admin/user/${id}`;
+        // Block user
+        document.querySelectorAll(".blockUserBtn").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const id = this.dataset.id;
+                const name = this.dataset.name;
+                const status = this.dataset.status;
 
-            new bootstrap.Modal(document.getElementById("deleteUserModal")).show();
+                document.getElementById("blockUserName").textContent = name;
+                document.getElementById("blockUserAction").textContent = status == 1 ? 'block' : 'unblock';
+                document.getElementById("blockUserForm").action = `/admin/user/${id}/block`;
+
+                new bootstrap.Modal(document.getElementById("blockUserModal")).show();
+            });
         });
-    });
+
 
     // edit
     document.querySelectorAll(".editUserBtn").forEach(btn => {
         btn.addEventListener("click", function () {
             const id = this.dataset.id;
             const name = this.dataset.name;
+            const fullname = this.dataset.fullname;
+            const birthday = this.dataset.birthday;
+            const gender = this.dataset.gender;
             const email = this.dataset.email;
             const status = this.dataset.status;
             const role_id = this.dataset.role_id;
             const photo = this.dataset.photo;
 
             document.getElementById("editName").value = name;
+            document.getElementById("editFullname").value = this.dataset.fullname;
+            document.getElementById("editBirthday").value = this.dataset.birthday;
+            document.getElementById("editGender").value = this.dataset.gender;
             document.getElementById("editEmail").value = email;
             document.getElementById("editStatus").value = status;
             document.getElementById("editRole").value = role_id;

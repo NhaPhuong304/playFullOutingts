@@ -62,7 +62,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('admin/dashboard', function () { return view('admin.dashboard');})->name('admin.dashboard');
     Route::get('admin/user', [UserController::class, 'user'])->name('admin.user');
     Route::put('admin/user/{id}', [UserController::class, 'update'])->name('admin.user.update');
-    Route::delete('admin/user/{id}', [UserController::class, 'delete'])->name('admin.user.delete');
+    Route::put('/admin/user/{user}/block', [UserController::class, 'block'])->name('admin.user.block');
     Route::post('admin/user/add', [UserController::class, 'store'])->name('admin.user.store');
 
     Route::get('admin/trashUser', [RecycleUserController::class, 'trash'])->name('admin.trashUser');
