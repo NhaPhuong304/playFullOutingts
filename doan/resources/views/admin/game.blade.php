@@ -258,8 +258,8 @@
                         <div class="mb-2">
                             <label>Status</label>
                             <select class="form-control" name="status" id="editGameStatus">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
+                                <option value="0">Active</option>
+                                <option value="1">Inactive</option>
                             </select>
                         </div>
                     </div>
@@ -298,18 +298,22 @@
 
 <script>
 
-const rowsPerPage = 4;
+const rowsPerPage = 6;
 let currentPage = 1;
 let filteredRows = [];
 
 function filterRows() {
+    // Unhide trước khi lọc
+    document.querySelectorAll("#gameTable tbody tr").forEach(r => r.style.display = "");
+
     const searchText = document.getElementById('searchInput').value.toLowerCase();
     const selectedStatus = document.getElementById('searchStatus').value;
 
     filteredRows = Array.from(document.querySelectorAll("#gameTable tbody tr")).filter(row => {
         const name = row.cells[1].innerText.toLowerCase();
-        const statusText = row.cells[8].innerText.toLowerCase(); // Active / Inactive
-        const status = statusText === 'active' ? '1' : '0';
+        const statusText = row.cells[7].innerText;
+
+        const status = statusText.includes('active') ? '1' : '0';
 
         const matchName = name.includes(searchText);
         const matchStatus = selectedStatus === "" || status === selectedStatus;

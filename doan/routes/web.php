@@ -73,7 +73,7 @@ Route::middleware(['role:admin'])->group(function () {
 
     Route::get('admin/category', [CategoryController::class, 'category'])->name('admin.category');
     Route::post('admin/category/store', [CategoryController::class, 'store'])->name('admin.category.store');
-    Route::post('admin/category/update/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
+    Route::put('/admin/category/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
     Route::delete('admin/category/{id}', [CategoryController::class, 'delete'])->name('admin.category.delete');
 
     Route::get('admin/trashCategory', [RecycleCategoryController::class, 'trash'])->name('admin.trashCategory');

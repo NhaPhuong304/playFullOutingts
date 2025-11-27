@@ -15,7 +15,7 @@
                     <select class="form-select" name="role" id="searchRole">
                         <option value="">All</option>
                         <option value="1" {{ request('role') == 1 ? 'selected' : '' }}>User</option>
-                        <option value="2" {{ request('role') == 2 ? 'selected' : '' }}>Admin</option>
+                        <option value="2" {{ request('role') == 2 ? 'selected' : '' }}>Admin</option> 
                         <option value="3" {{ request('role') == 3 ? 'selected' : '' }}>SupperAdmin</option>
                     </select>
                 </div>
@@ -375,15 +375,30 @@ let currentPage = 1;
 let filteredRows = [];
 
 function filterRows() {
-    const searchText = document.getElementById('searchInput').value.toLowerCase();
-    const selectedRole = document.getElementById('searchRole').value.toLowerCase();
+    // Bỏ ẩn tất cả row do phân trang lần trước
+    document.querySelectorAll("#userTable tbody tr").forEach(row => {
+        row.style.display = "";
+    });
 
-    filteredRows = Array.from(document.querySelectorAll("#userTable tbody tr")).filter(row => {
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const selectedRole = document.getElementById('searchRole').value;
+
+    const allRows = Array.from(document.querySelectorAll("#userTable tbody tr"));
+
+    const roleMap = {
+        "1": "user",
+        "2": "admin",
+        "3": "supperadmin"
+    };
+
+    filteredRows = allRows.filter(row => {
         const name = row.cells[1].innerText.toLowerCase();
-        const role = row.cells[3].innerText;
+        const role = row.cells[6].innerText.toLowerCase();
 
         const matchName = name.includes(searchText);
-        const matchRole = selectedRole === "" || role === selectedRole;
+        const matchRole =
+            selectedRole === "" ||
+            role === roleMap[selectedRole];
 
         return matchName && matchRole;
     });
@@ -391,6 +406,9 @@ function filterRows() {
     currentPage = 1;
     paginationTable();
 }
+
+
+
 
 function paginationTable() {
     const totalRows = filteredRows.length;

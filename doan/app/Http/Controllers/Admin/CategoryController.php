@@ -40,20 +40,16 @@ public function store(Request $request)
     {
         $category = Category::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required|unique:categories,name,' . $id,
-            'slug' => 'required|unique:categories,slug,' . $id,
-        ]);
+        $category->name = $request->name;
+        $category->slug = $request->slug;
+        $category->description = $request->description;
+        $category->status = $request->status;
 
-        $category->update([
-            'name' => $request->name,
-            'slug' => $request->slug,
-            'description' => $request->description,
-        ]);
+        $category->save();
 
-
-        return back()->with('success', 'Category updated successfully!');
+        return redirect()->back()->with('success', 'Category updated.');
     }
+
 
     public function delete($id)
     {

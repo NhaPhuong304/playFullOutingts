@@ -62,7 +62,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             // Điều hướng theo vai trò user
-            if ($user->role_id == 2) {
+            if ($user->role_id == 2 || $user-> role_id == 3) {
                 // Nếu là ADMIN (role_id == 2): Đăng nhập và chuyển hướng tới Admin Dashboard
                 // KHÔNG tăng lượt truy cập.
                 return redirect()->route('admin.dashboard');
