@@ -99,3 +99,7 @@ Route::get('password/verify', [PasswordResetController::class, 'showVerify'])->n
 Route::post('password/verify', [PasswordResetController::class, 'verifyCode'])->name('password.verify.post');
 Route::get('password/reset', [PasswordResetController::class, 'showReset'])->name('password.reset');
 Route::post('password/reset', [PasswordResetController::class, 'reset'])->name('password.reset.post');
+
+// API gọi chatbot
+use App\Http\Controllers\ChatController;
+Route::post('/chatbot', [ChatController::class, 'chat']);

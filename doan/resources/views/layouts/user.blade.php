@@ -99,7 +99,7 @@
                         </a>
 
                         <div class="text-sm font-bold text-text-light dark:text-text-dark mt-0">
-                            Visits: 1,234
+                           <span>{{ number_format(\DB::table('visits')->first()->counter ?? 0) }} visits</span>
                         </div>
                     </div>
 
@@ -272,6 +272,8 @@
         </footer>
     </div>
     </div>
+    @include('layouts.user.chat-widget')
+
 </body>
 
 </html>

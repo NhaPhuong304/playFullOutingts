@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -54,6 +55,37 @@ class AuthController extends Controller
         ->where('status', 1)
         ->where('is_delete', 0)
         ->first();
+        if ($user && Hash::check($request->password, $user->password)) {
+
+            // Đăng nhập người dùng và tạo session mới
+            Auth::login($user, true);
+            $request->session()->regenerate();
+
+            // Điều hướng theo vai trò user
+            if ($user->role_id == 2) {
+                // Nếu là ADMIN (role_id == 2): Đăng nhập và chuyển hướng tới Admin Dashboard
+                // KHÔNG tăng lượt truy cập.
+                return redirect()->route('admin.dashboard');
+            }
+
+            // Nếu là USER thường (role_id != 2):
+
+            // 1. TĂNG LƯỢT ĐĂNG NHẬP CÁ NHÂN (users.visits)
+            // Sau khi đăng nhập thành công, tăng cột visits của người dùng hiện tại lên 1
+            $user->increment('visits');
+
+            // 2. Tăng lượt truy cập CHUNG hệ thống (visits table)
+            DB::table('visits')->updateOrInsert(
+                [],  // chỉ có 1 dòng duy nhất
+                [
+                    'counter' => DB::raw('counter + 1'),
+                    'updated_at' => now(),
+                ]
+            );
+
+            // Chuyển hướng tới User Dashboard
+            return redirect()->route('user.dashboard');
+        }
 
         if ($user && Hash::check($request->password, $user->password)) {
             Auth::login($user, true);
@@ -68,6 +100,7 @@ class AuthController extends Controller
 
         return back()->withErrors(['username' => 'Thông tin đăng nhập không hợp lệ.'])->withInput();
     }
+    
 
     public function logout(Request $request)
     {

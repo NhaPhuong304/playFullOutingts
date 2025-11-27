@@ -10,22 +10,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&amp;display=swap" rel="stylesheet"/>
     <script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#13ec13",
-              "background-light": "#f6f8f6",
-              "background-dark": "#102210",
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec13",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102210",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
             },
-            fontFamily: {
-              "display": ["Be Vietnam Pro", "sans-serif"]
-            },
-            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
-          },
-        },
-      }
+        }
     </script>
 <style>
         body {
@@ -79,9 +79,11 @@
 <label class="flex flex-col w-full flex-1">
 <p class="text-[#111811] dark:text-white text-base font-medium leading-normal pb-2">Password</p>
 <div class="flex w-full flex-1 items-stretch rounded-xl border border-[#dbe6db] dark:border-gray-600 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-primary/50">
-<input name="password" type="password" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-xl text-[#111811] dark:text-white focus:outline-0 focus:ring-0 border-0 bg-transparent h-14 placeholder:text-[#618961] dark:placeholder:text-gray-400 p-[15px] pr-2 text-base font-normal leading-normal" placeholder="Enter your password" required />
-<button class="text-[#618961] dark:text-gray-400 flex items-center justify-center pr-[15px] cursor-pointer" type="button">
-<span class="material-symbols-outlined">visibility</span>
+<!-- THÊM ID CHO INPUT -->
+<input id="passwordInput" name="password" type="password" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-xl text-[#111811] dark:text-white focus:outline-0 focus:ring-0 border-0 bg-transparent h-14 placeholder:text-[#618961] dark:placeholder:text-gray-400 p-[15px] pr-2 text-base font-normal leading-normal" placeholder="Enter your password" required />
+<!-- THÊM ID CHO NÚT VÀ ICON -->
+<button id="togglePasswordButton" class="text-[#618961] dark:text-gray-400 flex items-center justify-center pr-[15px] cursor-pointer" type="button">
+<span id="visibilityIcon" class="material-symbols-outlined">visibility</span>
 </button>
 </div>
 </label>
@@ -94,10 +96,37 @@
 </div>
 <div class="mt-8 text-center">
 <p class="text-[#618961] dark:text-gray-300 text-sm">
-                    New to PlayFullOutings? <a class="font-bold text-primary hover:underline" href="{{ route('register') }}">Create an account.</a>
+New to PlayFullOutings? <a class="font-bold text-primary hover:underline" href="{{ route('register') }}">Create an account.</a>
 </p>
 </div>
 </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Lấy các phần tử cần thiết bằng ID
+        const passwordInput = document.getElementById('passwordInput');
+        const toggleButton = document.getElementById('togglePasswordButton');
+        const visibilityIcon = document.getElementById('visibilityIcon');
+
+        if (toggleButton && passwordInput && visibilityIcon) {
+            // Thêm sự kiện click cho nút bấm
+            toggleButton.addEventListener('click', function() {
+                // Kiểm tra kiểu input hiện tại: 'password' hay 'text'
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                
+                // Thay đổi kiểu input và icon
+                if (isPassword) {
+                    passwordInput.setAttribute('type', 'text');
+                    visibilityIcon.textContent = 'visibility_off'; // Icon mắt gạch chéo (ẩn)
+                } else {
+                    passwordInput.setAttribute('type', 'password');
+                    visibilityIcon.textContent = 'visibility'; // Icon mắt (hiện)
+                }
+            });
+        }
+    });
+</script>
+
 </body>
 </html>
