@@ -1,26 +1,26 @@
 @extends('admin.dashboard')
-@section('page-title', 'User')
+@section('page-title', 'Category')
 
 @section('content')
 
 <div class="main-content">
     <div class="card mt-4">
         <div class="card-header">
-            <h5 class="card-title">User</h5>
+            <h5 class="card-title">Category</h5>
         </div>
         <div class="card-body">
             <div class="row g-2 align-items-center mb-4">
                 <!-- Dropdown Role -->
                 <div class="col-auto">
-                    <select class="form-select" name="role" id="searchRole">
+                    <select class="form-select" name="status" id="searchStatus">
                         <option value="">All</option>
-                        <option value="1" {{ request('role') == 1 ? 'selected' : '' }}>User</option>
-                        <option value="2" {{ request('role') == 2 ? 'selected' : '' }}>Admin</option>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
                     </select>
                 </div>
 
                 <div class="col-auto">
-                    <button class="btn btn-success" id="addUserBtn">
+                    <button class="btn btn-success" id="addCategoryBtn">
                         Add
                     </button>
                 </div>
@@ -35,36 +35,28 @@
 
                 
             <div class="table-responsive" >
-                <table class="table table-hover" id="userTable">
+                <table class="table table-hover" id="categoryTable">
                     <thead>
                         <tr>
-                            <th>Photo</th>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
+                            <th>Slug</th>
+                            <th>Description</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($users as $user)
+                        @foreach($categories as $category)
                         <tr>
                             <td>
-                                @if($user->photo)
-                                <img src="{{asset('storage/avatars/'.$user->photo)}}?t={{$user->updated_at->timestamp}}" class="rounded-circle me-2"  width="40" height="40">
-                                @else
-                                <img src="{{asset('storage/avatars/no-image.jpg')}}" class="rounded-circle me-2"  width="40" height="40">
-                                @endif
-                            </td>
-                            <td>
                             <div class="d-flex align-items-center">
-                                <div>{{$user -> name}}</div>
+                                <div>{{$category -> name}}</div>
                             </div>
                             </td>
-                            <td>{{$user -> email }}</td>
-                            <td>{{$user -> role_id}}</td>
+                            <td>{{$category -> slug }}</td>
+                            <td>{{$category -> description}}</td>
                             <td>
-                                @if($user->status == 1)
+                                @if($category->status == 1)
                                     <span class="badge bg-success">Active</span>
                                 @else
                                     <span class="badge bg-danger">Inactive</span>
@@ -72,23 +64,25 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-outline-info viewUserBtn" data-bs-toggle="tooltip" title="View"
-                                        data-id="{{ $user->id }}"
-                                        data-name="{{ $user->name }}"
-                                        data-email="{{ $user->email }}"
-                                        data-photo="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('storage/avatars/no-image.jpg') }}"
-                                        data-status="{{ $user->status }}"
-                                        data-role_id="{{ $user->role_id }}">
+                                <button class="btn btn-sm btn-outline-info viewCategoryBtn" data-bs-toggle="tooltip" title="View"
+                                        data-id="{{ $category->id }}"
+                                        data-name="{{ $category->name }}"
+                                        data-slug="{{ $category->slug }}"
+                                        data-description="{{ $category->description }}"
+                                        data-status="{{ $category->status }}">
                                     <i class="fa-regular fa-eye"></i>
                                 </button>
-                                <button class="btn btn-sm btn-outline-danger deleteUserBtn" data-bs-toggle="tooltip" title="Delete"
-                                        data-id="{{ $user->id }}"
-                                        data-name="{{ $user->name }}">
+                                <button class="btn btn-sm btn-outline-danger deleteCategoryBtn" data-bs-toggle="tooltip" title="Delete"
+                                        data-id="{{ $category->id }}"
+                                        data-name="{{ $category->name }}">
                                     <i class="fa fa-trash"></i>
                                 </button>
-                                <button  class="btn btn-sm btn-outline-success editUserBtn" data-bs-toggle="tooltip" title="Edit"
-                                        data-id="{{$user->id}}"
-                                        data-name="{{$user->name }}">
+                                <button  class="btn btn-sm btn-outline-success editCategoryBtn" data-bs-toggle="tooltip" title="Edit"
+                                        data-id="{{ $category->id }}"
+                                        data-name="{{ $category->name }}"
+                                        data-slug="{{ $category->slug }}"
+                                        data-description="{{ $category->description }}"
+                                        data-status="{{ $category->status }}">
                                     <i class="fa-solid fa-pencil"></i>
                                 </button>
                                 </div>
@@ -104,12 +98,12 @@
             </div>
 
             <!-- View -->
-            <div class="modal fade" id="viewUserModal" tabindex="-1">
+            <div class="modal fade" id="viewCategoryModal" tabindex="-1">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content shadow-lg rounded-4">
                     <div class="modal-header bg-primary text-white rounded-top-4">
                         <h5 class="modal-title">
-                            <i class="bi bi-person-lines-fill"></i> User Details
+                            <i class="bi bi-person-lines-fill"></i> Category Details
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
@@ -117,12 +111,6 @@
                     <div class="modal-body">
 
                         <div class="row">
-
-                            <!-- Avatar -->
-                            <div class="col-md-4 text-center">
-                                <img id="viewPhoto" class="rounded-circle border shadow-sm"
-                                        style="width:150px; height:150px; object-fit:cover;">
-                            </div>
 
                             <!-- Information -->
                             <div class="col-md-8">
@@ -138,16 +126,16 @@
                                 </div>
 
                                 <div class="mb-2">
-                                    <strong>Email:</strong>
-                                    <span id="viewEmail"></span>
+                                    <strong>Slug:</strong>
+                                    <span id="viewSlug"></span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Description:</strong>
+                                    <span id="viewDescription"></span>
                                 </div>
                                 <div class="mb-2">
                                     <strong>Status:</strong>
                                     <span id="viewStatus"></span>
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Role:</strong>
-                                    <span id="viewRole"></span>
                                 </div>
 
                             </div>
@@ -161,7 +149,7 @@
         </div>
 
         <!-- Delete -->
-        <div class="modal fade" id="deleteUserModal" tabindex="-1">
+        <div class="modal fade" id="deleteCategoryModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
 
@@ -171,11 +159,11 @@
                     </div>
 
                     <div class="modal-body">
-                        <p>Are you sure you want to delete <strong id="deleteUserName"></strong>?</p>
+                        <p>Are you sure you want to delete <strong id="deleteCategoryName"></strong>?</p>
                     </div>
 
                     <div class="modal-footer">
-                        <form id="deleteUserForm" method="POST" action="">
+                        <form id="deleteCategoryForm" method="POST" action="">
                             @csrf
                             @method('DELETE')
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -187,43 +175,28 @@
             </div>
         </div>
 <!-- Add -->
-<div class="modal fade" id="addUserModal" tabindex="-1">
+<div class="modal fade" id="addCategoryModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Add User / Admin</h5>
+                <h5 class="modal-title">Add Category</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form id="addUserForm" action="{{ route('admin.user.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="addCategoryForm" action="{{route('admin.category.store')}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body row">
-                    <div class="col-md-4 text-center">
-                        <img id="addPhotoPreview" class="rounded-circle mb-2" style="width:150px;height:150px;" src="{{ asset('storage/avatars/no-image.jpg') }}">
-                        <input type="file" class="form-control" name="photo" id="addPhotoInput">
-                    </div>
                     <div class="col-md-8">
                         <div class="mb-3">
                             <label>Name</label>
                             <input type="text" class="form-control" name="name" required>
                         </div>
                         <div class="mb-3">
-                            <label>Username</label>
-                            <input type="text" class="form-control" name="username" required>
+                            <label>Slug</label>
+                            <input type="text" class="form-control" name="slug" required>
                         </div>
                         <div class="mb-3">
-                            <label>Email</label>
-                            <input type="email" class="form-control" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Password</label>
-                            <input type="password" class="form-control" name="password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Role</label>
-                            <select class="form-control" name="role_id">
-                                <option value="1">User</option>
-                                <option value="2">Admin</option>
-                            </select>
+                            <label>Description</label>
+                            <input type="text" class="form-control" name="description" required>
                         </div>
                         <div class="mb-3">
                             <label>Status</label>
@@ -236,7 +209,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Add User/Admin</button>
+                    <button type="submit" class="btn btn-success">Add Category</button>
                 </div>
             </form>
         </div>
@@ -247,43 +220,36 @@
 
 
 <!-- Edit -->
-        <div class="modal fade" id="editUserModal" tabindex="-1">
+        <div class="modal fade" id="editCategoryModal" tabindex="-1">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-warning text-white">
-                        <h5 class="modal-title">Edit User</h5>
+                        <h5 class="modal-title">Edit Category</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
 
-                    <form id="editUserForm" method="POST" enctype="multipart/form-data">
+                    <form id="editCategoryForm" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="modal-body row">
-                        <div class="col-md-4 text-center">
-                            <img id="editPhotoPreview" class="rounded-circle mb-2" style="width:150px;height:150px;">
-                            <input type="file" class="form-control" name="photo" id="editPhotoInput">
-                        </div>
                         <div class="col-md-8">
                             <div class="mb-3">
                                 <label>Name</label>
                                 <input type="text" class="form-control" name="name" id="editName">
                             </div>
                             <div class="mb-3">
-                                <label>Email</label>
-                                <input type="email" class="form-control" name="email" id="editEmail">
+                                <label>Slug</label>
+                                <input type="email" class="form-control" name="slug" id="editSlug">
+                            </div>
+                            <div class="mb-3">
+                                <label>Description</label>
+                                <input type="email" class="form-control" name="description" id="editDescription">
                             </div>
                             <div class="mb-3">
                                 <label>Status</label>
                                 <select class="form-control" name="status" id="editStatus">
                                     <option value="1">Active</option>
                                     <option value="0">Inactive</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label>Role</label>
-                                <select class="form-control" name="role_id" id="editRole">
-                                    <option value="2">Admin</option>
-                                    <option value="1">User</option>
                                 </select>
                             </div>
                         </div>
@@ -306,16 +272,16 @@ let filteredRows = [];
 
 function filterRows() {
     const searchText = document.getElementById('searchInput').value.toLowerCase();
-    const selectedRole = document.getElementById('searchRole').value.toLowerCase();
+    const selectedStatus = document.getElementById('searchStatus').value;
 
-    filteredRows = Array.from(document.querySelectorAll("#userTable tbody tr")).filter(row => {
-        const name = row.cells[1].innerText.toLowerCase();
-        const role = row.cells[3].innerText;
+    filteredRows = Array.from(document.querySelectorAll("#categoryTable tbody tr")).filter(row => {
+        const name = row.cells[0].innerText.toLowerCase();
+        const statusText = row.cells[3].innerText.trim() === "Active" ? "1" : "0";
 
         const matchName = name.includes(searchText);
-        const matchRole = selectedRole === "" || role === selectedRole;
+        const matchStatus = selectedStatus === "" || statusText === selectedStatus;
 
-        return matchName && matchRole;
+        return matchName && matchStatus;
     });
 
     currentPage = 1;
@@ -326,7 +292,7 @@ function paginationTable() {
     const totalRows = filteredRows.length;
     const totalPages = Math.ceil(totalRows / rowsPerPage);
 
-    document.querySelectorAll("#userTable tbody tr").forEach(row => row.style.display = "none");
+    document.querySelectorAll("#categoryTable tbody tr").forEach(row => row.style.display = "none");
 
     const start = (currentPage - 1) * rowsPerPage;
     const end = start + rowsPerPage;
@@ -356,112 +322,86 @@ function renderPagination(totalPages) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Lấy tất cả hàng
-    filteredRows = Array.from(document.querySelectorAll("#userTable tbody tr"));
+
+    filteredRows = Array.from(document.querySelectorAll("#categoryTable tbody tr"));
     paginationTable();
 
-    // Thêm event listener cho tìm kiếm
-    document.getElementById('searchInput').addEventListener('input', filterRows);
-    document.getElementById('searchRole').addEventListener('change', filterRows);
 
-    // Tooltip
+    document.getElementById('searchInput').addEventListener('input', filterRows);
+    document.getElementById('searchStatus').addEventListener('change', filterRows);
+
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // View, Edit, Delete modal
-    initUserModals();
+    initCategoryModals();
 });
 
-function initUserModals() {
-    // view
-    document.querySelectorAll(".viewUserBtn").forEach(btn => {
+function initCategoryModals() {
+
+    document.querySelectorAll(".viewCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
             const id = this.dataset.id;
             const name = this.dataset.name;
-            const email = this.dataset.email;
-            const photo = this.dataset.photo;
+            const slug = this.dataset.slug;
+            const description = this.dataset.description;
             const status = this.dataset.status == 1 ? 'Active' : 'Inactive';
-            const role_id = this.dataset.role_id;
 
             document.getElementById("viewId").textContent = id;
             document.getElementById("viewName").textContent = name;
-            document.getElementById("viewEmail").textContent = email;
+            document.getElementById("viewSlug").textContent = slug;
+            document.getElementById("viewDescription").textContent = description;
             document.getElementById("viewStatus").textContent = status;
-            document.getElementById("viewRole").textContent = role_id;
-            document.getElementById("viewPhoto").src = photo;
 
-            new bootstrap.Modal(document.getElementById("viewUserModal")).show();
+            new bootstrap.Modal(document.getElementById("viewCategoryModal")).show();
         });
     });
 
     // delete
-    document.querySelectorAll(".deleteUserBtn").forEach(btn => {
+    document.querySelectorAll(".deleteCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
             const id = this.dataset.id;
             const name = this.dataset.name;
 
-            document.getElementById("deleteUserName").textContent = name;
-            document.getElementById("deleteUserForm").action = `/admin/user/${id}`;
+            document.getElementById("deleteCategoryName").textContent = name;
+            document.getElementById("deleteCategoryForm").action = `/admin/recycle-category/delete/${id}`;
 
-            new bootstrap.Modal(document.getElementById("deleteUserModal")).show();
+            new bootstrap.Modal(document.getElementById("deleteCategoryModal")).show();
         });
     });
 
     // edit
-    document.querySelectorAll(".editUserBtn").forEach(btn => {
+    document.querySelectorAll(".editCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
             const id = this.dataset.id;
             const name = this.dataset.name;
-            const email = this.dataset.email;
+            const slug = this.dataset.slug;
+            const description = this.dataset.description;
             const status = this.dataset.status;
-            const role_id = this.dataset.role_id;
-            const photo = this.dataset.photo;
 
             document.getElementById("editName").value = name;
-            document.getElementById("editEmail").value = email;
+            document.getElementById("editSlug").value = slug;
+            document.getElementById("editDescription").value = description;
             document.getElementById("editStatus").value = status;
-            document.getElementById("editRole").value = role_id;
-            document.getElementById("editPhotoPreview").src = photo;
 
-            document.getElementById("editUserForm").action = `/admin/user/${id}`;
+            document.getElementById("editCategoryForm").action = `/admin/category/${id}`;
 
-            new bootstrap.Modal(document.getElementById("editUserModal")).show();
+            new bootstrap.Modal(document.getElementById("editCategoryModal")).show();
         });
-    });
-
-    // preview ảnh
-    document.getElementById("editPhotoInput").addEventListener("change", function(e){
-        const reader = new FileReader();
-        reader.onload = function(e){
-            document.getElementById("editPhotoPreview").src = e.target.result;
-        }
-        reader.readAsDataURL(this.files[0]);
     });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const addUserBtn = document.getElementById("addUserBtn");
-    const addUserModalEl = document.getElementById("addUserModal");
-    const addPhotoInput = document.getElementById("addPhotoInput");
-    const addPhotoPreview = document.getElementById("addPhotoPreview");
+    const addCategoryBtn = document.getElementById("addCategoryBtn");
+    const addCategoryModal = document.getElementById("addCategoryModal");
 
-    // Khi click nút Add User, mở modal
-    addUserBtn.addEventListener("click", () => {
-        const addModal = new bootstrap.Modal(addUserModalEl);
+    addCategoryBtn.addEventListener("click", () => {
+        const addModal = new bootstrap.Modal(addCategoryModal);
         addModal.show();
     });
-
-    // Preview ảnh khi chọn file
-    addPhotoInput.addEventListener("change", function(e){
-        const reader = new FileReader();
-        reader.onload = function(e){
-            addPhotoPreview.src = e.target.result;
-        }
-        reader.readAsDataURL(this.files[0]);
-    });
 });
+
 
 </script>
 @endsection

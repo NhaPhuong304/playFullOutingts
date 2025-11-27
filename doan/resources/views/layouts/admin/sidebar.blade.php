@@ -17,7 +17,7 @@
                 <li><a href="#" class="sidebar-link submenu-parent"><i class="bi bi-trash"></i><p>Trash <i class="fa-solid fa-chevron-right right-icon"></i></p></a>
                     <ul class="sidebar-submenu">
                         <li><a href="{{route('admin.trashUser')}}" class="submenu-link {{ Request::is('admin/trashUser*') ? 'active' : '' }}"><i class="fa-solid fa-users"></i></i><p>User</p></a></li>
-                        <li><a href="signup.html" class="submenu-link"><i class="fa-solid fa-user-plus"></i><p>Register</p></a></li>
+                        <li><a href="{{route('admin.trashCategory')}}" class="submenu-link {{ Request::is('admin/trashCategory*') ? 'active' : '' }}"><i class="fa-solid fa-list"></i><p>Category</p></a></li>
                         <li><a href="forgot-password.html" class="submenu-link"><i class="fa-solid fa-recycle"></i><p>Forgot password</p></a></li>
                     </ul>
                 </li>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\GameController;
+use App\Http\Controllers\Admin\RecycleCategoryController;
 use App\Http\Controllers\Admin\RecycleUserController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -65,7 +66,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('admin/user/add', [UserController::class, 'store'])->name('admin.user.store');
 
     Route::get('admin/trashUser', [RecycleUserController::class, 'trash'])->name('admin.trashUser');
-    Route::post('admin/recycle-user/restore', [RecycleUserController::class, 'restore'])->name('admin.recycleUser.restore');
+    Route::post('admin/recycle-user/restore/{id}', [RecycleUserController::class, 'restore'])->name('admin.recycleUser.restore');
     Route::delete('admin/recycle-user/delete/{id}', [RecycleUserController::class, 'delete'])->name('admin.recycleUser.delete');
 
 
@@ -73,7 +74,10 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('admin/category', [CategoryController::class, 'category'])->name('admin.category');
     Route::post('admin/category/store', [CategoryController::class, 'store'])->name('admin.category.store');
     Route::post('admin/category/update/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
-    Route::get('admin/category/delete/{id}', [CategoryController::class, 'delete'])->name('admin.category.delete');
+    Route::delete('admin/category/{id}', [CategoryController::class, 'delete'])->name('admin.category.delete');
+
+    Route::get('admin/trashCategory', [RecycleCategoryController::class, 'trash'])->name('admin.trashCategory');
+    Route::delete('admin/recycle-category/delete/{id}', [RecycleCategoryController::class, 'delete'])->name('admin.recycleCategory.delete');
 
     Route::get('admin/game', [GameController::class, 'game'])->name('admin.game');
     Route::post('admin/game/add', [GameController::class, 'add'])->name('admin.game.add');

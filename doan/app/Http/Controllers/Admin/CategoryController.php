@@ -58,10 +58,9 @@ public function store(Request $request)
     public function delete($id)
     {
         $category = Category::findOrFail($id);
-        $category->update([
-            'is_delete' => 1
-        ]);
-
+        $category->is_delete = 1;
+        $category->status = 0;
+        $category->save();
         return back()->with('success', 'Category deleted successfully!');
     }
 }

@@ -9,8 +9,9 @@
             <h5 class="card-title">Category</h5>
         </div>
         <div class="card-body">
+
+            <!-- Filter + Add + Search -->
             <div class="row g-2 align-items-center mb-4">
-                <!-- Dropdown Role -->
                 <div class="col-auto">
                     <select class="form-select" name="status" id="searchStatus">
                         <option value="">All</option>
@@ -20,9 +21,7 @@
                 </div>
 
                 <div class="col-auto">
-                    <button class="btn btn-success" id="addCategoryBtn">
-                        Add
-                    </button>
+                    <button class="btn btn-success" id="addCategoryBtn">Add</button>
                 </div>
 
                 <div class="col-auto ms-auto">
@@ -33,8 +32,8 @@
                 </div>
             </div>
 
-                
-            <div class="table-responsive" >
+            <!-- Table -->
+            <div class="table-responsive">
                 <table class="table table-hover" id="categoryTable">
                     <thead>
                         <tr>
@@ -48,13 +47,9 @@
                     <tbody>
                         @foreach($categories as $category)
                         <tr>
-                            <td>
-                            <div class="d-flex align-items-center">
-                                <div>{{$category -> name}}</div>
-                            </div>
-                            </td>
-                            <td>{{$category -> slug }}</td>
-                            <td>{{$category -> description}}</td>
+                            <td>{{ $category->name }}</td>
+                            <td>{{ $category->slug }}</td>
+                            <td>{{ $category->description }}</td>
                             <td>
                                 @if($category->status == 1)
                                     <span class="badge bg-success">Active</span>
@@ -64,27 +59,27 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-outline-info viewCategoryBtn" data-bs-toggle="tooltip" title="View"
+                                    <button class="btn btn-sm btn-outline-info viewCategoryBtn" data-bs-toggle="tooltip" title="View"
                                         data-id="{{ $category->id }}"
                                         data-name="{{ $category->name }}"
                                         data-slug="{{ $category->slug }}"
                                         data-description="{{ $category->description }}"
                                         data-status="{{ $category->status }}">
-                                    <i class="fa-regular fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger deleteCategoryBtn" data-bs-toggle="tooltip" title="Delete"
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger deleteCategoryBtn" data-bs-toggle="tooltip" title="Delete"
                                         data-id="{{ $category->id }}"
                                         data-name="{{ $category->name }}">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                                <button  class="btn btn-sm btn-outline-success editCategoryBtn" data-bs-toggle="tooltip" title="Edit"
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success editCategoryBtn" data-bs-toggle="tooltip" title="Edit"
                                         data-id="{{ $category->id }}"
                                         data-name="{{ $category->name }}"
                                         data-slug="{{ $category->slug }}"
                                         data-description="{{ $category->description }}"
                                         data-status="{{ $category->status }}">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </button>
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -92,89 +87,58 @@
                     </tbody>
                 </table>
             </div>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center" id="pagination"></ul>
-                </nav>
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center" id="pagination"></ul>
+            </nav>
+
+        </div>
+    </div>
+</div>
+
+<!-- View Modal -->
+<div class="modal fade" id="viewCategoryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-4">
+            <div class="modal-header bg-primary text-white rounded-top-4">
+                <h5 class="modal-title"><i class="bi bi-tags"></i> Category Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-
-            <!-- View -->
-            <div class="modal fade" id="viewCategoryModal" tabindex="-1">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content shadow-lg rounded-4">
-                    <div class="modal-header bg-primary text-white rounded-top-4">
-                        <h5 class="modal-title">
-                            <i class="bi bi-person-lines-fill"></i> Category Details
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-
-                        <div class="row">
-
-                            <!-- Information -->
-                            <div class="col-md-8">
-
-                                <div class="mb-2">
-                                    <strong>ID:</strong>
-                                    <span id="viewId"></span>
-                                </div>
-
-                                <div class="mb-2">
-                                    <strong>Name:</strong>
-                                    <span id="viewName"></span>
-                                </div>
-
-                                <div class="mb-2">
-                                    <strong>Slug:</strong>
-                                    <span id="viewSlug"></span>
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Description:</strong>
-                                    <span id="viewDescription"></span>
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Status:</strong>
-                                    <span id="viewStatus"></span>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
+            <div class="modal-body">
+                <div class="mb-2"><strong>ID:</strong> <span id="viewId"></span></div>
+                <div class="mb-2"><strong>Name:</strong> <span id="viewName"></span></div>
+                <div class="mb-2"><strong>Slug:</strong> <span id="viewSlug"></span></div>
+                <div class="mb-2"><strong>Description:</strong> <span id="viewDescription"></span></div>
+                <div class="mb-2"><strong>Status:</strong> <span id="viewStatus"></span></div>
             </div>
         </div>
+    </div>
+</div>
 
-        <!-- Delete -->
-        <div class="modal fade" id="deleteCategoryModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title">Confirm Delete</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete <strong id="deleteCategoryName"></strong>?</p>
-                    </div>
-
-                    <div class="modal-footer">
-                        <form id="deleteCategoryForm" method="POST" action="">
-                            @csrf
-                            @method('DELETE')
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                        </form>
-                    </div>
-
-                </div>
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteCategoryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteCategoryName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteCategoryForm" method="POST" action="">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
             </div>
         </div>
-<!-- Add -->
+    </div>
+</div>
+
+<!-- Add Modal -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
@@ -182,29 +146,27 @@
                 <h5 class="modal-title">Add Category</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form id="addCategoryForm" action="{{route('admin.category.store')}}" method="POST" enctype="multipart/form-data">
+            <form id="addCategoryForm" action="{{ route('admin.category.store') }}" method="POST">
                 @csrf
-                <div class="modal-body row">
-                    <div class="col-md-8">
-                        <div class="mb-3">
-                            <label>Name</label>
-                            <input type="text" class="form-control" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Slug</label>
-                            <input type="text" class="form-control" name="slug" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Description</label>
-                            <input type="text" class="form-control" name="description" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Status</label>
-                            <select class="form-control" name="status">
-                                <option value="1">Active</option>
-                                <option value="0">Inactive</option>
-                            </select>
-                        </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Slug</label>
+                        <input type="text" class="form-control" name="slug" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <input type="text" class="form-control" name="description" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Status</label>
+                        <select class="form-control" name="status">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -216,55 +178,47 @@
     </div>
 </div>
 
-
-
-
-<!-- Edit -->
-        <div class="modal fade" id="editCategoryModal" tabindex="-1">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-warning text-white">
-                        <h5 class="modal-title">Edit Category</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <form id="editCategoryForm" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body row">
-                        <div class="col-md-8">
-                            <div class="mb-3">
-                                <label>Name</label>
-                                <input type="text" class="form-control" name="name" id="editName">
-                            </div>
-                            <div class="mb-3">
-                                <label>Slug</label>
-                                <input type="email" class="form-control" name="slug" id="editSlug">
-                            </div>
-                            <div class="mb-3">
-                                <label>Description</label>
-                                <input type="email" class="form-control" name="description" id="editDescription">
-                            </div>
-                            <div class="mb-3">
-                                <label>Status</label>
-                                <select class="form-control" name="status" id="editStatus">
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-warning">Save Changes</button>
-                    </div>
-                </form>
-                </div>
+<!-- Edit Modal -->
+<div class="modal fade" id="editCategoryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">Edit Category</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-        </div>
+            <form id="editCategoryForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Name</label>
+                        <input type="text" class="form-control" name="name" id="editName">
+                    </div>
+                    <div class="mb-3">
+                        <label>Slug</label>
+                        <input type="text" class="form-control" name="slug" id="editSlug">
+                    </div>
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <input type="text" class="form-control" name="description" id="editDescription">
+                    </div>
+                    <div class="mb-3">
+                        <label>Status</label>
+                        <select class="form-control" name="status" id="editStatus">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Save Changes</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+
 <script>
 const rowsPerPage = 4;
 let currentPage = 1;
@@ -311,97 +265,62 @@ function renderPagination(totalPages) {
         btn.textContent = i;
         btn.className = "btn btn-sm btn-outline-primary mx-1";
         if (i === currentPage) btn.classList.add("active");
-
         btn.onclick = () => {
             currentPage = i;
             paginationTable();
         };
-
         pagination.appendChild(btn);
     }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
     filteredRows = Array.from(document.querySelectorAll("#categoryTable tbody tr"));
     paginationTable();
-
 
     document.getElementById('searchInput').addEventListener('input', filterRows);
     document.getElementById('searchStatus').addEventListener('change', filterRows);
 
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+    tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
 
     initCategoryModals();
+
+    document.getElementById("addCategoryBtn").addEventListener("click", () => {
+        new bootstrap.Modal(document.getElementById("addCategoryModal")).show();
+    });
 });
 
 function initCategoryModals() {
-
     document.querySelectorAll(".viewCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
-            const id = this.dataset.id;
-            const name = this.dataset.name;
-            const slug = this.dataset.slug;
-            const description = this.dataset.description;
-            const status = this.dataset.status == 1 ? 'Active' : 'Inactive';
-
-            document.getElementById("viewId").textContent = id;
-            document.getElementById("viewName").textContent = name;
-            document.getElementById("viewSlug").textContent = slug;
-            document.getElementById("viewDescription").textContent = description;
-            document.getElementById("viewStatus").textContent = status;
-
+            document.getElementById("viewId").textContent = this.dataset.id;
+            document.getElementById("viewName").textContent = this.dataset.name;
+            document.getElementById("viewSlug").textContent = this.dataset.slug;
+            document.getElementById("viewDescription").textContent = this.dataset.description;
+            document.getElementById("viewStatus").textContent = this.dataset.status == 1 ? "Active" : "Inactive";
             new bootstrap.Modal(document.getElementById("viewCategoryModal")).show();
         });
     });
 
-    // delete
     document.querySelectorAll(".deleteCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
-            const id = this.dataset.id;
-            const name = this.dataset.name;
-
-            document.getElementById("deleteCategoryName").textContent = name;
-            document.getElementById("deleteCategoryForm").action = `/admin/category/${id}`;
-
+            document.getElementById("deleteCategoryName").textContent = this.dataset.name;
+            document.getElementById("deleteCategoryForm").action = `/admin/category/${this.dataset.id}`;
             new bootstrap.Modal(document.getElementById("deleteCategoryModal")).show();
         });
     });
 
-    // edit
     document.querySelectorAll(".editCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
-            const id = this.dataset.id;
-            const name = this.dataset.name;
-            const slug = this.dataset.slug;
-            const description = this.dataset.description;
-            const status = this.dataset.status;
-
-            document.getElementById("editName").value = name;
-            document.getElementById("editSlug").value = slug;
-            document.getElementById("editDescription").value = description;
-            document.getElementById("editStatus").value = status;
-
-            document.getElementById("editCategoryForm").action = `/admin/category/${id}`;
-
+            document.getElementById("editName").value = this.dataset.name;
+            document.getElementById("editSlug").value = this.dataset.slug;
+            document.getElementById("editDescription").value = this.dataset.description;
+            document.getElementById("editStatus").value = this.dataset.status;
+            document.getElementById("editCategoryForm").action = `/admin/category/${this.dataset.id}`;
             new bootstrap.Modal(document.getElementById("editCategoryModal")).show();
         });
     });
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    const addCategoryBtn = document.getElementById("addCategoryBtn");
-    const addCategoryModal = document.getElementById("addCategoryModal");
-
-    addCategoryBtn.addEventListener("click", () => {
-        const addModal = new bootstrap.Modal(addCategoryModal);
-        addModal.show();
-    });
-});
-
-
 </script>
+
 @endsection
