@@ -14,6 +14,7 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -61,8 +62,9 @@
                 <div class="layout-content-container flex flex-col w-full max-w-5xl flex-1">
                     <header id="picnic-title" class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light dark:border-border-dark px-6 md:px-10 py-4">
                         <div class="flex items-center gap-4">
-
-                            <h2 class="text-text-light dark:text-text-dark text-xl font-bold leading-tight tracking-[-0.015em]">Picnic Games</h2>
+                            <h2 class="text-text-light dark:text-text-dark text-xl font-bold leading-tight tracking-[-0.015em]">
+                                Picnic Games
+                            </h2>
                         </div>
                         <nav class="hidden md:flex flex-1 justify-end items-center gap-8">
 
@@ -83,8 +85,8 @@
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
-                            <a href="{{route('user.game')}}#picnic-title">
-                                <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-transparent hover:border-primary/50 hover:bg-white dark:hover:bg-background-dark/50">
+                            <a href="{{route('user.indoorGame')}}#picnic-title">
+                                <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 hover:border-primary/50">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                                         <span class="material-symbols-outlined !text-3xl">home</span>
                                     </div>
@@ -110,7 +112,7 @@
                                 </button>
                             </a>
                             <a href="{{route('user.malesGame')}}#picnic-title">
-                                <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 hover:border-primary/50">
+                                <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-transparent hover:border-primary/50 hover:bg-white dark:hover:bg-background-dark/50">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                                         <span class="material-symbols-outlined !text-3xl">man</span>
                                     </div>
@@ -135,7 +137,7 @@
                             </a>
                         </div>
                         <div class="mt-8" id="game-list">
-                            <h2 class="text-2xl font-bold mb-6">Males Games</h2>
+                            <h2 class="text-2xl font-bold mb-6">Indoor Games</h2>
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
                                     <div class="aspect-video overflow-hidden">
@@ -218,6 +220,5 @@
 </body>
 
 </html>
-
 
 @endsection

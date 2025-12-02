@@ -15,7 +15,7 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <script src="{{ asset('user/js/layout.js') }}" ></script>
+    <script src="{{ asset('user/js/layout.js') }}"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -118,7 +118,7 @@
 
                                 <div id="games-menu"
                                     class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.game')}}#picnic-title">Indoor Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.indoorGame')}}#picnic-title">Indoor Games</a>
                                     <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.outdoorsGame')}}#picnic-title">Outdoor Games</a>
                                     <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.kidsGame')}}#picnic-title">Kids Games</a>
                                     <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.malesGame')}}#picnic-title">Male Games</a>
@@ -127,9 +127,9 @@
                                 </div>
                             </li>
 
-                            <li><a class="hover:text-primary transition-colors" href="#">Itinerary</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">Contact Us</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="{{url('user/itinerary')}}">Itinerary</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="{{url('user/aboutus')}}">About Us</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="{{url('user/contact')}}">Contact Us</a></li>
                         </ul>
                     </div>
 
@@ -190,7 +190,9 @@
 
         </header>
         <main class="flex-1">
-            <div x-data="slider()" class="relative h-96 md:h-[65vh] overflow-hidden">
+            <div x-data="slider()"
+                class="relative h-96 md:h-[65vh] overflow-hidden rounded-2xl md:rounded-3xl shadow-lg">
+
 
                 <!-- Banner Images -->
                 <template x-for="(banner, index) in banners" :key="index">

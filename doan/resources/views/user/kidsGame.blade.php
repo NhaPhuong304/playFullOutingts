@@ -153,9 +153,11 @@
                                                 <span>Easy</span>
                                             </div>
                                         </div>
-                                        <button class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
                                             View Details
-                                        </button>
+                                        </a>
+
                                     </div>
                                 </div>
                                 <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
@@ -174,9 +176,11 @@
                                                 <span>Easy</span>
                                             </div>
                                         </div>
-                                        <button class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
                                             View Details
-                                        </button>
+                                        </a>
+
                                     </div>
                                 </div>
                                 <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
@@ -195,9 +199,11 @@
                                                 <span>Medium</span>
                                             </div>
                                         </div>
-                                        <button class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
                                             View Details
-                                        </button>
+                                        </a>
+
                                     </div>
                                 </div>
                             </div>

@@ -14,7 +14,7 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&amp;display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
-    
+
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -85,15 +85,15 @@
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
-                            <a href="{{route('user.game')}}#picnic-title#picnic-title">
-                                <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 hover:border-primary/50">
+                            <a href="{{route('user.indoorGame')}}#picnic-title">
+                                <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-transparent hover:border-primary/50 hover:bg-white dark:hover:bg-background-dark/50">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                                         <span class="material-symbols-outlined !text-3xl">home</span>
                                     </div>
                                     <span class="text-text-light dark:text-text-dark text-sm font-medium leading-normal text-center">Indoor Games</span>
                                 </button>
                             </a>
-                            <a href="{{route('user.outdoorsGame')}}#picnic-title#picnic-title">
+                            <a href="{{route('user.outdoorsGame')}}#picnic-title">
                                 <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-transparent hover:border-primary/50 hover:bg-white dark:hover:bg-background-dark/50">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                                         <span class="material-symbols-outlined !text-3xl">sunny</span>
@@ -136,6 +136,7 @@
                                 </button>
                             </a>
                         </div>
+                        <!-- list game -->
                         <div class="mt-8" id="game-list">
                             <h2 class="text-2xl font-bold mb-6">Indoor Games</h2>
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -155,9 +156,11 @@
                                                 <span>Easy</span>
                                             </div>
                                         </div>
-                                        <button class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
                                             View Details
-                                        </button>
+                                        </a>
+
                                     </div>
                                 </div>
                                 <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
@@ -176,9 +179,11 @@
                                                 <span>Easy</span>
                                             </div>
                                         </div>
-                                        <button class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
                                             View Details
-                                        </button>
+                                        </a>
+
                                     </div>
                                 </div>
                                 <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
@@ -197,9 +202,386 @@
                                                 <span>Medium</span>
                                             </div>
                                         </div>
-                                        <button class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
                                             View Details
-                                        </button>
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8" id="game-list">
+                            <h2 class="text-2xl font-bold mb-6">Outdoor Games</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Frisbee Toss" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVACgcCWfuvqD88liNJR2TOB6y7Jopwl4U2i2FARDFj5BwolkS2uCDj8WAYWvYhyhQGaQzT1nFpMOmvukOfpLs5_yTLrjAt0fwXii4GgVIMV3vYl2niP7_NLWSY_Q0N_498p8tuCxjtmw_VlgkTA_-LwsF77yWRVffpcgVR02lVeQQWSImyQV87mBhm_UC-IpoR6ek2AawNG9Q2dj43TQ4J6E9vJGcxaS4qABuHaxwmRHmpreH6Vhnj3abdpqTW2QL6K8B-a2O1Y4" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Frisbee Toss</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>15-30 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Easy</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Water Balloon Fight" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfguk0njibgxV22reNGyuL2H1VaT71FbEsIzobHW4_9tG8xiwq9N9MQQGfaR_Jgwzw06GUvMRBjVgPwFC-oOyV6wku0VpX96H2PPypLDHQGdwGJ8g9lToyHVOn7IH8Cvoc8VgoL6SiN3MDre1OskICd4yE2JwcLYZ0fQC9_7XESPLrQcstAznbG_9hzg9bxiyzFhRPHpnbBya6852RQqdaWe74e5NtDZszzh_PlThSkZfLMo9pgYsXmjrvio-U2CbhohP0ssXsOk4" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Water Balloon Fight</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>20 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Easy</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Three-Legged Race" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9q9GIP047xp2v5OYesOuRBWmyjAOKxTEq4OjlKGnEKoJ4tGZLVs-n_1qCVk9p2089X85OmTGnVwzzR2JISmIaJvBHLZfafYgiSh9zdjetXUCiwUgO6hs0S6iFxtbkGvE5OVh1mxJzdzbv6L87Uel25S3SQYDieAMaxNtB681i2J7i537hQrlQx8ZdhtGON1JE0lvGhzYe2Z626sz-MrkUealoycPmWSY1trveEaiWAmMslDBmy6aWGQioXsEBwmB1N2NUmQSxRzc" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Three-Legged Race</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>10-20 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Medium</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8" id="game-list">
+                            <h2 class="text-2xl font-bold mb-6">Kids Games</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Frisbee Toss" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVACgcCWfuvqD88liNJR2TOB6y7Jopwl4U2i2FARDFj5BwolkS2uCDj8WAYWvYhyhQGaQzT1nFpMOmvukOfpLs5_yTLrjAt0fwXii4GgVIMV3vYl2niP7_NLWSY_Q0N_498p8tuCxjtmw_VlgkTA_-LwsF77yWRVffpcgVR02lVeQQWSImyQV87mBhm_UC-IpoR6ek2AawNG9Q2dj43TQ4J6E9vJGcxaS4qABuHaxwmRHmpreH6Vhnj3abdpqTW2QL6K8B-a2O1Y4" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Frisbee Toss</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>15-30 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Easy</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Water Balloon Fight" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfguk0njibgxV22reNGyuL2H1VaT71FbEsIzobHW4_9tG8xiwq9N9MQQGfaR_Jgwzw06GUvMRBjVgPwFC-oOyV6wku0VpX96H2PPypLDHQGdwGJ8g9lToyHVOn7IH8Cvoc8VgoL6SiN3MDre1OskICd4yE2JwcLYZ0fQC9_7XESPLrQcstAznbG_9hzg9bxiyzFhRPHpnbBya6852RQqdaWe74e5NtDZszzh_PlThSkZfLMo9pgYsXmjrvio-U2CbhohP0ssXsOk4" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Water Balloon Fight</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>20 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Easy</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Three-Legged Race" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9q9GIP047xp2v5OYesOuRBWmyjAOKxTEq4OjlKGnEKoJ4tGZLVs-n_1qCVk9p2089X85OmTGnVwzzR2JISmIaJvBHLZfafYgiSh9zdjetXUCiwUgO6hs0S6iFxtbkGvE5OVh1mxJzdzbv6L87Uel25S3SQYDieAMaxNtB681i2J7i537hQrlQx8ZdhtGON1JE0lvGhzYe2Z626sz-MrkUealoycPmWSY1trveEaiWAmMslDBmy6aWGQioXsEBwmB1N2NUmQSxRzc" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Three-Legged Race</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>10-20 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Medium</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8" id="game-list">
+                            <h2 class="text-2xl font-bold mb-6">Males Games</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Frisbee Toss" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVACgcCWfuvqD88liNJR2TOB6y7Jopwl4U2i2FARDFj5BwolkS2uCDj8WAYWvYhyhQGaQzT1nFpMOmvukOfpLs5_yTLrjAt0fwXii4GgVIMV3vYl2niP7_NLWSY_Q0N_498p8tuCxjtmw_VlgkTA_-LwsF77yWRVffpcgVR02lVeQQWSImyQV87mBhm_UC-IpoR6ek2AawNG9Q2dj43TQ4J6E9vJGcxaS4qABuHaxwmRHmpreH6Vhnj3abdpqTW2QL6K8B-a2O1Y4" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Frisbee Toss</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>15-30 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Easy</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Water Balloon Fight" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfguk0njibgxV22reNGyuL2H1VaT71FbEsIzobHW4_9tG8xiwq9N9MQQGfaR_Jgwzw06GUvMRBjVgPwFC-oOyV6wku0VpX96H2PPypLDHQGdwGJ8g9lToyHVOn7IH8Cvoc8VgoL6SiN3MDre1OskICd4yE2JwcLYZ0fQC9_7XESPLrQcstAznbG_9hzg9bxiyzFhRPHpnbBya6852RQqdaWe74e5NtDZszzh_PlThSkZfLMo9pgYsXmjrvio-U2CbhohP0ssXsOk4" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Water Balloon Fight</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>20 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Easy</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Three-Legged Race" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9q9GIP047xp2v5OYesOuRBWmyjAOKxTEq4OjlKGnEKoJ4tGZLVs-n_1qCVk9p2089X85OmTGnVwzzR2JISmIaJvBHLZfafYgiSh9zdjetXUCiwUgO6hs0S6iFxtbkGvE5OVh1mxJzdzbv6L87Uel25S3SQYDieAMaxNtB681i2J7i537hQrlQx8ZdhtGON1JE0lvGhzYe2Z626sz-MrkUealoycPmWSY1trveEaiWAmMslDBmy6aWGQioXsEBwmB1N2NUmQSxRzc" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Three-Legged Race</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>10-20 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Medium</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8" id="game-list">
+                            <h2 class="text-2xl font-bold mb-6">Females Games</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Frisbee Toss" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVACgcCWfuvqD88liNJR2TOB6y7Jopwl4U2i2FARDFj5BwolkS2uCDj8WAYWvYhyhQGaQzT1nFpMOmvukOfpLs5_yTLrjAt0fwXii4GgVIMV3vYl2niP7_NLWSY_Q0N_498p8tuCxjtmw_VlgkTA_-LwsF77yWRVffpcgVR02lVeQQWSImyQV87mBhm_UC-IpoR6ek2AawNG9Q2dj43TQ4J6E9vJGcxaS4qABuHaxwmRHmpreH6Vhnj3abdpqTW2QL6K8B-a2O1Y4" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Frisbee Toss</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>15-30 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Easy</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Water Balloon Fight" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfguk0njibgxV22reNGyuL2H1VaT71FbEsIzobHW4_9tG8xiwq9N9MQQGfaR_Jgwzw06GUvMRBjVgPwFC-oOyV6wku0VpX96H2PPypLDHQGdwGJ8g9lToyHVOn7IH8Cvoc8VgoL6SiN3MDre1OskICd4yE2JwcLYZ0fQC9_7XESPLrQcstAznbG_9hzg9bxiyzFhRPHpnbBya6852RQqdaWe74e5NtDZszzh_PlThSkZfLMo9pgYsXmjrvio-U2CbhohP0ssXsOk4" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Water Balloon Fight</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>20 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Easy</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Three-Legged Race" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9q9GIP047xp2v5OYesOuRBWmyjAOKxTEq4OjlKGnEKoJ4tGZLVs-n_1qCVk9p2089X85OmTGnVwzzR2JISmIaJvBHLZfafYgiSh9zdjetXUCiwUgO6hs0S6iFxtbkGvE5OVh1mxJzdzbv6L87Uel25S3SQYDieAMaxNtB681i2J7i537hQrlQx8ZdhtGON1JE0lvGhzYe2Z626sz-MrkUealoycPmWSY1trveEaiWAmMslDBmy6aWGQioXsEBwmB1N2NUmQSxRzc" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Three-Legged Race</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>10-20 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Medium</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8" id="game-list">
+                            <h2 class="text-2xl font-bold mb-6">Family Games</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Frisbee Toss" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVACgcCWfuvqD88liNJR2TOB6y7Jopwl4U2i2FARDFj5BwolkS2uCDj8WAYWvYhyhQGaQzT1nFpMOmvukOfpLs5_yTLrjAt0fwXii4GgVIMV3vYl2niP7_NLWSY_Q0N_498p8tuCxjtmw_VlgkTA_-LwsF77yWRVffpcgVR02lVeQQWSImyQV87mBhm_UC-IpoR6ek2AawNG9Q2dj43TQ4J6E9vJGcxaS4qABuHaxwmRHmpreH6Vhnj3abdpqTW2QL6K8B-a2O1Y4" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Frisbee Toss</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>15-30 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Easy</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Water Balloon Fight" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfguk0njibgxV22reNGyuL2H1VaT71FbEsIzobHW4_9tG8xiwq9N9MQQGfaR_Jgwzw06GUvMRBjVgPwFC-oOyV6wku0VpX96H2PPypLDHQGdwGJ8g9lToyHVOn7IH8Cvoc8VgoL6SiN3MDre1OskICd4yE2JwcLYZ0fQC9_7XESPLrQcstAznbG_9hzg9bxiyzFhRPHpnbBya6852RQqdaWe74e5NtDZszzh_PlThSkZfLMo9pgYsXmjrvio-U2CbhohP0ssXsOk4" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Water Balloon Fight</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>20 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Easy</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
+                                    <div class="aspect-video overflow-hidden">
+                                        <img alt="Three-Legged Race" class="h-full w-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9q9GIP047xp2v5OYesOuRBWmyjAOKxTEq4OjlKGnEKoJ4tGZLVs-n_1qCVk9p2089X85OmTGnVwzzR2JISmIaJvBHLZfafYgiSh9zdjetXUCiwUgO6hs0S6iFxtbkGvE5OVh1mxJzdzbv6L87Uel25S3SQYDieAMaxNtB681i2J7i537hQrlQx8ZdhtGON1JE0lvGhzYe2Z626sz-MrkUealoycPmWSY1trveEaiWAmMslDBmy6aWGQioXsEBwmB1N2NUmQSxRzc" />
+                                    </div>
+                                    <div class="flex flex-col gap-4 p-5 flex-grow">
+                                        <h3 class="text-lg font-bold">Three-Legged Race</h3>
+                                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">timer</span>
+                                                <span>10-20 min</span>
+                                            </div>
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined !text-lg">signal_cellular_alt</span>
+                                                <span>Medium</span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                            View Details
+                                        </a>
+
                                     </div>
                                 </div>
                             </div>

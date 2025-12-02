@@ -1,12 +1,15 @@
 <?php
 
+use App\Http\Controllers\AboutusController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\RecycleUserController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\GameController as ControllersGameController;
+use App\Http\Controllers\ItineraryController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SetPasswordController;
@@ -30,11 +33,17 @@ Route::get('user/dashboard', function () {
         return view('user.dashboard');
     })->name('user.dashboard');
 Route::get('user/game', [ControllersGameController::class, 'game'])->name('user.game');
+Route::get('user/indoorGame', [ControllersGameController::class, 'indoorGame'])->name('user.indoorGame');
 Route::get('user/outdoorsGame', [ControllersGameController::class, 'outdoorsGame'])->name('user.outdoorsGame');
 Route::get('user/kidsGame', [ControllersGameController::class, 'kidsGame'])->name('user.kidsGame');
 Route::get('user/malesGame', [ControllersGameController::class, 'malesGame'])->name('user.malesGame');
 Route::get('user/femalesGame', [ControllersGameController::class, 'femalesGame'])->name('user.femalesGame');
 Route::get('user/familyGame', [ControllersGameController::class, 'familyGame'])->name('user.familyGame');
+Route::get('user/detailGame', [ControllersGameController::class, 'detailGame'])->name('user.detailGame');
+
+Route::get('user/aboutus', [AboutusController::class, 'aboutus'])->name('user.aboutus');
+Route::get('user/itinerary', [ItineraryController::class, 'itinerary'])->name('user.itinerary');
+Route::get('user/contact', [ContactController::class, 'contact'])->name('user.contact');
 
 
 // Authentication
