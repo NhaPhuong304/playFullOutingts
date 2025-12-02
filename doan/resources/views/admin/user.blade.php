@@ -1,12 +1,28 @@
 @extends('admin.dashboard')
-@section('page-title', 'User')
+@section('page-title', 'Accounts')
 
 @section('content')
+<style>
+.user-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+.user-thumb:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+</style>
 
 <div class="main-content">
     <div class="card mt-4">
         <div class="card-header">
-            <h5 class="card-title">User</h5>
+            <h5 class="card-title">Accounts</h5>
         </div>
         <div class="card-body">
             <div class="row g-2 align-items-center mb-4">
@@ -38,53 +54,48 @@
 
                 
             <div class="table-responsive" >
-                <table class="table table-hover table-sm" id="userTable">
-                    <thead>
-                        <tr>
-                            <th>Photo</th>
-                            <th>Name</th>
-                            <th>Fullname</th>
-                            <th>Birthday</th>
-                            <th>Gender</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($users as $user)
-                        <tr>
-                            <td>
-                                @if($user->photo)
-                                <img src="{{asset('storage/avatars/'.$user->photo)}}?t={{$user->updated_at->timestamp}}" class="rounded-circle me-2"  width="40" height="40">
-                                @else
-                                <img src="{{asset('storage/avatars/no-image.jpg')}}" class="rounded-circle me-2"  width="40" height="40">
-                                @endif
-                            </td>
-                            <td>                        
-                                <div>{{$user -> name}}</div>
-                            </td>
-                            <td>{{$user->fullname}}</td>
-                            <td>{{$user->birthday}}</td>
-                            <td>{{$user -> gender}}</td>
-                            <td>{{$user -> email }}</td>
-                            <td>
-                                @if($user->role_id == 1)
-                                    User
-                                @elseif($user->role_id == 2)
-                                    Admin
-                                @else
-                                    SupperAdmin
-                                @endif
-                            </td>
-                            <td>
-                                @if($user->status == 1)
-                                    <span class="badge bg-success">Active</span>
-                                @else
-                                    <span class="badge bg-danger">Inactive</span>
-                                @endif
-                            </td>
+ <table class="table table-bordered table-hover text-center align-middle" id="userTable">
+        <thead class="table-dark">
+            <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Fullname</th>
+                <th>Birthday</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($users as $user)
+            <tr>
+                <td>
+                    @if($user->photo)
+                    <img src="{{ asset('storage/avatars/'.$user->photo) }}?t={{ $user->updated_at->timestamp }}" class="user-thumb" alt="User Photo">
+                    @else
+                    <img src="{{ asset('storage/avatars/no-image.jpg') }}" class="user-thumb" alt="No Image">
+                    @endif
+                </td>
+                <td>{{ $user->name }}</td>
+                <td>{{ $user->fullname }}</td>
+                <td>{{ $user->birthday }}</td>
+                <td>{{ $user->gender }}</td>
+                <td>{{ $user->email }}</td>
+                <td>
+                    @if($user->role_id == 1) User
+                    @elseif($user->role_id == 2) Admin
+                    @else SupperAdmin
+                    @endif
+                </td>
+                <td>
+                    @if($user->status == 1)
+                        <span class="badge bg-success">Active</span>
+                    @else
+                        <span class="badge bg-danger">Inactive</span>
+                    @endif
+                </td>
                             <td>
                                 <div class="btn-group" role="group">
                                     <button class="btn btn-sm btn-outline-info viewUserBtn" data-bs-toggle="tooltip" title="View"
@@ -96,11 +107,21 @@
                                             data-email="{{ $user->email }}"
                                             data-photo="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('storage/avatars/no-image.jpg') }}"
                                             data-status="{{ $user->status }}"
-                                            data-role_id="{{ $user->role_id }}">
+                                            data-role_id="{{ $user->role_id == 1 ? 'User' : ($user->role_id == 2 ? 'Admin' : 'SupperAdmin') }}">
                                         <i class="fa-regular fa-eye"></i>
                                     </button>
 
-                                    <button  class="btn btn-sm btn-outline-success editUserBtn" data-bs-toggle="tooltip" title="Edit"
+                                    @php
+                                        $canEdit = false;
+                                        if(Auth::user()->role_id == 3) {
+                                            $canEdit = true; // SupperAdmin có thể edit tất cả
+                                        } elseif(Auth::user()->role_id == 2 && $user->role_id == 1) {
+                                            $canEdit = true; // Admin chỉ edit User
+                                        }
+                                    @endphp
+
+                                    @if($canEdit)
+                                    <button class="btn btn-sm btn-outline-success editUserBtn" data-bs-toggle="tooltip" title="Edit"
                                             data-id="{{ $user->id }}"
                                             data-name="{{ $user->name }}"
                                             data-fullname="{{ $user->fullname }}"
@@ -109,17 +130,19 @@
                                             data-email="{{ $user->email }}"
                                             data-photo="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('storage/avatars/no-image.jpg') }}"
                                             data-status="{{ $user->status }}"
-                                            data-role_id="{{ $user->role_id }}">
+                                            data-role_id="{{ $user->role_id == 1 ? 'User' : ($user->role_id == 2 ? 'Admin' : 'SupperAdmin') }}">
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
-                                        @if(Auth::user()->id != $user->id)
-                                            <button class="btn btn-sm btn-outline-danger blockUserBtn" data-bs-toggle="tooltip" title="Block"
-                                                data-id="{{ $user->id }}"
-                                                data-name="{{ $user->name }}"
-                                                data-status="{{ $user->status }}">
-                                                <i class="fa fa-ban"></i>
-                                            </button>
-                                        @endif
+                                    @endif
+
+                                    @if(Auth::user()->id != $user->id)
+                                        <button class="btn btn-sm btn-outline-danger blockUserBtn" data-bs-toggle="tooltip" title="Block"
+                                            data-id="{{ $user->id }}"
+                                            data-name="{{ $user->name }}"
+                                            data-status="{{ $user->status }}">
+                                            <i class="fa fa-ban"></i>
+                                        </button>
+                                    @endif
                                 </div>
                             </td>
 
@@ -321,6 +344,10 @@
                         </div>
                         <div class="col-md-8">
                             <div class="mb-3">
+                                <label>Name</label>
+                                <input type="text" class="form-control" name="name" id="editName">
+                            </div>
+                            <div class="mb-3">
                                 <label>Fullname</label>
                                 <input type="text" class="form-control" name="fullname" id="editFullname">
                             </div>
@@ -339,7 +366,7 @@
 
                             <div class="mb-3">
                                 <label>Email</label>
-                                <input type="email" class="form-control" id="editEmail" value="{{ $user->email }}" disabled>
+                                <input type="email" class="form-control" id="editEmail" disabled>
                             </div>
                             <div class="mb-3">
                                 <label>Status</label>
@@ -370,7 +397,7 @@
         </div>
     </div>
 <script>
-const rowsPerPage = 4;
+const rowsPerPage = 10;
 let currentPage = 1;
 let filteredRows = [];
 

@@ -130,6 +130,8 @@
                             <li><a class="hover:text-primary transition-colors" href="#">Itinerary</a></li>
                             <li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
                             <li><a class="hover:text-primary transition-colors" href="#">Contact Us</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="{{ route('user.blog.index') }}">Blogs</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="{{route('admin.dashboard')}}">DashBoard</a></li>
                         </ul>
                     </div>
 
@@ -190,35 +192,7 @@
 
         </header>
         <main class="flex-1">
-            <div x-data="slider()" class="relative h-96 md:h-[65vh] overflow-hidden">
-
-                <!-- Banner Images -->
-                <template x-for="(banner, index) in banners" :key="index">
-                    <img
-                        x-show="current === index"
-                        x-transition.opacity.duration.700ms
-                        :src="banner"
-                        class="absolute inset-0 w-full h-full object-cover object-center select-none pointer-events-none"
-                        alt="banner">
-                </template>
-
-                <!-- Gradient Overlay giúp banner sâu hơn -->
-                <div class="absolute inset-0 bg-gradient-to-b from-black/10 to-black/40 pointer-events-none"></div>
-
-                <!-- Nút lùi -->
-                <button @click="prev()"
-                    class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full">
-                    ❮
-                </button>
-
-                <!-- Nút tiến -->
-                <button @click="next()"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full">
-                    ❯
-                </button>
-
-            </div>
-
+            @yield('banner')
             @yield('content')
         </main>
         <footer class="bg-card-dark text-text-dark">

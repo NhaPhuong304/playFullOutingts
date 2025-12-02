@@ -31,6 +31,8 @@ class User extends Authenticatable
         'is_delete',
         'google_id',
         'password_set',
+        'last_login',
+        'phone',
     ];
 
     /**

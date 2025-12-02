@@ -2,6 +2,22 @@
 @section('page-title', 'Category')
 
 @section('content')
+<style>
+.category-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+.category-thumb:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+</style>
 
 <div class="main-content">
     <div class="card mt-4">
@@ -26,7 +42,7 @@
 
                 <div class="col-auto ms-auto">
                     <div class="position-relative">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search by name">
                         <span class="fa fa-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></span>
                     </div>
                 </div>
@@ -34,8 +50,8 @@
 
             <!-- Table -->
             <div class="table-responsive">
-                <table class="table table-hover" id="categoryTable">
-                    <thead>
+                <table class="table table-bordered table-hover text-center align-middle" id="categoryTable">
+                    <thead class="table-dark">
                         <tr>
                             <th>Name</th>
                             <th>Slug</th>
@@ -64,13 +80,9 @@
                                         data-name="{{ $category->name }}"
                                         data-slug="{{ $category->slug }}"
                                         data-description="{{ $category->description }}"
-                                        data-status="{{ $category->status }}">
+                                        data-status="{{ $category->status }}"
+                                        data-games='@json($category->games)'>
                                         <i class="fa-regular fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger deleteCategoryBtn" data-bs-toggle="tooltip" title="Delete"
-                                        data-id="{{ $category->id }}"
-                                        data-name="{{ $category->name }}">
-                                        <i class="fa fa-trash"></i>
                                     </button>
                                     <button class="btn btn-sm btn-outline-success editCategoryBtn" data-bs-toggle="tooltip" title="Edit"
                                         data-id="{{ $category->id }}"
@@ -79,6 +91,11 @@
                                         data-description="{{ $category->description }}"
                                         data-status="{{ $category->status }}">
                                         <i class="fa-solid fa-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger deleteCategoryBtn" data-bs-toggle="tooltip" title="Delete"
+                                        data-id="{{ $category->id }}"
+                                        data-name="{{ $category->name }}">
+                                        <i class="fa fa-trash"></i>
                                     </button>
                                 </div>
                             </td>
@@ -105,34 +122,13 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-2"><strong>ID:</strong> <span id="viewId"></span></div>
-                <div class="mb-2"><strong>Name:</strong> <span id="viewName"></span></div>
-                <div class="mb-2"><strong>Slug:</strong> <span id="viewSlug"></span></div>
-                <div class="mb-2"><strong>Description:</strong> <span id="viewDescription"></span></div>
-                <div class="mb-2"><strong>Status:</strong> <span id="viewStatus"></span></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteCategoryModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Confirm Delete</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete <strong id="deleteCategoryName"></strong>?</p>
-            </div>
-            <div class="modal-footer">
-                <form id="deleteCategoryForm" method="POST" action="">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                </form>
+                <div class="mb-2"><strong>ID:</strong> <span id="viewCatId"></span></div>
+                <div class="mb-2"><strong>Name:</strong> <span id="viewCatName"></span></div>
+                <div class="mb-2"><strong>Slug:</strong> <span id="viewCatSlug"></span></div>
+                <div class="mb-2"><strong>Description:</strong> <span id="viewCatDescription"></span></div>
+                <div class="mb-2"><strong>Status:</strong> <span id="viewCatStatus"></span></div>
+                <div class="mb-2"><strong>Games:</strong></div>
+                <ul id="categoryGamesList" class="list-group"></ul>
             </div>
         </div>
     </div>
@@ -219,8 +215,31 @@
     </div>
 </div>
 
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteCategoryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteCategoryName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteCategoryForm" method="POST" action="">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-const rowsPerPage = 4;
+const rowsPerPage = 5;
 let currentPage = 1;
 let filteredRows = [];
 
@@ -231,10 +250,8 @@ function filterRows() {
     filteredRows = Array.from(document.querySelectorAll("#categoryTable tbody tr")).filter(row => {
         const name = row.cells[0].innerText.toLowerCase();
         const statusText = row.cells[3].innerText.trim() === "Active" ? "1" : "0";
-
         const matchName = name.includes(searchText);
         const matchStatus = selectedStatus === "" || statusText === selectedStatus;
-
         return matchName && matchStatus;
     });
 
@@ -259,16 +276,12 @@ function paginationTable() {
 function renderPagination(totalPages) {
     const pagination = document.getElementById("pagination");
     pagination.innerHTML = "";
-
     for (let i = 1; i <= totalPages; i++) {
         const btn = document.createElement("button");
         btn.textContent = i;
         btn.className = "btn btn-sm btn-outline-primary mx-1";
         if (i === currentPage) btn.classList.add("active");
-        btn.onclick = () => {
-            currentPage = i;
-            paginationTable();
-        };
+        btn.onclick = () => { currentPage = i; paginationTable(); };
         pagination.appendChild(btn);
     }
 }
@@ -293,20 +306,30 @@ document.addEventListener("DOMContentLoaded", () => {
 function initCategoryModals() {
     document.querySelectorAll(".viewCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
-            document.getElementById("viewId").textContent = this.dataset.id;
-            document.getElementById("viewName").textContent = this.dataset.name;
-            document.getElementById("viewSlug").textContent = this.dataset.slug;
-            document.getElementById("viewDescription").textContent = this.dataset.description;
-            document.getElementById("viewStatus").textContent = this.dataset.status == 1 ? "Active" : "Inactive";
-            new bootstrap.Modal(document.getElementById("viewCategoryModal")).show();
-        });
-    });
+            document.getElementById("viewCatId").textContent = this.dataset.id;
+            document.getElementById("viewCatName").textContent = this.dataset.name;
+            document.getElementById("viewCatSlug").textContent = this.dataset.slug;
+            document.getElementById("viewCatDescription").textContent = this.dataset.description;
+            document.getElementById("viewCatStatus").textContent = this.dataset.status == 1 ? 'Active' : 'Inactive';
 
-    document.querySelectorAll(".deleteCategoryBtn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            document.getElementById("deleteCategoryName").textContent = this.dataset.name;
-            document.getElementById("deleteCategoryForm").action = `/admin/category/${this.dataset.id}`;
-            new bootstrap.Modal(document.getElementById("deleteCategoryModal")).show();
+            const games = JSON.parse(this.dataset.games);
+            const ul = document.getElementById("categoryGamesList");
+            ul.innerHTML = "";
+            if (games.length > 0) {
+                games.forEach(game => {
+                    const li = document.createElement("li");
+                    li.textContent = game.name;
+                    li.className = "list-group-item";
+                    ul.appendChild(li);
+                });
+            } else {
+                const li = document.createElement("li");
+                li.textContent = "No games found";
+                li.className = "list-group-item text-muted";
+                ul.appendChild(li);
+            }
+
+            new bootstrap.Modal(document.getElementById("viewCategoryModal")).show();
         });
     });
 
@@ -320,7 +343,14 @@ function initCategoryModals() {
             new bootstrap.Modal(document.getElementById("editCategoryModal")).show();
         });
     });
+
+    document.querySelectorAll(".deleteCategoryBtn").forEach(btn => {
+        btn.addEventListener("click", function () {
+            document.getElementById("deleteCategoryName").textContent = this.dataset.name;
+            document.getElementById("deleteCategoryForm").action = `/admin/category/${this.dataset.id}`;
+            new bootstrap.Modal(document.getElementById("deleteCategoryModal")).show();
+        });
+    });
 }
 </script>
-
 @endsection

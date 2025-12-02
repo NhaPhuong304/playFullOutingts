@@ -1,8 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\GameController;
+use App\Http\Controllers\Admin\ItineraryController;
+use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\MaterialController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RecycleCategoryController;
+use App\Http\Controllers\Admin\RecycleGameController;
 use App\Http\Controllers\Admin\RecycleUserController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -11,21 +17,15 @@ use App\Http\Controllers\GameController as ControllersGameController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SetPasswordController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\User\BlogUserController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
 Route::get('/', function () {
     return redirect()->route('user.dashboard');
 });
+
+
 
 Route::get('user/dashboard', function () {
         return view('user.dashboard');
@@ -37,6 +37,9 @@ Route::get('user/malesGame', [ControllersGameController::class, 'malesGame'])->n
 Route::get('user/femalesGame', [ControllersGameController::class, 'femalesGame'])->name('user.femalesGame');
 Route::get('user/familyGame', [ControllersGameController::class, 'familyGame'])->name('user.familyGame');
 
+// Blog pages for user
+Route::get('/blog', [BlogUserController::class, 'index'])->name('user.blog.index');
+Route::get('/blog/{id}', [BlogUserController::class, 'show'])->name('user.blog.show');
 
 // Authentication
 Route::get('register', [AuthController::class, 'showRegister'])->name('register');
@@ -78,12 +81,46 @@ Route::middleware(['role:admin'])->group(function () {
 
     Route::get('admin/trashCategory', [RecycleCategoryController::class, 'trash'])->name('admin.trashCategory');
     Route::delete('admin/recycle-category/delete/{id}', [RecycleCategoryController::class, 'delete'])->name('admin.recycleCategory.delete');
+    Route::post('admin/recycle-category/restore/{id}', [RecycleCategoryController::class, 'restore'])->name('admin.recycleCategory.restore');
 
     Route::get('admin/game', [GameController::class, 'game'])->name('admin.game');
     Route::post('admin/game/add', [GameController::class, 'add'])->name('admin.game.add');
     Route::put('admin/game/{id}', [GameController::class, 'update'])->name('admin.game.update');
     Route::delete('admin/game/{id}', [GameController::class, 'delete'])->name('admin.game.delete');
 
+    Route::get('admin/trashGame', [RecycleGameController::class, 'trash'])->name('admin.trashGame');
+    Route::delete('admin/recycle-game/delete/{id}', [RecycleGameController::class, 'delete'])->name('admin.recycleGame.delete');
+    Route::post('admin/recycle-game/restore/{id}', [RecycleGameController::class, 'restore'])->name('admin.recycleGame.restore');
+
+
+    Route::get('admin/material', [MaterialController::class, 'material'])->name('admin.material');
+    Route::post('admin/material/add', [MaterialController::class, 'add'])->name('admin.material.add');
+    Route::put('admin/material/{id}', [MaterialController::class, 'update'])->name('admin.material.update');
+    Route::delete('admin/material/{id}', [MaterialController::class, 'delete'])->name('admin.material.delete');
+
+    Route::get('admin/profile/{id}', [ProfileController::class,'profile'])->name('admin.profile');
+    Route::post('admin/profile/{id}/update', [ProfileController::class,'updateProfile'])->name('admin.profile.update');
+    Route::post('admin/profile/{id}/change-password', [ProfileController::class,'changePassword'])->name('admin.profile.changePassword');
+
+    Route::get('admin/itineraries', [ItineraryController::class, 'itineraries'])->name('admin.itineraries');
+    Route::post('admin/itineraries/add', [ItineraryController::class, 'add'])->name('admin.itineraries.add');
+    Route::get('admin/itineraries/{id}', [ItineraryController::class, 'show'])->name('admin.itineraries.show');
+    Route::post('admin/itineraries/update/{id}', [ItineraryController::class, 'update'])->name('admin.itineraries.update');
+    Route::delete('admin/itineraries/delete/{id}', [ItineraryController::class, 'delete'])->name('admin.itineraries.delete');
+    
+    Route::get('admin/locations', [LocationController::class, 'location'])->name('admin.locations');
+    Route::post('admin/locations/add', [LocationController::class, 'add'])->name('admin.locations.add');
+    Route::post('admin/locations/update/{id}', [LocationController::class, 'update'])->name('admin.locations.update');
+    Route::delete('admin/locations/delete/{id}', [LocationController::class, 'destroy'])->name('admin.locations.delete');
+
+    // BLOG MANAGEMENT
+    Route::get('admin/blog', [BlogController::class, 'index'])->name('admin.blog.index');
+    Route::get('admin/blog/create', [BlogController::class, 'create'])->name('admin.blog.create');
+    Route::post('admin/blog', [BlogController::class, 'store'])->name('admin.blog.store');
+    Route::get('admin/blog/{id}/edit', [BlogController::class, 'edit'])->name('admin.blog.edit');
+    Route::put('admin/blog/{id}', [BlogController::class, 'update'])->name('admin.blog.update');
+    Route::delete('admin/blog/{id}', [BlogController::class, 'destroy'])->name('admin.blog.delete');
+    Route::get('admin/blog/{id}', [BlogController::class, 'show'])->name('admin.blog.show');
 
 });
 

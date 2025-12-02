@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function user(){
         $data = [
-            'users' => User::where('is_delete', 0)->get()
+            'users' => User::where('is_delete', 0)->orderBy('id', 'desc')->get()
         ];
         return view('admin/user')->with($data);
     }

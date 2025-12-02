@@ -184,25 +184,33 @@
                     </span>
                 </li>
                 <!-- User Profile -->
-                <li class="nav-item dropdown user-profile">
-                    <div class="d-flex align-items-center dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="./assets/images/avatar-2.jpg" class="user-avatar" alt="">
-                        <div>
-                            <ul class="dropdown-menu mt-3">
-                                <li><h6 class="dropdown-header">Settings</h6></li>
-                                <li><a class="dropdown-item" href="#"><i class="fa-regular fa-user"></i> Profile Settings</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fa-regular fa-bell"></i> Notifications</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fa-solid fa-shield-halved"></i> Privacy &amp; Security</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fa-regular fa-credit-card"></i> Billing</a></li>
-                                <li>
-                                    <div class="sign-out">
-                                    <a class="dropdown-item text-danger" href="#"><i class="fa-solid fa-right-from-bracket"></i> Sign out</a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" 
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{{ Auth::user() && Auth::user()->photo ? asset('storage/avatars/' . Auth::user()->photo) : asset('images/no_image.jpg') }}" 
+                            class="user-avatar rounded-circle" alt="avatar" width="40">
+
+
+
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end mt-2">
+                            <li><h6 class="dropdown-header">Settings</h6></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.profile', auth()->user()->id) }}"><i class="fa-regular fa-user"></i> Profile Settings</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa-regular fa-bell"></i> Notifications</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-shield-halved"></i> Privacy &amp; Security</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa-regular fa-credit-card"></i> Billing</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ route('logout') }}"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fa-solid fa-right-from-bracket"></i> Sign out
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
             </ul>
         </div>
     </div>

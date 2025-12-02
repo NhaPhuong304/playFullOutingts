@@ -12,7 +12,7 @@ class CategoryController extends Controller
     public function category()
     {
         $data = [
-            'categories' => Category::where('is_delete', 0)->get()
+            'categories' => Category::where('is_delete', 0)->orderBy('id', 'desc')->get()
         ];
         return view('admin.category')->with($data);
     }

@@ -1,5 +1,36 @@
 @extends('layouts.user')
 
+@section('banner')
+<div x-data="slider()" class="relative h-96 md:h-[65vh] overflow-hidden">
+
+    <!-- Banner Images -->
+    <template x-for="(banner, index) in banners" :key="index">
+        <img
+            x-show="current === index"
+            x-transition.opacity.duration.700ms
+            :src="banner"
+            class="absolute inset-0 w-full h-full object-cover object-center select-none pointer-events-none"
+            alt="banner">
+    </template>
+
+    <!-- Gradient Overlay -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/10 to-black/40 pointer-events-none"></div>
+
+    <!-- Prev -->
+    <button @click="prev()"
+        class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full">
+        ❮
+    </button>
+
+    <!-- Next -->
+    <button @click="next()"
+        class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full">
+        ❯
+    </button>
+
+</div>
+@endsection
+
 @section('content')
     <div class="flex justify-center py-5 px-4 sm:px-8 lg:px-10">
                     <div class="flex flex-col w-full max-w-7xl">

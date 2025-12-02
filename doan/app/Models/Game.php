@@ -25,5 +25,8 @@ class Game extends Model
     {
         return $this->belongsToMany(Category::class, 'category_game', 'game_id', 'category_id');
     }
-
+    public function materials()
+    {
+        return $this->belongsToMany(Material::class, 'game_material', 'game_id', 'material_id');
+    }
 }
