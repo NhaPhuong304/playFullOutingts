@@ -1,4 +1,4 @@
-@extends('layouts.user')
+@extends('layouts.user.user')
 
 @section('content')
 
@@ -59,7 +59,7 @@
         <div class="layout-container flex h-full grow flex-col">
             <div class="px-4 sm:px-8 md:px-20 lg:px-40 flex flex-1 justify-center py-5">
                 <div class="layout-content-container flex flex-col w-full max-w-5xl flex-1">
-                    <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light dark:border-border-dark px-6 md:px-10 py-4">
+                    <header id="picnic-title" class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-light dark:border-border-dark px-6 md:px-10 py-4">
                         <div class="flex items-center gap-4">
 
                             <h2 class="text-text-light dark:text-text-dark text-xl font-bold leading-tight tracking-[-0.015em]">Picnic Games</h2>
@@ -83,15 +83,15 @@
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
-                            <a href="{{route('user.game')}}">
-                                <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 hover:border-primary/50">
+                            <a href="{{route('user.game')}}#picnic-title">
+                                <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-transparent hover:border-primary/50 hover:bg-white dark:hover:bg-background-dark/50">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                                         <span class="material-symbols-outlined !text-3xl">home</span>
                                     </div>
                                     <span class="text-text-light dark:text-text-dark text-sm font-medium leading-normal text-center">Indoor Games</span>
                                 </button>
                             </a>
-                            <a href="{{route('user.outdoorsGame')}}">
+                            <a href="{{route('user.outdoorsGame')}}#picnic-title">
                                 <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-transparent hover:border-primary/50 hover:bg-white dark:hover:bg-background-dark/50">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                                         <span class="material-symbols-outlined !text-3xl">sunny</span>
@@ -101,7 +101,7 @@
                                         Outdoor Games</span>
                                 </button>
                             </a>
-                            <a href="{{route('user.kidsGame')}}">
+                            <a href="{{route('user.kidsGame')}}#picnic-title">
                                 <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-transparent hover:border-primary/50 hover:bg-white dark:hover:bg-background-dark/50">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                                         <span class="material-symbols-outlined !text-3xl">child_care</span>
@@ -109,7 +109,7 @@
                                     <span class="text-text-light dark:text-text-dark text-sm font-medium leading-normal text-center">Games for Kids</span>
                                 </button>
                             </a>
-                            <a href="{{route('user.malesGame')}}">
+                            <a href="{{route('user.malesGame')}}#picnic-title">
                                 <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-transparent hover:border-primary/50 hover:bg-white dark:hover:bg-background-dark/50">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                                         <span class="material-symbols-outlined !text-3xl">man</span>
@@ -117,15 +117,15 @@
                                     <span class="text-text-light dark:text-text-dark text-sm font-medium leading-normal text-center">Games for Males</span>
                                 </button>
                             </a>
-                            <a href="{{route('user.femalesGame')}}">
-                                <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-transparent hover:border-primary/50 hover:bg-white dark:hover:bg-background-dark/50">
+                            <a href="{{route('user.femalesGame')}}#picnic-title">
+                                <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 hover:border-primary/50">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                                         <span class="material-symbols-outlined !text-3xl">woman</span>
                                     </div>
                                     <span class="text-text-light dark:text-text-dark text-sm font-medium leading-normal text-center">Games for Females</span>
                                 </button>
                             </a>
-                            <a href="{{route('user.familyGame')}}">
+                            <a href="{{route('user.familyGame')}}#picnic-title">
                                 <button class="group flex flex-col items-center gap-2 rounded-lg p-3 transition-all border border-transparent hover:border-primary/50 hover:bg-white dark:hover:bg-background-dark/50">
                                     <div class="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                                         <span class="material-symbols-outlined !text-3xl">family_restroom</span>
@@ -153,9 +153,11 @@
                                                 <span>Easy</span>
                                             </div>
                                         </div>
-                                        <button class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
                                             View Details
-                                        </button>
+                                        </a>
+
                                     </div>
                                 </div>
                                 <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
@@ -174,9 +176,11 @@
                                                 <span>Easy</span>
                                             </div>
                                         </div>
-                                        <button class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
                                             View Details
-                                        </button>
+                                        </a>
+
                                     </div>
                                 </div>
                                 <div class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
@@ -195,9 +199,11 @@
                                                 <span>Medium</span>
                                             </div>
                                         </div>
-                                        <button class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
+                                        <a href="{{ route('user.detailGame') }}#detail"
+                                            class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 bg-primary/10 text-primary text-sm font-bold leading-normal transition-colors hover:bg-primary hover:text-text-light">
                                             View Details
-                                        </button>
+                                        </a>
+
                                     </div>
                                 </div>
                             </div>

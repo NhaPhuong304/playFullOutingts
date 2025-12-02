@@ -1,6 +1,7 @@
-@extends('layouts.user')
+@extends('layouts.user.user')
 
-@section('banner')
+
+@section('content')
 <div x-data="slider()" class="relative h-96 md:h-[65vh] overflow-hidden">
 
     <!-- Banner Images -->
@@ -29,9 +30,6 @@
     </button>
 
 </div>
-@endsection
-
-@section('content')
     <div class="flex justify-center py-5 px-4 sm:px-8 lg:px-10">
                     <div class="flex flex-col w-full max-w-7xl">
                         <section class="@container py-10 md:py-16 -mt-32 md:-mt-40 relative z-10">

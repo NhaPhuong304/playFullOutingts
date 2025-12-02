@@ -91,3 +91,4 @@ function slider() {
 
     btnRegister.addEventListener('click', loginUser);
     btnLogin.addEventListener('click', loginUser);
+

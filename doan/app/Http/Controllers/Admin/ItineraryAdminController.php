@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Itinerary;
 use Illuminate\Http\Request;
 
-class ItineraryController extends Controller
+class ItineraryAdminController extends Controller
 {
     public function itineraries()
     {

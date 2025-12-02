@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\AboutusController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\GameController;
-use App\Http\Controllers\Admin\ItineraryController;
 use App\Http\Controllers\Admin\LocationController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -13,11 +14,14 @@ use App\Http\Controllers\Admin\RecycleUserController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\GameController as ControllersGameController;
+use App\Http\Controllers\ItineraryController;
 use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SetPasswordController;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\ItineraryAdminController;
 use App\Http\Controllers\User\BlogUserController;
 
 
@@ -31,11 +35,17 @@ Route::get('user/dashboard', function () {
         return view('user.dashboard');
     })->name('user.dashboard');
 Route::get('user/game', [ControllersGameController::class, 'game'])->name('user.game');
+Route::get('user/indoorGame', [ControllersGameController::class, 'indoorGame'])->name('user.indoorGame');
 Route::get('user/outdoorsGame', [ControllersGameController::class, 'outdoorsGame'])->name('user.outdoorsGame');
 Route::get('user/kidsGame', [ControllersGameController::class, 'kidsGame'])->name('user.kidsGame');
 Route::get('user/malesGame', [ControllersGameController::class, 'malesGame'])->name('user.malesGame');
 Route::get('user/femalesGame', [ControllersGameController::class, 'femalesGame'])->name('user.femalesGame');
 Route::get('user/familyGame', [ControllersGameController::class, 'familyGame'])->name('user.familyGame');
+Route::get('user/detailGame', [ControllersGameController::class, 'detailGame'])->name('user.detailGame');
+
+Route::get('user/aboutus', [AboutusController::class, 'aboutus'])->name('user.aboutus');
+Route::get('user/itinerary', [ItineraryController::class, 'itinerary'])->name('user.itinerary');
+Route::get('user/contact', [ContactController::class, 'contact'])->name('user.contact');
 
 // Blog pages for user
 Route::get('/blog', [BlogUserController::class, 'index'])->name('user.blog.index');
@@ -102,11 +112,11 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('admin/profile/{id}/update', [ProfileController::class,'updateProfile'])->name('admin.profile.update');
     Route::post('admin/profile/{id}/change-password', [ProfileController::class,'changePassword'])->name('admin.profile.changePassword');
 
-    Route::get('admin/itineraries', [ItineraryController::class, 'itineraries'])->name('admin.itineraries');
-    Route::post('admin/itineraries/add', [ItineraryController::class, 'add'])->name('admin.itineraries.add');
-    Route::get('admin/itineraries/{id}', [ItineraryController::class, 'show'])->name('admin.itineraries.show');
-    Route::post('admin/itineraries/update/{id}', [ItineraryController::class, 'update'])->name('admin.itineraries.update');
-    Route::delete('admin/itineraries/delete/{id}', [ItineraryController::class, 'delete'])->name('admin.itineraries.delete');
+    Route::get('admin/itineraries', [ItineraryAdminController::class, 'itineraries'])->name('admin.itineraries');
+    Route::post('admin/itineraries/add', [ItineraryAdminController::class, 'add'])->name('admin.itineraries.add');
+    Route::get('admin/itineraries/{id}', [ItineraryAdminController::class, 'show'])->name('admin.itineraries.show');
+    Route::post('admin/itineraries/update/{id}', [ItineraryAdminController::class, 'update'])->name('admin.itineraries.update');
+    Route::delete('admin/itineraries/delete/{id}', [ItineraryAdminController::class, 'delete'])->name('admin.itineraries.delete');
     
     Route::get('admin/locations', [LocationController::class, 'location'])->name('admin.locations');
     Route::post('admin/locations/add', [LocationController::class, 'add'])->name('admin.locations.add');
@@ -138,5 +148,5 @@ Route::get('password/reset', [PasswordResetController::class, 'showReset'])->nam
 Route::post('password/reset', [PasswordResetController::class, 'reset'])->name('password.reset.post');
 
 // API gọi chatbot
-use App\Http\Controllers\ChatController;
+
 Route::post('/chatbot', [ChatController::class, 'chat']);

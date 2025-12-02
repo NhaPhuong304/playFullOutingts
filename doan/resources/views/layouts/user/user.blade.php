@@ -112,26 +112,25 @@
                             <li class="relative nav-item">
                                 <button id="games-button"
                                     class="flex items-center gap-1 hover:text-primary transition-colors">
-                                    <a href="{{route('user.game')}}">Games</a>
+                                    <a href="{{route('user.game')}}#picnic-title">Games</a>
                                     <span class="material-symbols-outlined text-base">expand_more</span>
                                 </button>
 
                                 <div id="games-menu"
                                     class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Indoor Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Outdoor Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Kids Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Male Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Female Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="#">Family Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.indoorGame')}}#picnic-title">Indoor Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.outdoorsGame')}}#picnic-title">Outdoor Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.kidsGame')}}#picnic-title">Kids Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.malesGame')}}#picnic-title">Male Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.femalesGame')}}#picnic-title">Female Games</a>
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.familyGame')}}#picnic-title">Family Games</a>
                                 </div>
                             </li>
-
-                            <li><a class="hover:text-primary transition-colors" href="#">Itinerary</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="#">Contact Us</a></li>
                             <li><a class="hover:text-primary transition-colors" href="{{ route('user.blog.index') }}">Blogs</a></li>
                             <li><a class="hover:text-primary transition-colors" href="{{route('admin.dashboard')}}">DashBoard</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="{{url('user/itinerary')}}">Itinerary</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="{{url('user/aboutus')}}">About Us</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="{{url('user/contact')}}">Contact Us</a></li>
                         </ul>
                     </div>
 
@@ -192,7 +191,7 @@
 
         </header>
         <main class="flex-1">
-            @yield('banner')
+
             @yield('content')
         </main>
         <footer class="bg-card-dark text-text-dark">
