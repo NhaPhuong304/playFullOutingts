@@ -22,6 +22,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SetPasswordController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ItineraryAdminController;
+use App\Http\Controllers\Admin\RecycleItineraryController;
 use App\Http\Controllers\User\BlogUserController;
 
 
@@ -108,21 +109,24 @@ Route::middleware(['role:admin'])->group(function () {
     Route::put('admin/material/{id}', [MaterialController::class, 'update'])->name('admin.material.update');
     Route::delete('admin/material/{id}', [MaterialController::class, 'delete'])->name('admin.material.delete');
 
-    Route::get('admin/profile/{id}', [ProfileController::class,'profile'])->name('admin.profile');
-    Route::post('admin/profile/{id}/update', [ProfileController::class,'updateProfile'])->name('admin.profile.update');
-    Route::post('admin/profile/{id}/change-password', [ProfileController::class,'changePassword'])->name('admin.profile.changePassword');
+    Route::get('/admin/profile/{id}', [ProfileController::class, 'profile'])->name('admin.profile');
+    Route::post('/admin/profile/{id}/update', [ProfileController::class, 'updateProfile'])->name('admin.profile.update');
+    Route::post('/admin/profile/{id}/photo', [ProfileController::class, 'updatePhoto'])->name('admin.profile.updatePhoto');
+    Route::post('/admin/profile/{id}/change-password', [ProfileController::class, 'changePassword'])->name('admin.profile.changePassword');
 
-    Route::get('admin/itineraries', [ItineraryAdminController::class, 'itineraries'])->name('admin.itineraries');
+    Route::get('admin/itineraries', [ItineraryAdminController::class, 'itinerary'])->name('admin.itineraries');
     Route::post('admin/itineraries/add', [ItineraryAdminController::class, 'add'])->name('admin.itineraries.add');
     Route::get('admin/itineraries/{id}', [ItineraryAdminController::class, 'show'])->name('admin.itineraries.show');
     Route::post('admin/itineraries/update/{id}', [ItineraryAdminController::class, 'update'])->name('admin.itineraries.update');
     Route::delete('admin/itineraries/delete/{id}', [ItineraryAdminController::class, 'delete'])->name('admin.itineraries.delete');
-    
-    Route::get('admin/locations', [LocationController::class, 'location'])->name('admin.locations');
-    Route::post('admin/locations/add', [LocationController::class, 'add'])->name('admin.locations.add');
-    Route::post('admin/locations/update/{id}', [LocationController::class, 'update'])->name('admin.locations.update');
-    Route::delete('admin/locations/delete/{id}', [LocationController::class, 'destroy'])->name('admin.locations.delete');
 
+    Route::get('/admin/trashItineraries', [RecycleItineraryController::class, 'trash'])->name('admin.trashItineraries');
+    Route::post('/admin/trashItineraries/{id}/restore', [RecycleItineraryController::class, 'restore'])->name('admin.trashItineraries.restore');
+    Route::delete('/admin/trashItineraries/{id}/force-delete', [RecycleItineraryController::class, 'forceDelete'])->name('admin.trashItineraries.forceDelete');
+    Route::get('admin/locations', [LocationController::class, 'location'])->name('admin.locations');
+    Route::post('admin/locations/store', [LocationController::class, 'store'])->name('admin.locations.store');
+    Route::put('/admin/locations/{id}', [LocationController::class, 'update'])->name('admin.locations.update');
+    Route::delete('admin/locations/{id}', [LocationController::class, 'delete'])->name('admin.locations.delete');
     // BLOG MANAGEMENT
     Route::get('admin/blog', [BlogController::class, 'index'])->name('admin.blog.index');
     Route::get('admin/blog/create', [BlogController::class, 'create'])->name('admin.blog.create');

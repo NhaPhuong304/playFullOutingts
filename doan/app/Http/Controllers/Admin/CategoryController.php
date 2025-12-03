@@ -12,7 +12,9 @@ class CategoryController extends Controller
     public function category()
     {
         $data = [
-            'categories' => Category::where('is_delete', 0)->orderBy('id', 'desc')->get()
+            'categories' => Category::where('is_delete', 0)->orderBy('id', 'desc')->get(),
+            'allGames' => \App\Models\Game::where('is_delete', 0)->orderBy('id', 'desc')->get(),
+
         ];
         return view('admin.category')->with($data);
     }
@@ -36,19 +38,30 @@ public function store(Request $request)
     return back()->with('success', 'Category added successfully!');
     }
 
-    public function update(Request $request, $id)
-    {
-        $category = Category::findOrFail($id);
+public function update(Request $request, $id)
+{
+    $category = Category::findOrFail($id);
 
-        $category->name = $request->name;
-        $category->slug = $request->slug;
-        $category->description = $request->description;
-        $category->status = $request->status;
+    $request->validate([
+        'name' => 'required|unique:categories,name,'.$id,
+        'slug' => 'required|unique:categories,slug,'.$id,
+    ]);
 
-        $category->save();
+    $category->name = $request->name;
+    $category->slug = $request->slug;
+    $category->description = $request->description;
+    $category->status = $request->status;
+    $category->save();
 
-        return redirect()->back()->with('success', 'Category updated.');
+    if ($request->has('games')) {
+        $category->games()->sync($request->games);  
+    } else {
+        $category->games()->sync([]);
     }
+
+    return redirect()->back()->with('success', 'Category updated.');
+}
+
 
 
     public function delete($id)

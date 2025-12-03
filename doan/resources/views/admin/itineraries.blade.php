@@ -2,6 +2,22 @@
 @section('page-title', 'Itinerary')
 
 @section('content')
+<style>
+.game-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+.game-thumb:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+</style>
 
 <div class="main-content">
     <div class="card mt-4">
@@ -10,6 +26,24 @@
         </div>
 
         <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
 
             <div class="row g-2 align-items-center mb-4">
                 <div class="col-auto">
@@ -37,7 +71,7 @@
 
             <div class="table-responsive">
                 <table class="table table-hover table-sm" id="itineraryTable">
-                    <thead>
+                    <thead class="table-dark">
                         <tr>
                             <th>Name</th>
                             <th>Description</th>
@@ -46,52 +80,54 @@
                             <th style="width:120px;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                        <tbody>
                         @foreach($itineraries as $itinerary)
                         <tr>
                             <td>{{ $itinerary->name }}</td>
                             <td>{{ Str::limit($itinerary->description, 60) }}</td>
                             <td>{{ $itinerary->days }}</td>
                             <td>
-                                @if($itinerary->status == 1)
-                                    <span class="badge bg-success">Active</span>
-                                @else
-                                    <span class="badge bg-danger">Inactive</span>
-                                @endif
+                                <span class="badge {{ $itinerary->status ? 'bg-success' : 'bg-danger' }}">
+                                    {{ $itinerary->status ? 'Active' : 'Inactive' }}
+                                </span>
                             </td>
                             <td>
                                 <div class="btn-group">
+                                    <!-- VIEW -->
                                     <button class="btn btn-sm btn-outline-info viewItineraryBtn"
-                                            data-id="{{ $itinerary->id }}"
-                                            data-name="{{ $itinerary->name }}"
-                                            data-description="{{ $itinerary->description }}"
-                                            data-days="{{ $itinerary->days }}"
-                                            data-status="{{ $itinerary->status }}"
-                                            title="View">
+                                        data-id="{{ $itinerary->id }}"
+                                        data-name="{{ $itinerary->name }}"
+                                        data-description="{{ $itinerary->description }}"
+                                        data-days="{{ $itinerary->days }}"
+                                        data-status="{{ $itinerary->status }}"
+                                        data-locations='@json($itinerary->locations)'>
+
                                         <i class="fa-regular fa-eye"></i>
                                     </button>
 
+                                    <!-- EDIT -->
                                     <button class="btn btn-sm btn-outline-success editItineraryBtn"
-                                            data-id="{{ $itinerary->id }}"
-                                            data-name="{{ $itinerary->name }}"
-                                            data-description="{{ $itinerary->description }}"
-                                            data-days="{{ $itinerary->days }}"
-                                            data-status="{{ $itinerary->status }}"
-                                            title="Edit">
+                                        data-id="{{ $itinerary->id }}"
+                                        data-name="{{ $itinerary->name }}"
+                                        data-description="{{ $itinerary->description }}"
+                                        data-days="{{ $itinerary->days }}"
+                                        data-status="{{ $itinerary->status }}"
+                                        data-locations='@json($itinerary->locations)'>
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
 
+                                    <!-- DELETE -->
                                     <button class="btn btn-sm btn-outline-danger deleteItineraryBtn"
-                                            data-id="{{ $itinerary->id }}"
-                                            data-name="{{ $itinerary->name }}"
-                                            title="Delete">
+                                        data-id="{{ $itinerary->id }}"
+                                        data-name="{{ $itinerary->name }}">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
                         @endforeach
-                    </tbody>
+                        </tbody>
+
                 </table>
             </div>
 
@@ -343,72 +379,56 @@ function initModals() {
     });
 
 
-    document.querySelectorAll(".viewItineraryBtn").forEach(btn => {
+document.querySelectorAll(".viewItineraryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
+            document.getElementById("viewName").innerText = this.dataset.name;
+            document.getElementById("viewDescription").innerText = this.dataset.description;
+            document.getElementById("viewDays").innerText = this.dataset.days;
+            document.getElementById("viewStatus").innerText = this.dataset.status == 1 ? "Active" : "Inactive";
+            const locations = JSON.parse(this.dataset.locations || '[]');
+            let html = '';
+            locations.forEach(loc => {
+                html += `<div class="border rounded p-2 mb-2">
+                            <strong>${loc.name}</strong><br>
+                            ${loc.description || ''}<br>
+                            ${loc.image ? `<img src="/storage/locations/${loc.image}" width="120">` : ''}
+                        </div>`;
+            });
+            document.getElementById("viewLocations").innerHTML = html;
 
-            let id = this.dataset.id;
 
-            fetch(`/admin/itineraries/${id}`)
-                .then(res => res.json())
-                .then(data => {
-
-                    document.getElementById("viewName").innerText = data.name;
-                    document.getElementById("viewDescription").innerText = data.description;
-                    document.getElementById("viewDays").innerText = data.days;
-                    document.getElementById("viewStatus").innerText = data.status == 1 ? "Active" : "Inactive";
-
-                    let html = "";
-                    data.locations.forEach(loc => {
-                        html += `
-                            <div class="border rounded p-2 mb-2">
-                                <strong>${loc.name}</strong><br>
-                                ${loc.description}<br>
-                                ${loc.image ? `<img src="/uploads/${loc.image}" width="120">` : ""}
-                            </div>
-                        `;
-                    });
-
-                    document.getElementById("viewLocations").innerHTML = html;
-
-                    new bootstrap.Modal(document.getElementById("viewItineraryModal")).show();
-                });
+            new bootstrap.Modal(document.getElementById("viewItineraryModal")).show();
         });
     });
 
+    // ADD
+    document.getElementById("addItineraryBtn").addEventListener("click", () => {
+        new bootstrap.Modal(document.getElementById("addItineraryModal")).show();
+    });
 
+    // EDIT
     document.querySelectorAll(".editItineraryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
-
-            let id = this.dataset.id;
-
+            const id = this.dataset.id;
             document.getElementById("editName").value = this.dataset.name;
             document.getElementById("editDescription").value = this.dataset.description;
             document.getElementById("editDays").value = this.dataset.days;
             document.getElementById("editStatus").value = this.dataset.status;
-
-            document.getElementById("editItineraryForm").action =
-                `/admin/itineraries/update/${id}`;
-
+            document.getElementById("editItineraryForm").action = `/admin/itineraries/update/${id}`;
             new bootstrap.Modal(document.getElementById("editItineraryModal")).show();
         });
     });
 
-
+    // DELETE
     document.querySelectorAll(".deleteItineraryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
-
-            let id = this.dataset.id;
-            let name = this.dataset.name;
-
+            const id = this.dataset.id;
+            const name = this.dataset.name;
             document.getElementById("deleteName").innerText = name;
-
-            document.getElementById("deleteItineraryForm").action =
-                `/admin/itineraries/delete/${id}`;
-
+            document.getElementById("deleteItineraryForm").action = `/admin/itineraries/delete/${id}`;
             new bootstrap.Modal(document.getElementById("deleteItineraryModal")).show();
         });
     });
-
 }
 </script>
 

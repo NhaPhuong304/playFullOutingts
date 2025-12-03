@@ -25,6 +25,24 @@
             <h5 class="card-title">Games</h5>
         </div>
         <div class="card-body">
+                    @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
             <!-- Filters & Add Button -->
             <div class="row g-2 align-items-center mb-4">
                 <div class="col-auto">
@@ -39,7 +57,7 @@
                 </div>
                 <div class="col-auto ms-auto">
                     <div class="position-relative">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search Game">
                         <span class="fa fa-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></span>
                     </div>
                 </div>

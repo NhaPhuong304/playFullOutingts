@@ -2,55 +2,80 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Game;
-use Illuminate\Http\Request;
 use App\Models\Material;
+use Illuminate\Http\Request;
 
 class MaterialController extends Controller
 {
-    // Hiển thị danh sách Material
+    // Hiển thị danh sách materials
     public function material()
     {
-        $materials = Material::all();
-        $games = Game::all();
-        return view('admin.material', compact('materials', 'games'));
+        $materials = Material::where('is_delete', 0)->orderBy('id', 'desc')->get();
+        return view('admin.material', compact('materials'));
     }
 
-    // Thêm Material mới
-    public function add(Request $request)
-    {
-        $request->validate([
-            'material' => 'required|string|max:255|unique:game_materials,material',
-        ]);
+    // Thêm material
+public function add(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255|unique:materials,name',
+        'description' => 'nullable|string',
+        'status' => 'required|in:0,1',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
+    ]);
 
-        Material::create([
-            'material' => $request->material
-        ]);
-
-        return response()->json(['success' => true, 'message' => 'Material added successfully']);
+    $imageName = null;
+    if ($request->hasFile('image')) {
+       $file = $request->file('image');
+            $imageName = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('storage/materials'), $imageName);
     }
 
-    // Cập nhật Material
-    public function update(Request $request, $id)
-    {
-        $material = Material::findOrFail($id);
+    Material::create([
+        'name' => $request->name,
+        'description' => $request->description,
+        'status' => $request->status,
+        'is_delete' => 0,
+        'image' => $imageName,
+    ]);
 
-        $request->validate([
-            'material' => 'required|string|max:255|unique:game_materials,material,' . $material->id,
-        ]);
+    return back()->with('success', 'Added material successfully!');
+}
 
-        $material->update([
-            'material' => $request->material
-        ]);
+// Cập nhật material
+public function update(Request $request, $id)
+{
+    $material = Material::findOrFail($id);
 
-        return response()->json(['success' => true, 'message' => 'Material updated successfully']);
-    }
+    $request->validate([
+        'name' => 'required|string|max:255|unique:materials,name,' . $id,
+        'description' => 'nullable|string',
+        'status' => 'required|in:0,1',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+    ]);
 
+    if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $imageName = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('storage/materials'), $imageName);
+            $material->image = $imageName;
+        }
+
+        $material->name = $request->name;
+        $material->status = $request->status;
+        $material->save();
+
+    return back()->with('success', 'Updated material successfully!');
+}
+
+    // Xóa material (soft delete)
     public function delete($id)
     {
         $material = Material::findOrFail($id);
-        $material->delete();
+        $material->is_delete = 1;
+        $material->status = 0;
+        $material->save();
 
-        return response()->json(['success' => true, 'message' => 'Material deleted successfully']);
+        return back()->with('success', 'Deleted material successfully!');
     }
 }

@@ -9,18 +9,22 @@ class Location extends Model
 {
     use HasFactory;
 
-    protected $table = 'locations';
-
     protected $fillable = [
-        'itinerary_id',
         'name',
         'description',
+        'status',
         'image',
-        'is_delete'
+        'is_delete',
     ];
 
-    public function itinerary()
+    // Many-to-Many với Itinerary
+    public function itineraries()
     {
-        return $this->belongsTo(Itinerary::class);
+        return $this->belongsToMany(
+            Itinerary::class,
+            'location_itinerary',
+            'location_id',
+            'itinerary_id'
+        );
     }
 }

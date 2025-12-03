@@ -25,6 +25,24 @@
             <h5 class="card-title">Accounts</h5>
         </div>
         <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
             <div class="row g-2 align-items-center mb-4">
                 <!-- Dropdown Role -->
                 <div class="col-auto">
@@ -58,7 +76,7 @@
         <thead class="table-dark">
             <tr>
                 <th>Photo</th>
-                <th>Name</th>
+                <th>User Name</th>
                 <th>Fullname</th>
                 <th>Birthday</th>
                 <th>Gender</th>
@@ -78,7 +96,7 @@
                     <img src="{{ asset('storage/avatars/no-image.jpg') }}" class="user-thumb" alt="No Image">
                     @endif
                 </td>
-                <td>{{ $user->name }}</td>
+                <td>{{ $user->username }}</td>
                 <td>{{ $user->fullname }}</td>
                 <td>{{ $user->birthday }}</td>
                 <td>{{ $user->gender }}</td>
@@ -100,7 +118,7 @@
                                 <div class="btn-group" role="group">
                                     <button class="btn btn-sm btn-outline-info viewUserBtn" data-bs-toggle="tooltip" title="View"
                                             data-id="{{ $user->id }}"
-                                            data-name="{{ $user->name }}"
+                                            data-name="{{ $user->username }}"
                                             data-fullname="{{ $user->fullname }}"
                                             data-birthday="{{ $user->birthday }}"
                                             data-gender="{{ $user->gender }}"
@@ -123,7 +141,7 @@
                                     @if($canEdit)
                                     <button class="btn btn-sm btn-outline-success editUserBtn" data-bs-toggle="tooltip" title="Edit"
                                             data-id="{{ $user->id }}"
-                                            data-name="{{ $user->name }}"
+                                            data-name="{{ $user->username }}"
                                             data-fullname="{{ $user->fullname }}"
                                             data-birthday="{{ $user->birthday }}"
                                             data-gender="{{ $user->gender }}"
@@ -138,7 +156,7 @@
                                     @if(Auth::user()->id != $user->id)
                                         <button class="btn btn-sm btn-outline-danger blockUserBtn" data-bs-toggle="tooltip" title="Block"
                                             data-id="{{ $user->id }}"
-                                            data-name="{{ $user->name }}"
+                                            data-name="{{ $user->username }}"
                                             data-status="{{ $user->status }}">
                                             <i class="fa fa-ban"></i>
                                         </button>
@@ -186,8 +204,8 @@
                                 </div>
 
                                 <div class="mb-2">
-                                    <strong>Name:</strong>
-                                    <span id="viewName"></span>
+                                    <strong>UserName:</strong>
+                                    <span id="viewUserName"></span>
                                 </div>
 
                                 <div class="mb-2">
@@ -255,7 +273,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Add User / Admin</h5>
+                <h5 class="modal-title">Add Admin</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form id="addUserForm" action="{{ route('admin.user.store') }}" method="POST" enctype="multipart/form-data">
@@ -267,8 +285,8 @@
                     </div>
                     <div class="col-md-8">
                         <div class="mb-3">
-                            <label>Name</label>
-                            <input type="text" class="form-control" name="name" required>
+                            <label>User Name</label>
+                            <input type="text" class="form-control" name="username" required>
                         </div>
                         <div class="mb-3">
                             <label>Fullname</label>
@@ -285,10 +303,6 @@
                                 <option value="female">Female</option>
                                 <option value="other">Other</option>
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label>Username</label>
-                            <input type="text" class="form-control" name="username" required>
                         </div>
                         <div class="mb-3">
                             <label>Email</label>
@@ -344,8 +358,8 @@
                         </div>
                         <div class="col-md-8">
                             <div class="mb-3">
-                                <label>Name</label>
-                                <input type="text" class="form-control" name="name" id="editName">
+                                <label>User Name</label>
+                                <input type="text" class="form-control" name="name" id="editUserName">
                             </div>
                             <div class="mb-3">
                                 <label>Fullname</label>
@@ -501,7 +515,7 @@ function initUserModals() {
         else if(this.dataset.role_id == 3) roleName = 'SupperAdmin';
 
         document.getElementById("viewId").textContent = this.dataset.id;
-        document.getElementById("viewName").textContent = this.dataset.name;
+        document.getElementById("viewUserName").textContent = this.dataset.username;
         document.getElementById("viewFullname").textContent = this.dataset.fullname;
         document.getElementById("viewBirthday").textContent = this.dataset.birthday || '-';
         document.getElementById("viewGender").textContent = this.dataset.gender;
@@ -519,10 +533,10 @@ function initUserModals() {
         document.querySelectorAll(".blockUserBtn").forEach(btn => {
             btn.addEventListener("click", function () {
                 const id = this.dataset.id;
-                const name = this.dataset.name;
+                const username = this.dataset.username;
                 const status = this.dataset.status;
 
-                document.getElementById("blockUserName").textContent = name;
+                document.getElementById("blockUserName").textContent = username;
                 document.getElementById("blockUserAction").textContent = status == 1 ? 'block' : 'unblock';
                 document.getElementById("blockUserForm").action = `/admin/user/${id}/block`;
 
@@ -535,7 +549,7 @@ function initUserModals() {
     document.querySelectorAll(".editUserBtn").forEach(btn => {
         btn.addEventListener("click", function () {
             const id = this.dataset.id;
-            const name = this.dataset.name;
+            const username = this.dataset.username;
             const fullname = this.dataset.fullname;
             const birthday = this.dataset.birthday;
             const gender = this.dataset.gender;
@@ -544,7 +558,7 @@ function initUserModals() {
             const role_id = this.dataset.role_id;
             const photo = this.dataset.photo;
 
-            document.getElementById("editName").value = name;
+            document.getElementById("editUserName").value = username;
             document.getElementById("editFullname").value = this.dataset.fullname;
             document.getElementById("editBirthday").value = this.dataset.birthday;
             document.getElementById("editGender").value = this.dataset.gender;

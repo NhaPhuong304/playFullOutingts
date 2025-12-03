@@ -19,6 +19,17 @@ class RecycleCategoryController extends Controller
         $games = Game::get();
         return view('admin.trashCategory', compact('categories','games'));
     }
+    public function restore($id)
+    {
+        $category = Category::findOrFail($id);
+
+        $category->is_delete = 0;
+        $category->status = 1;
+        $category->save();
+
+        return redirect()->route('admin.trashCategory')
+            ->with('success', 'Category restored successfully!');
+    }
 
     public function delete($id)
     {

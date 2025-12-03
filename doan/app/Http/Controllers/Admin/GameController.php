@@ -21,7 +21,7 @@ class GameController extends Controller
    public function add(Request $request)
 {
     $request->validate([
-        'name' => 'required|string|max:255',
+        'name' => 'required|string|max:255|unique:games,name',
         'slug' => 'required|string|max:255|unique:games,slug',
         'duration' => 'nullable|integer',
         'instructions' => 'nullable|string',

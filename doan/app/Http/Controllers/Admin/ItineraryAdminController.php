@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -8,41 +7,61 @@ use Illuminate\Http\Request;
 
 class ItineraryAdminController extends Controller
 {
-    public function itineraries()
+    public function itinerary()
     {
-        $itineraries = Itinerary::where('is_delete', 0)->get();
+        $itineraries = Itinerary::where('is_delete', 0)->orderBy('id', 'desc')->get();
         return view('admin.itineraries', compact('itineraries'));
     }
 
     public function add(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:itineraries,name',
+            'description' => 'nullable|string',
+            'days' => 'nullable|integer',
+            'status' => 'required|in:0,1',
+        ]);
+
         Itinerary::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'days' => $request->days,
+            'status' => $request->status,
+            'is_delete' => 0,
+        ]);
+
+        return back()->with('success', 'Added itinerary successfully!');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $itinerary = Itinerary::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:itineraries,name,' . $id,
+            'description' => 'nullable|string',
+            'days' => 'nullable|integer',
+            'status' => 'required|in:0,1',
+        ]);
+
+        $itinerary->update([
             'name' => $request->name,
             'description' => $request->description,
             'days' => $request->days,
             'status' => $request->status,
         ]);
 
-        return back()->with('success', 'Thêm chuyến đi thành công!');
-    }
-
-    public function show($id)
-    {
-        $itinerary = Itinerary::with('locations')->findOrFail($id);
-        return response()->json($itinerary);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $itinerary = Itinerary::findOrFail($id);
-        $itinerary->update($request->all());
-
-        return back()->with('success', 'Cập nhật chuyến đi thành công!');
+        return back()->with('success', 'Updated itinerary successfully!');
     }
 
     public function delete($id)
     {
-        Itinerary::where('id', $id)->update(['is_delete' => 1]);
-        return back()->with('success', 'Đã xóa chuyến đi');
+        $itinerary = Itinerary::findOrFail($id);
+        $itinerary->update([
+            'is_delete' => 1,
+            'status' => 0
+        ]);
+
+        return back()->with('success', 'Deleted itinerary successfully!');
     }
 }

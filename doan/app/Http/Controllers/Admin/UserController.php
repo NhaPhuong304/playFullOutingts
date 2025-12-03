@@ -25,7 +25,6 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $user->name = $request->name;
         $user->fullname = $request->fullname;
         $user->birthday = $request->birthday;
         $user->gender = $request->gender;
@@ -58,7 +57,6 @@ class UserController extends Controller
     {
     // Validate dữ liệu
     $request->validate([
-        'name' => 'required|string|max:255',
         'username' => 'required|string|max:255|unique:users',
         'email' => 'required|email|unique:users',
         'password' => 'required|string|min:6',
@@ -76,7 +74,6 @@ class UserController extends Controller
 
     // Tạo user mới
     User::create([
-        'name' => $request->name,
         'username' => $request->username,
         'email' => $request->email,
         'password' => bcrypt($request->password),

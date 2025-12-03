@@ -3,47 +3,105 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Location;
 use App\Models\Itinerary;
+use App\Models\Location;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
-    public function location(Request $request)
+    // Hiển thị danh sách
+    public function location()
     {
-        $search = $request->input('search');
-
-        $locations = Location::with('itinerary')
-            ->where('is_delete', 0)
-            ->get();
-        $itineraries = Itinerary::where('status',1)->get();
-        return view('admin.locations', compact('locations','search','itineraries'));
+        $data = [
+            'locations' => Location::where('is_delete', 0)->orderBy('id', 'desc')->get(),
+            'itineraries' => Itinerary::where('is_delete', 0)->orderBy('id', 'desc')->get()
+        ];
+        return view('admin.locations')->with($data);
     }
 
-    public function add(Request $request)
+    // Thêm location mới
+    public function store(Request $request)
     {
         $request->validate([
-            'itinerary_id' => 'required|exists:itineraries,id',
-            'name' => 'required',
+            'name' => 'required|string|max:255|unique:locations,name',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'itinerary_ids' => 'nullable|array',
+            'itinerary_ids.*' => 'integer|exists:itineraries,id',
         ]);
 
-        Location::create($request->all());
-        return response()->json(['success' => true]);
+        // Upload image nếu có
+        $imageName = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $imageName = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('storage/locations'), $imageName);
+        }
+
+        // Tạo location
+        $location = Location::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $imageName,
+            'status' => $request->status ?? 1,
+            'is_delete' => 0,
+        ]);
+
+        // Gán many-to-many
+        if ($request->has('itinerary_ids')) {
+            $location->itineraries()->sync($request->itinerary_ids);
+        }
+
+        return back()->with('success', 'Location added successfully!');
     }
 
+    // Cập nhật location
     public function update(Request $request, $id)
     {
         $location = Location::findOrFail($id);
-        $location->update($request->all());
 
-        return response()->json(['success' => true]);
+        $request->validate([
+            'name' => 'required|string|max:255|unique:locations,name,'.$id,
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'itinerary_ids' => 'nullable|array',
+            'itinerary_ids.*' => 'integer|exists:itineraries,id',
+        ]);
+
+        // Nếu có ảnh mới → upload
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $imageName = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('storage/locations'), $imageName);
+            $location->image = $imageName;
+        }
+
+        // Update thông tin
+        $location->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status ?? 1,
+        ]);
+
+        // Update many to many
+        if ($request->has('itinerary_ids')) {
+            $location->itineraries()->sync($request->itinerary_ids);
+        } else {
+            $location->itineraries()->sync([]); // Nếu không chọn itinerary thì xoá hết
+        }
+
+        return redirect()->back()->with('success', 'Location updated successfully!');
     }
 
-    public function destroy($id)
+    // Xóa mềm
+    public function delete($id)
     {
         $location = Location::findOrFail($id);
-        $location->update(['is_delete' => 1]);
+        $location->update([
+            'is_delete' => 1,
+            'status' => 0
+        ]);
 
-        return response()->json(['success' => true]);
+        return back()->with('success', 'Location deleted successfully!');
     }
 }

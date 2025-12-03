@@ -17,8 +17,8 @@ class Itinerary extends Model
         'is_delete',
     ];
     public function locations()
-        {
-            return $this->hasMany(Location::class);
-        }
+    {
+        return $this->belongsToMany(Location::class, 'location_itinerary');
+    }
 
 }
