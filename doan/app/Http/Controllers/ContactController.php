@@ -21,29 +21,57 @@ class ContactController extends Controller
     // AJAX endpoint to generate a simple math captcha
     public function generateCaptcha(Request $request)
     {
-        // Create a base image (simple pattern) and a cut-out piece for drag-drop captcha
-        $width = 300;
-        $height = 120;
+        // Prefer using a static base image if present in public/storage/captcha
+        $staticPathPng = public_path('storage/captcha/captcha-base.png');
+        $staticPathJpg = public_path('storage/captcha/captcha-base.jpg');
 
-        $im = imagecreatetruecolor($width, $height);
-        // background colors
-        $bg = imagecolorallocate($im, 230, 245, 255);
-        $dark = imagecolorallocate($im, 100, 150, 200);
-        imagefilledrectangle($im, 0, 0, $width, $height, $bg);
-
-        // draw some random rectangles/ellipses as background texture
-        for ($i = 0; $i < 6; $i++) {
-            $c = imagecolorallocate($im, rand(200, 240), rand(200, 240), rand(230, 255));
-            imagefilledellipse($im, rand(0, $width), rand(0, $height), rand(30, 120), rand(20, 80), $c);
+        if (file_exists($staticPathPng) || file_exists($staticPathJpg)) {
+            $usePath = file_exists($staticPathPng) ? $staticPathPng : $staticPathJpg;
+            $ext = strtolower(pathinfo($usePath, PATHINFO_EXTENSION));
+            try {
+                if ($ext === 'png') {
+                    $im = imagecreatefrompng($usePath);
+                } else {
+                    // default to jpeg loader
+                    $im = imagecreatefromjpeg($usePath);
+                }
+            } catch (\Exception $e) {
+                Log::warning('Failed loading static captcha base image, falling back to generated one: ' . $e->getMessage());
+                $im = null;
+            }
+        } else {
+            $im = null;
         }
 
-        // choose piece size and position
-        $pieceW = 60;
-        $pieceH = 60;
-        $minX = 80;
-        $maxX = $width - $pieceW - 20;
+        // If no static image loaded, generate a simple patterned base as before
+        if ($im === null) {
+            $width = 300;
+            $height = 120;
+
+            $im = imagecreatetruecolor($width, $height);
+            // background colors
+            $bg = imagecolorallocate($im, 230, 245, 255);
+            $dark = imagecolorallocate($im, 100, 150, 200);
+            imagefilledrectangle($im, 0, 0, $width, $height, $bg);
+
+            // draw some random rectangles/ellipses as background texture
+            for ($i = 0; $i < 6; $i++) {
+                $c = imagecolorallocate($im, rand(200, 240), rand(200, 240), rand(230, 255));
+                imagefilledellipse($im, rand(0, $width), rand(0, $height), rand(30, 120), rand(20, 80), $c);
+            }
+        }
+
+        // determine base size
+        $width = imagesx($im);
+        $height = imagesy($im);
+
+        // choose piece size and position (ensure it fits within base)
+        $pieceW = min(35, (int) max(20, floor($width * 0.08)));
+        $pieceH = min(35, (int) max(20, floor($height * 0.25)));
+        $minX = (int) max(10, floor($width * 0.2));
+        $maxX = (int) max($minX + 10, $width - $pieceW - 20);
         $targetX = rand($minX, $maxX);
-        $targetY = rand(20, $height - $pieceH - 10);
+        $targetY = rand(10, max(10, $height - $pieceH - 10));
 
         // create the piece image by copying region from base image
         $piece = imagecreatetruecolor($pieceW, $pieceH);
@@ -80,7 +108,8 @@ class ContactController extends Controller
             'captcha_id' => $id,
             'session_id' => session()->getId(),
             'target_x' => $targetX,
-            'stored_in_session' => session()->get("captcha.{$id}")
+            'stored_in_session' => session()->get("captcha.{$id}"),
+            'base_from' => (isset($usePath) ? $usePath : 'generated')
         ]);
 
         $base64 = 'data:image/png;base64,' . base64_encode($baseImg);
