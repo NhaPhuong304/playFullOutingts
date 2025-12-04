@@ -13,6 +13,7 @@
                 <li><a href="{{route('admin.game')}}" class="sidebar-link {{ Request::is('admin/game*') ? 'active' : '' }}"><i class="fa-solid fa-box"></i><p>Game</p></a></li>
                 <li><a href="{{ route('admin.category') }}" class="sidebar-link {{ Request::is('admin/category*') ? 'active' : '' }}"><i class="fa-solid fa-list"></i></i><p>Category</p></a></li>
                 <li><a href="{{route('admin.user')}}" class="sidebar-link {{ Request::is('admin/user*') ? 'active' : '' }}"><i class="fa-solid fa-users"></i><p>Accounts</p></a></li>
+                <li><a href="{{route('admin.contact')}}" class="sidebar-link {{ Request::is('admin/contact*') ? 'active' : '' }}"><i class="fa-solid fa-users"></i><p>Contact</p></a></li>
                 <li><a href="{{route('admin.material')}}" class="sidebar-link {{ Request::is('admin/material*') ? 'active' : '' }}"><i class="fa-regular fa-chart-bar"></i><p>Material</p></a></li>
                 <li><a href="{{route('admin.itineraries')}}" class="sidebar-link {{ Request::is('admin/itineraries*') ? 'active' : '' }}"><i class="fa-regular fa-gear"></i><p>Intinerary</p></a></li>
                 <li><a href="{{route('admin.locations')}}" class="sidebar-link {{ Request::is('admin/locations*') ? 'active' : '' }}"><i class="fa-regular fa-user"></i><p>Location</p></a></li>
