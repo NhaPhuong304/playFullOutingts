@@ -64,11 +64,6 @@
                             </div>
                             <h4 class="text-xl font-bold text-charcoal dark:text-off-white">Coastal Escape in Brighton</h4>
                             <p class="text-sm text-charcoal/80 dark:text-off-white/80 mt-2 flex-grow">Enjoy a day of sun, sea, and pebbles. Explore the iconic pier and relax on the vibrant beachfront.</p>
-                            <a href="{{ route('user.detailGame') }}"
-                                class="flex min-w-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-2 bg-orange-300 text-white font-bold hover:bg-orange-600 transition-colors mt-3">
-                                View Details
-                            </a>
-
 
 
 
@@ -83,10 +78,7 @@
                             </div>
                             <h4 class="text-xl font-bold text-charcoal dark:text-off-white">Lake District Retreat</h4>
                             <p class="text-sm text-charcoal/80 dark:text-off-white/80 mt-2 flex-grow">A two-day adventure hiking scenic trails, enjoying boat rides, and picnicking by serene lakes.</p>
-                            <a href="{{ route('user.detailGame') }}"
-                                class="flex min-w-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-2 bg-orange-300 text-white font-bold hover:bg-orange-600 transition-colors mt-3">
-                                View Details
-                            </a>
+
 
                         </div>
                     </div>
@@ -99,10 +91,7 @@
                             </div>
                             <h4 class="text-xl font-bold text-charcoal dark:text-off-white">Afternoon in Richmond Park</h4>
                             <p class="text-sm text-charcoal/80 dark:text-off-white/80 mt-2 flex-grow">Spot wild deer, explore beautiful gardens, and find a perfect spot for a classic park picnic.</p>
-                            <a href="{{ route('user.detailGame') }}"
-                                class="flex min-w-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-2 bg-orange-300 text-white font-bold hover:bg-orange-600 transition-colors mt-3">
-                                View Details
-                            </a>
+
 
                         </div>
                     </div>

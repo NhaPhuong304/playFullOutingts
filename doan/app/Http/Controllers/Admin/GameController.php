@@ -27,6 +27,7 @@ class GameController extends Controller
         'instructions' => 'nullable|string',
         'status' => 'required|boolean',
         'categories' => 'nullable|array',
+        'players' => 'nullable|integer',
         'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         'download_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         'video_url' => 'nullable|url'
@@ -37,12 +38,18 @@ class GameController extends Controller
     $game->slug = $request->slug;
     $game->duration = $request->duration;
     $game->instructions = $request->instructions;
+    $game->players = $request->players;
+    $game->difficulty = $request->difficulty;
+    $game->game_setup = $request->game_setup;
+    $game->game_rules = $request->game_rules;
     $game->status = $request->status;
+    $game->video_url = $request->video_url ?? null;
+
 
     // Image
     if($request->hasFile('image')){
         $filename = time().'_'.$request->image->getClientOriginalName();
-        $request->image->storeAs('public/games/images', $filename);
+       $request->image->move(public_path('storage/games/images'), $filename);
         $game->image = $filename;
     } else {
         $game->image = 'no-image.jpg';
@@ -51,7 +58,7 @@ class GameController extends Controller
     // File
     if($request->hasFile('download_file')){
         $fileName = time().'_'.$request->download_file->getClientOriginalName();
-        $request->download_file->storeAs('public/games/files', $fileName);
+        $request->download_file->move(public_path('storage/games/files'), $fileName);
         $game->download_file = $fileName;
     }
 
@@ -76,8 +83,14 @@ class GameController extends Controller
         $game->name = $request->name;
         $game->slug = $request->slug;
         $game->duration = $request->duration;
+        $game->players = $request->players;
+        $game->game_setup = $request->game_setup;
+        $game->game_rules = $request->game_rules;
         $game->instructions = $request->instructions;
+        $game->difficulty = $request->difficulty;
         $game->status = $request->status;
+        $game->video_url = $request->video_url;
+        $game->download_file = $request->download_file;
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -86,11 +99,17 @@ class GameController extends Controller
             $game->image = $filename;
         }
 
+    if($request->hasFile('download_file')){
+            $fileName = time().'_'.$request->download_file->getClientOriginalName();
+            $request->download_file->move(public_path('storage/games/files'), $fileName);
+            $game->download_file = $fileName;
+        }
         $game->save();
 
         // Sync categories
          $game->categories()->sync($request->categories ?? []);
         $game->materials()->sync($request->materials ?? []);
+    $game->video_url = $request->video_url ?? null;
 
         return redirect()->back()->with('success', 'Game updated successfully.');
     }

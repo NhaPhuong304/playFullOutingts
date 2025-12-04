@@ -99,7 +99,7 @@
                         </a>
 
                         <div class="text-sm font-bold text-text-light dark:text-text-dark mt-0">
-                           <span>{{ number_format(\DB::table('visits')->first()->counter ?? 0) }} visits</span>
+                           <!-- <span>{{ number_format(\DB::table('visits')->first()->counter ?? 0) }} visits</span> -->
                         </div>
                     </div>
 
@@ -118,14 +118,17 @@
 
                                 <div id="games-menu"
                                     class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.indoorGame')}}#picnic-title">Indoor Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.outdoorsGame')}}#picnic-title">Outdoor Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.kidsGame')}}#picnic-title">Kids Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.malesGame')}}#picnic-title">Male Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.femalesGame')}}#picnic-title">Female Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.familyGame')}}#picnic-title">Family Games</a>
+
+                                    @foreach ($categoriesList as $cat)
+                                        <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary"
+                                        href="{{ route('games.category', $cat->id) }}#picnic-title">
+                                            {{ $cat->name }}
+                                        </a>
+                                    @endforeach
+
                                 </div>
                             </li>
+
                             <li><a class="hover:text-primary transition-colors" href="{{ route('user.blog.index') }}">Blogs</a></li>
                             <li><a class="hover:text-primary transition-colors" href="{{route('admin.dashboard')}}">DashBoard</a></li>
                             <li><a class="hover:text-primary transition-colors" href="{{url('user/itinerary')}}">Itinerary</a></li>
@@ -141,11 +144,11 @@
                         <div id="auth-buttons" class="flex items-center gap-3">
                             <a href="{{ url('register') }}"
                                 class="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition">
-                                Đăng ký
+                                Sign up
                             </a>
                             <a href="{{ url('login') }}"
                                 class="px-4 py-2 rounded-lg bg-primary/10 text-primary border border-primary hover:bg-primary/20 transition font-medium">
-                                Đăng nhập
+                                Sign in
                             </a>
                         </div>
                         @endif
@@ -156,8 +159,10 @@
                         <div id="avatar-dropdown" class="relative">
                             <button id="avatar-button"
                                 class="flex items-center justify-center size-12 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                                <img alt="User avatar" class="w-10 h-10 rounded-full object-cover"
-                                    src="{{ Auth::user()->avatar ?? 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}">
+                                <img id="avatarPreview"
+                             class="profile-avatar"
+                             src="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('images/no_image.jpg') }}">
+
                             </button>
 
                             <div id="avatar-menu"
