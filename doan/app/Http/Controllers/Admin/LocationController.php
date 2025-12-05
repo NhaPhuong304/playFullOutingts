@@ -9,17 +9,16 @@ use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
-    // Hiển thị danh sách
     public function location()
     {
         $data = [
             'locations' => Location::where('is_delete', 0)->orderBy('id', 'desc')->get(),
-            'itineraries' => Itinerary::where('is_delete', 0)->orderBy('id', 'desc')->get()
+            'itineraries' => Itinerary::where('is_delete', 0)->orderBy('id', 'desc')->get(),
+            'categories' => \App\Models\CategoryLocation::where('is_delete', 0)->orderBy('id', 'desc')->get(),
         ];
         return view('admin.locations')->with($data);
     }
 
-    // Thêm location mới
     public function store(Request $request)
     {
         $request->validate([
@@ -30,7 +29,6 @@ class LocationController extends Controller
             'itinerary_ids.*' => 'integer|exists:itineraries,id',
         ]);
 
-        // Upload image nếu có
         $imageName = null;
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -38,7 +36,6 @@ class LocationController extends Controller
             $file->move(public_path('storage/locations'), $imageName);
         }
 
-        // Tạo location
         $location = Location::create([
             'name' => $request->name,
             'description' => $request->description,
@@ -47,7 +44,6 @@ class LocationController extends Controller
             'is_delete' => 0,
         ]);
 
-        // Gán many-to-many
         if ($request->has('itinerary_ids')) {
             $location->itineraries()->sync($request->itinerary_ids);
         }
@@ -68,7 +64,6 @@ class LocationController extends Controller
             'itinerary_ids.*' => 'integer|exists:itineraries,id',
         ]);
 
-        // Nếu có ảnh mới → upload
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $imageName = time().'_'.$file->getClientOriginalName();
@@ -76,18 +71,16 @@ class LocationController extends Controller
             $location->image = $imageName;
         }
 
-        // Update thông tin
         $location->update([
             'name' => $request->name,
             'description' => $request->description,
             'status' => $request->status ?? 1,
         ]);
 
-        // Update many to many
         if ($request->has('itinerary_ids')) {
             $location->itineraries()->sync($request->itinerary_ids);
         } else {
-            $location->itineraries()->sync([]); // Nếu không chọn itinerary thì xoá hết
+            $location->itineraries()->sync([]);
         }
 
         return redirect()->back()->with('success', 'Location updated successfully!');

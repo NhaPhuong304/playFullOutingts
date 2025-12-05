@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use COM;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,4 +28,15 @@ class Location extends Model
             'itinerary_id'
         );
     }
+    public function categoryLocations()
+    {
+        return $this->belongsToMany(
+            CategoryLocation::class,
+            'category_location_location',
+            'location_id',
+            'location_category_id'
+        );
+    }
+
+
 }

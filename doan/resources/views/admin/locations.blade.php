@@ -50,8 +50,8 @@
                 <div class="col-auto">
                     <select class="form-select" id="searchStatus">
                         <option value="">All</option>
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
+                        <option value="0">Active</option>
+                        <option value="1">Inactive</option>
                     </select>
                 </div>
                 <div class="col-auto">
@@ -70,6 +70,7 @@
                             <th>Name</th>
                             <th>Description</th>
                             <th>Itinerary</th>
+                            <th>Category</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -90,6 +91,11 @@
                                 @endforelse
                             </td>
                             <td>
+                                @foreach ($location->categoryLocations as $cat)
+                                    <span>{{ $cat->name }}</span>
+                                @endforeach
+                            </td>
+                            <td>
                                 <span class="badge {{ $location->status ? 'bg-success' : 'bg-danger' }}">
                                     {{ $location->status ? 'Active' : 'Inactive' }}
                                 </span>
@@ -100,19 +106,20 @@
                                         data-id="{{ $location->id }}"
                                         data-name="{{ $location->name }}"
                                         data-description="{{ $location->description }}"
-                                        data-itinerary-id="{{ $location->itinerary_id }}"
                                         data-itineraries='@json($location->itineraries->pluck("name"))'
-
+                                        data-categories='@json($location->categoryLocations->pluck("name"))'
                                         data-status="{{ $location->status }}"
                                         data-image="{{ $location->image ? asset('storage/locations/'.$location->image) : asset('storage/locations/no-image.jpg') }}">
                                         <i class="fa-regular fa-eye"></i>
                                     </button>
+
                                     <button class="btn btn-sm btn-outline-success editLocationBtn"
                                         data-id="{{ $location->id }}"
                                         data-name="{{ $location->name }}"
                                         data-description="{{ $location->description }}"
                                         data-status="{{ $location->status }}"
                                         data-itinerary-id="{{ $location->itinerary_id }}"
+                                        data-category-ids='@json($location->categoryLocations->pluck("name"))'
                                       data-itineraries='@json($location->itineraries->pluck("name"))'
 
                                         data-image="{{ $location->image ? asset('storage/locations/'.$location->image) : asset('storage/locations/no-image.jpg') }}">
@@ -149,6 +156,7 @@
                 <p><strong>Name:</strong> <span id="viewLocationName"></span></p>
                 <p><strong>Description:</strong> <span id="viewLocationDescription"></span></p>
                 <p><strong>Status:</strong> <span id="viewLocationStatus"></span></p>
+                <p><strong>Category:</strong> <span id="viewLocationCategory"></span></p>
                 <p><strong>Itinerary:</strong> <span id="viewLocationItinerary"></span></p>
             </div>
         </div>
@@ -175,6 +183,12 @@
                             <option value="{{ $itinerary->id }}">{{ $itinerary->name }}</option>
                         @endforeach
                     </select>
+                    <select name="category_ids[]" class="form-select" multiple>
+                        @foreach ($categories as $cat)
+                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+
 
                     <select name="status" class="form-control mb-2">
                         <option value="1">Active</option>
@@ -211,8 +225,11 @@
                             <option value="{{ $itinerary->id }}">{{ $itinerary->name }}</option>
                         @endforeach
                     </select>
-
-
+                    <select name="category_ids[]" id="editLocationCategories" class="form-select" multiple>
+                        @foreach ($categories as $cat)
+                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
                     <select name="status" class="form-control mb-2" id="editLocationStatus">
                         <option value="1">Active</option>
                         <option value="0">Inactive</option>
@@ -327,10 +344,19 @@ function initLocationModals() {
         btn.addEventListener('click', function() {
             document.getElementById('viewLocationName').textContent = this.dataset.name;
             document.getElementById('viewLocationDescription').textContent = this.dataset.description;
-            let list = JSON.parse(this.dataset.itineraries);
-                document.getElementById('viewLocationItinerary').innerHTML = 
-                list.length ? list.map(n => `<span class='badge bg-info'>${n}</span>`).join(' ')
-                : '<span class="text-muted">None</span>';
+            let itineraries = JSON.parse(this.dataset.itineraries);
+            document.getElementById('viewLocationItinerary').innerHTML =
+                itineraries.length
+                    ? itineraries.join(", ")
+                    : "None";   
+
+                
+            let categories = JSON.parse(this.dataset.categories);
+            document.getElementById('viewLocationCategory').innerHTML =
+                categories.length
+                    ? categories.join(", ")
+                    : "None";
+
             document.getElementById('viewLocationStatus').textContent = this.dataset.status == '1' ? 'Active' : 'Inactive';
             document.getElementById('viewLocationImage').src = this.dataset.image;
             new bootstrap.Modal(document.getElementById('viewLocationModal')).show();
@@ -349,11 +375,21 @@ function initLocationModals() {
             document.getElementById('editLocationStatus').value = this.dataset.status;
             document.getElementById('editLocationImagePreview').src = this.dataset.image;
 
+
+            
+
             let selectedIds = JSON.parse(this.dataset.itineraries);
             let select = document.getElementById('editLocationItineraries');
 
             [...select.options].forEach(opt => {
                 opt.selected = selectedIds.includes(parseInt(opt.value));
+            });
+
+            let selectedCategoryIds = JSON.parse(this.dataset.categoryIds);
+            let categorySelect = document.getElementById('editLocationCategories');
+
+            [...categorySelect.options].forEach(opt => {
+                opt.selected = selectedCategoryIds.includes(parseInt(opt.value));
             });
 
 
@@ -365,7 +401,7 @@ function initLocationModals() {
     document.querySelectorAll('.deleteLocationBtn').forEach(btn => {
         btn.addEventListener('click', function() {
             document.getElementById('deleteLocationName').textContent = this.dataset.name;
-            document.getElementById('deleteLocationForm').action = `/admin/location/${this.dataset.id}`;
+            document.getElementById('deleteLocationForm').action = `/admin/locations/${this.dataset.id}`;
             new bootstrap.Modal(document.getElementById('deleteLocationModal')).show();
         });
     });

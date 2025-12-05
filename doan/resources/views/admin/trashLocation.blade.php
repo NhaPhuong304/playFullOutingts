@@ -1,5 +1,5 @@
 @extends('admin.dashboard')
-@section('page-title', 'Itinerary Trash')
+@section('page-title', 'Location Trash')
 
 @section('content')
 <style>
@@ -22,7 +22,7 @@
 <div class="main-content">
     <div class="card mt-4">
         <div class="card-header">
-            <h5 class="card-title">Trash Itineraries</h5>
+            <h5 class="card-title">Trash Location</h5>
         </div>
         <div class="card-body">
 
@@ -56,47 +56,61 @@
                 </div>
                 <div class="col-auto ms-auto">
                     <div class="position-relative">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search Itineraries...">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search Location...">
                         <span class="fa fa-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></span>
                     </div>
                 </div>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover text-center align-middle" id="itineraryTable">
+                <table class="table table-hover text-center align-middle" id="locationTable">
                     <thead class="table-dark">
                         <tr>
+                            <th>Image</th>
                             <th>Name</th>
-                            <th>Days</th>
+                            <th>Description</th>
+                            <th>Itinerary</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($itineraries as $itinerary)
+                        @foreach($locations as $location)
                         <tr>
-                            <td>{{ $itinerary->name }}</td>
-                            <td>{{ $itinerary->days }}</td>
                             <td>
-                                @if($itinerary->status == 1)
-                                    <span class="badge bg-success">Active</span>
+                               @if($location->image)
+                                <img src="{{asset('storage/locations/'.$location->image)}}?t={{$location->updated_at->timestamp}}" class="rounded-circle me-2"  width="40" height="40">
                                 @else
-                                    <span class="badge bg-danger">Inactive</span>
+                                <img src="{{asset('storage/locations/no-image.jpg')}}" class="rounded-circle me-2"  width="40" height="40">
                                 @endif
+                            </td>
+                            <td>{{ $location->name }}</td>
+                            <td>{{ Str::limit($location->description, 60) }}</td>
+                            <td>
+                                @forelse($location->itineraries as $it)
+                                    <span >{{ $it->name }}</span>
+                                @empty
+                                    <span>None</span>
+                                @endforelse
+                            </td>
+                            <td>
+                                <span class="badge {{ $location->status ? 'bg-success' : 'bg-danger' }}">
+                                    {{ $location->status ? 'Active' : 'Inactive' }}
+                                </span>
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <button class="btn btn-sm btn-outline-success restoreItineraryBtn" 
+                                    <button class="btn btn-sm btn-outline-success restoreLocationBtn" 
                                         data-bs-toggle="tooltip" 
                                         title="Restore"
-                                        data-id="{{ $itinerary->id }}"
-                                        data-name="{{ $itinerary->name }}">
+                                        data-id="{{ $location->id }}"
+                                        data-name="{{ $location->name }}">
                                         <i class="fa-solid fa-rotate-left"></i>
                                     </button>
 
-                                    <button class="btn btn-sm btn-outline-danger deleteItineraryBtn"
-                                        data-id="{{ $itinerary->id }}"
-                                        data-name="{{ $itinerary->name }}">
+                                    <button class="btn btn-sm btn-outline-danger deleteLocationBtn"
+                                        data-id="{{ $location->id }}"
+                                        data-name="{{ $location->name }}">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </div>
@@ -116,7 +130,7 @@
 </div>
 
 <!-- Restore Modal -->
-<div class="modal fade" id="restoreItineraryModal" tabindex="-1">
+<div class="modal fade" id="restoreLocationModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
@@ -124,10 +138,10 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to restore <strong id="restoreItineraryName"></strong>?
+                Are you sure you want to restore <strong id="restoreLocationName"></strong>?
             </div>
             <div class="modal-footer">
-                <form id="restoreItineraryForm" method="POST" action="">
+                <form id="restoreLocationForm" method="POST" action="">
                     @csrf
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-success">Yes, Restore</button>
@@ -138,7 +152,7 @@
 </div>
 
 <!-- Delete Modal -->
-<div class="modal fade" id="deleteItineraryModal" tabindex="-1">
+<div class="modal fade" id="deleteLocationModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
@@ -146,10 +160,10 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to permanently delete <strong id="deleteItineraryName"></strong>?
+                Are you sure you want to permanently delete <strong id="deleteLocationName"></strong>?
             </div>
             <div class="modal-footer">
-                <form id="deleteItineraryForm" method="POST" action="">
+                <form id="deleteLocationForm" method="POST" action="">
                     @csrf
                     @method('DELETE')
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -161,21 +175,30 @@
 </div>
 
 <script>
-const rowsPerPage = 6;
+const rowsPerPage = 10;
 let currentPage = 1;
 let filteredRows = [];
 
 function filterRows() {
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    filteredRows = Array.from(document.querySelectorAll("#itineraryTable tbody tr")).filter(row => {
-        const name = row.cells[0].innerText.toLowerCase();
-        const statusText = row.cells[2].innerText.trim() === "Active" ? "1" : "0";
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const selectedStatus = document.getElementById('searchStatus').value;
 
+    filteredRows = Array.from(document.querySelectorAll("#locationTable tbody tr")).filter(row => {
+
+        // Cột Name
+        const name = row.cells[1].innerText.toLowerCase();
+
+        // Cột Status (badge)
+        const statusText = row.cells[4].querySelector("span").textContent.trim().toLowerCase();
+        const statusValue = statusText === "active" ? "1" : "0";
+
+        // Điều kiện lọc
         const matchName = name.includes(searchText);
-        const matchStatus = selectedStatus === "" || statusText === selectedStatus;
+        const matchStatus = selectedStatus === "" || selectedStatus === statusValue;
 
         return matchName && matchStatus;
     });
+
     currentPage = 1;
     paginationTable();
 }
@@ -183,51 +206,70 @@ function filterRows() {
 function paginationTable() {
     const totalRows = filteredRows.length;
     const totalPages = Math.ceil(totalRows / rowsPerPage);
-    document.querySelectorAll("#itineraryTable tbody tr").forEach(r => r.style.display = "none");
-    filteredRows.slice((currentPage-1) * rowsPerPage, currentPage * rowsPerPage)
-                .forEach(r => r.style.display = "");
+
+    // Ẩn toàn bộ trước
+    document.querySelectorAll("#locationTable tbody tr").forEach(row => row.style.display = "none");
+
+    // Hiện đúng page
+    filteredRows
+        .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+        .forEach(row => row.style.display = "");
+
     renderPagination(totalPages);
 }
 
 function renderPagination(totalPages) {
     const ul = document.getElementById("pagination");
     ul.innerHTML = "";
-    for(let i=1; i<=totalPages; i++){
+
+    for (let i = 1; i <= totalPages; i++) {
         const btn = document.createElement("button");
         btn.textContent = i;
         btn.className = "btn btn-sm btn-outline-primary mx-1";
-        if(i === currentPage) btn.classList.add("active");
-        btn.onclick = ()=>{ currentPage = i; paginationTable(); };
+        if (i === currentPage) btn.classList.add("active");
+        btn.onclick = () => {
+            currentPage = i;
+            paginationTable();
+        };
+
         ul.appendChild(btn);
     }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    filteredRows = Array.from(document.querySelectorAll("#itineraryTable tbody tr"));
+
+    filteredRows = Array.from(document.querySelectorAll("#locationTable tbody tr"));
     paginationTable();
+
 
     document.getElementById("searchInput").addEventListener("input", filterRows);
 
-    // Restore
-    document.querySelectorAll(".restoreItineraryBtn").forEach(btn => {
-        btn.addEventListener("click", function(){
-            document.getElementById("restoreItineraryName").textContent = this.dataset.name;
-            document.getElementById("restoreItineraryForm").action =
-                `/admin/itineraries/${this.dataset.id}/restore`;
-            new bootstrap.Modal(document.getElementById("restoreItineraryModal")).show();
-        });
-    });
+    document.getElementById("searchStatus").addEventListener("change", filterRows);
+document.querySelectorAll(".restoreLocationBtn").forEach(btn => {
+    btn.addEventListener("click", function () {
+        document.getElementById("restoreLocationName").textContent = this.dataset.name;
 
-    // Delete
-    document.querySelectorAll(".deleteItineraryBtn").forEach(btn => {
-        btn.addEventListener("click", function(){
-            document.getElementById("deleteItineraryName").textContent = this.dataset.name;
-            document.getElementById("deleteItineraryForm").action =
-                `/admin/itineraries/${this.dataset.id}/force-delete`;
-            new bootstrap.Modal(document.getElementById("deleteItineraryModal")).show();
+
+        document.getElementById("restoreLocationForm").action =
+            `/admin/recycle-location/restore/${this.dataset.id}`;
+
+        new bootstrap.Modal(document.getElementById("restoreLocationModal")).show();
+    });
+});
+
+
+    document.querySelectorAll(".deleteLocationBtn").forEach(btn => {
+        btn.addEventListener("click", function () {
+            document.getElementById("deleteLocationName").textContent = this.dataset.name;
+
+            document.getElementById("deleteLocationForm").action =
+                `/admin/recycle-location/delete/${this.dataset.id}`;
+
+            new bootstrap.Modal(document.getElementById("deleteLocationModal")).show();
         });
     });
 });
 </script>
+
 
 @endsection

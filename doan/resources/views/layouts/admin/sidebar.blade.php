@@ -12,6 +12,7 @@
                 <li><a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ Request::is('admin/dashboard') ? 'active' : '' }}"><i class="fa-solid fa-house"></i><p>Dashboard</p></a></li>
                 <li><a href="{{route('admin.game')}}" class="sidebar-link {{ Request::is('admin/game*') ? 'active' : '' }}"><i class="fa-solid fa-gamepad"></i><p>Game</p></a></li>
                 <li><a href="{{ route('admin.category') }}" class="sidebar-link {{ Request::is('admin/category*') ? 'active' : '' }}"><i class="fa-solid fa-list"></i></i><p>Category</p></a></li>
+                <li><a href="{{ route('admin.categoryLocation') }}" class="sidebar-link {{ Request::is('admin/category-location*') ? 'active' : '' }}"><i class="fa-solid fa-list"></i></i><p>Category Location</p></a></li>
                 <li><a href="{{route('admin.user')}}" class="sidebar-link {{ Request::is('admin/user*') ? 'active' : '' }}"><i class="fa-solid fa-users"></i><p>Accounts</p></a></li>
                 <li><a href="{{route('admin.material')}}" class="sidebar-link {{ Request::is('admin/material*') ? 'active' : '' }}"><i class="fa-solid fa-screwdriver-wrench"></i><p>Material</p></a></li>
                 <li><a href="{{route('admin.itineraries')}}" class="sidebar-link {{ Request::is('admin/itineraries*') ? 'active' : '' }}"><i class="fa-regular fa-map"></i><p>Intinerary</p></a></li>
@@ -27,6 +28,9 @@
                         <li><a href="{{route('admin.trashItineraries')}}" class="submenu-link {{ Request::is('admin/trashItineraries*') ? 'active' : '' }}"><i class="fa-regular fa-map"></i><p>Itinerary</p></a></li>
                         <li><a href="{{route('admin.trashCategory')}}" class="submenu-link {{ Request::is('admin/trashCategory*') ? 'active' : '' }}"><i class="fa-solid fa-list"></i><p>Category</p></a></li>
                         <li><a href="{{route('admin.trashGame')}}" class="submenu-link {{ Request::is('admin/trashGame*') ? 'active' : '' }}"><i class="fa-solid fa-gamepad"></i><p>Game</p></a></li>
+                        <li><a href="{{route('admin.trashLocation')}}" class="submenu-link {{ Request::is('admin/trashLocation*') ? 'active' : '' }}"><i class="fa-solid fa-location-dot"></i><p>Location</p></a></li>
+                        <li><a href="{{route('admin.trashCategoryLocation')}}" class="submenu-link {{ Request::is('admin/trashCategoryLocation*') ? 'active' : '' }}"><i class="fa-solid fa-list"></i><p>Category Location</p></a></li>
+                        <li><a href="{{route('admin.trashMaterial')}}" class="submenu-link {{ Request::is('admin/trashMaterial*') ? 'active' : '' }}"><i class="fa-solid fa-screwdriver-wrench"></i><p>Material</p></a></li>
                     </ul>
                 </li>
             </ul>

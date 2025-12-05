@@ -19,8 +19,12 @@ use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\SetPasswordController;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\CategoryLocationController;
 use App\Http\Controllers\Admin\ItineraryAdminController;
+use App\Http\Controllers\Admin\RecycleCategoryLocationController;
 use App\Http\Controllers\Admin\RecycleItineraryController;
+use App\Http\Controllers\Admin\RecycleLocationController;
+use App\Http\Controllers\Admin\RecycleMaterialController;
 use App\Http\Controllers\User\BlogUserController;
 use App\Http\Controllers\User\ContactController;
 use App\Http\Controllers\User\GameUserController;
@@ -91,12 +95,30 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('admin/recycle-user/restore/{id}', [RecycleUserController::class, 'restore'])->name('admin.recycleUser.restore');
     Route::delete('admin/recycle-user/delete/{id}', [RecycleUserController::class, 'delete'])->name('admin.recycleUser.delete');
 
+    Route::get('admin/trashLocation', [RecycleLocationController::class, 'trash'])->name('admin.trashLocation');
+    Route::delete('admin/recycle-location/delete/{id}',[RecycleLocationController::class, 'forceDelete'])->name('admin.recycleLocation.delete');
+    Route::post('admin/recycle-location/restore/{id}', [RecycleLocationController::class, 'restore'])->name('admin.recycleLocation.restore');
 
 
     Route::get('admin/category', [CategoryController::class, 'category'])->name('admin.category');
     Route::post('admin/category/store', [CategoryController::class, 'store'])->name('admin.category.store');
     Route::put('/admin/category/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
     Route::delete('admin/category/{id}', [CategoryController::class, 'delete'])->name('admin.category.delete');
+
+    Route::get('admin/category', [CategoryController::class, 'category'])->name('admin.category');
+    Route::post('admin/category/store', [CategoryController::class, 'store'])->name('admin.category.store');
+    Route::put('/admin/category/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
+    Route::delete('admin/category/{id}', [CategoryController::class, 'delete'])->name('admin.category.delete');
+
+    Route::get('admin/categoryLocation', [CategoryLocationController::class, 'categoryLocation'])->name('admin.categoryLocation');
+    Route::post('admin/categoryLocation/store', [CategoryLocationController::class, 'store'])->name('admin.categoryLocation.store');
+    Route::put('/admin/categoryLocation/{id}', [CategoryLocationController::class, 'update'])->name('admin.categoryLocation.update');
+    Route::delete('admin/categoryLocation/{id}', [CategoryLocationController::class, 'delete'])->name('admin.categoryLocation.delete');
+
+
+    Route::get('admin/trashCategoryLocation', [RecycleCategoryLocationController::class, 'trash'])->name('admin.trashCategoryLocation');
+    Route::delete('admin/recycle-category-location/delete/{id}', [RecycleCategoryLocationController::class, 'delete'])->name('admin.recycleCategoryLocation.delete');
+    Route::post('admin/recycle-category-location/restore/{id}', [RecycleCategoryLocationController::class, 'restore'])->name('admin.recycleCategoryLocation.restore');
 
     Route::get('admin/trashCategory', [RecycleCategoryController::class, 'trash'])->name('admin.trashCategory');
     Route::delete('admin/recycle-category/delete/{id}', [RecycleCategoryController::class, 'delete'])->name('admin.recycleCategory.delete');
@@ -111,6 +133,10 @@ Route::middleware(['role:admin'])->group(function () {
     Route::delete('admin/recycle-game/delete/{id}', [RecycleGameController::class, 'delete'])->name('admin.recycleGame.delete');
     Route::post('admin/recycle-game/restore/{id}', [RecycleGameController::class, 'restore'])->name('admin.recycleGame.restore');
 
+    Route::get('admin/trashMaterial', [RecycleMaterialController::class, 'trash'])->name('admin.trashMaterial');
+    Route::delete('admin/recycle-material/delete/{id}',[RecycleMaterialController::class, 'forceDelete'])->name('admin.recycleMaterial.delete');
+
+    Route::post('admin/recycle-material/restore/{id}', [RecycleMaterialController::class, 'restore'])->name('admin.recycleMaterial.restore');
 
     Route::get('admin/material', [MaterialController::class, 'material'])->name('admin.material');
     Route::post('admin/material/add', [MaterialController::class, 'add'])->name('admin.material.add');
@@ -128,9 +154,11 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('admin/itineraries/update/{id}', [ItineraryAdminController::class, 'update'])->name('admin.itineraries.update');
     Route::delete('admin/itineraries/delete/{id}', [ItineraryAdminController::class, 'delete'])->name('admin.itineraries.delete');
 
-    Route::get('/admin/trashItineraries', [RecycleItineraryController::class, 'trash'])->name('admin.trashItineraries');
-    Route::post('/admin/trashItineraries/{id}/restore', [RecycleItineraryController::class, 'restore'])->name('admin.trashItineraries.restore');
-    Route::delete('/admin/trashItineraries/{id}/force-delete', [RecycleItineraryController::class, 'forceDelete'])->name('admin.trashItineraries.forceDelete');
+   
+     Route::get('admin/trashItineraries', [RecycleItineraryController::class, 'trash'])->name('admin.trashItineraries');
+    Route::delete('admin/recycle-itineraries/delete/{id}', [RecycleItineraryController::class, 'delete'])->name('admin.recycleItinerary.delete');
+    Route::post('admin/recycle-itineraries/restore/{id}', [RecycleItineraryController::class, 'restore'])->name('admin.recycleItinerary.restore');
+
     Route::get('admin/locations', [LocationController::class, 'location'])->name('admin.locations');
     Route::post('admin/locations/store', [LocationController::class, 'store'])->name('admin.locations.store');
     Route::put('/admin/locations/{id}', [LocationController::class, 'update'])->name('admin.locations.update');
