@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class GameUserController extends Controller
 {
-    // 🟩 Trang Game chính: mỗi category hiện 3 game
     public function game()
     {
         $categories = Category::where('is_delete', 0)->get();
@@ -23,6 +22,7 @@ class GameUserController extends Controller
                                     $q->where('id', $cat->id);
                                 })
                                 ->where('is_delete', 0)
+                                ->orderBy('id', 'asc')
                                 ->take(3)
                                 ->get()
             ];
@@ -31,19 +31,23 @@ class GameUserController extends Controller
         return view('user.game', compact('data'));
     }
 
-    // 🟦 Trang riêng theo Category ID
+
     public function category($id)
-    {
-        $category = Category::findOrFail($id);
+{
+    // Lấy danh sách tất cả category (để hiển thị filter list)
+    $categoriesList = Category::where('is_delete', 0)->get();
 
-        $games = Game::whereHas('categories', function ($q) use ($id) {
-                        $q->where('id', $id);
-                    })
-                    ->where('is_delete', 0)
-                    ->get();
+    // Lấy category hiện tại
+    $category = Category::where('is_delete', 0)->findOrFail($id);
 
-        return view('user.categoryPage', compact('category', 'games'));
-    }
+    // Lấy danh sách games của category hiện tại
+    $games = $category->games()->where('is_delete', 0)->get();
+
+    // Trả về view với đủ biến
+    return view('user.categoryPage', compact('categoriesList', 'category', 'games'));
+}
+
+
 
     public function detailGame($id)
     {

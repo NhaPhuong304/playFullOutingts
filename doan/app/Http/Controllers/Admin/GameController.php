@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Game;
 use App\Models\Material;
+use Illuminate\Support\Facades\Storage;
 
 class GameController extends Controller
 {
@@ -55,10 +56,17 @@ class GameController extends Controller
         $game->image = 'no-image.jpg';
     }
 
-    // File
-    if($request->hasFile('download_file')){
-        $fileName = time().'_'.$request->download_file->getClientOriginalName();
-        $request->download_file->move(public_path('storage/games/files'), $fileName);
+    if ($request->hasFile('download_file')) {
+
+        // Xóa file cũ
+        if ($game->download_file && Storage::exists('public/games/files/'.$game->download_file)) {
+            Storage::delete('public/games/files/'.$game->download_file);
+        }
+
+        $file = $request->file('download_file');
+        $fileName = time().'_'.$file->getClientOriginalName();
+        $file->storeAs('public/games/files', $fileName);
+
         $game->download_file = $fileName;
     }
 

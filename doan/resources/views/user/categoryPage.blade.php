@@ -45,6 +45,40 @@
         </a>
         @endforeach
     </div>
+        {{-- Search Form --}}
+<form id="gameFilterForm" method="GET" action="{{ route('user.game') }}" class="mb-10" onsubmit="return false;">
+
+    <div class="flex flex-col md:flex-row gap-4 items-center">
+
+        <!-- Input keyword -->
+        <input type="text" name="keyword" placeholder="Search by keyword..."
+            value="{{ request('keyword') }}"
+            class="flex-1 h-12 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+
+        <!-- Difficulty select -->
+        <select name="difficulty"
+        class="flex-none w-auto h-12 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary">
+
+            <option value="">All</option>
+            <option value="Easy"   {{ request('difficulty') == 'Easy' ? 'selected' : '' }}>Easy</option>
+            <option value="Medium" {{ request('difficulty') == 'Medium' ? 'selected' : '' }}>Medium</option>
+            <option value="Hard"   {{ request('difficulty') == 'Hard' ? 'selected' : '' }}>Hard</option>
+
+        </select>
+
+
+        <!-- Players select -->
+        <select name="players"
+            class="flex-none w-auto h-12 px-4 pr-8 rounded-lg border border-gray-300 dark:border-gray-600 
+                bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary appearance-none">
+            <option value="">Players</option>
+            <option value="1-2" {{ request('players')=='1-2' ? 'selected' : '' }}>1-2</option>
+            <option value="3-4" {{ request('players')=='3-4' ? 'selected' : '' }}>3-4</option>
+            <option value="5+" {{ request('players')=='5+' ? 'selected' : '' }}>5+</option>
+        </select>
+
+    </div>
+</form>
 
     {{-- GAME LIST OF THIS CATEGORY --}}
     <h2 class="text-2xl font-bold mb-6">
@@ -54,9 +88,27 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
         @foreach($games as $game)
-        <div
-            class="group flex flex-col overflow-hidden rounded-xl border border-border-light dark:border-border-dark
-                   bg-white dark:bg-background-dark/50 hover:shadow-lg hover:scale-105 transition-all duration-300">
+                    @php
+                        $max = (int) ($game->players ?? 1);
+                        $min = 1; 
+
+                        $playersGroup =
+                            ($max <= 2) ? '1-2' :
+                            (($max <= 4) ? '3-4' : '5+');
+
+                    @endphp
+
+                    <div
+                        class="game-card group flex flex-col overflow-hidden rounded-xl ..."
+                        data-difficulty="{{ strtolower($game->difficulty) }}"
+                        data-players="{{ $playersGroup }}"
+                        data-min="{{ $min }}"
+                        data-max="{{ $max }}"
+                    >
+
+
+
+
 
             {{-- IMAGE --}}
             <div class="aspect-video overflow-hidden">
@@ -95,7 +147,99 @@
         @endforeach
 
     </div>
-
+<!-- Pagination container -->
+<div class="flex justify-center mt-6" id="gamesPagination"></div>
 </div>
+<script>
+const gamesPerPage = 9;
+let currentPage = 1;
+let filteredGames = [];
+let allGameCards = [];
+
+function filterGames() {
+    const keyword = document.querySelector('input[name="keyword"]').value.toLowerCase();
+    const difficulty = document.querySelector('select[name="difficulty"]').value.toLowerCase();
+    const players = document.querySelector('select[name="players"]').value;
+
+    filteredGames = allGameCards.filter(card => {
+        const gameName = card.querySelector('h3')?.innerText.toLowerCase() || '';
+        const gameDifficulty = (card.dataset.difficulty || '').toLowerCase();
+        const max = parseInt(card.dataset.max || '1', 10);
+
+        const matchName = gameName.includes(keyword);
+        const matchDifficulty = !difficulty || gameDifficulty === difficulty;
+
+        let matchPlayers = true;
+        if (players === '1-2') {
+            matchPlayers = max <= 2;
+        } else if (players === '3-4') {
+            matchPlayers = max >= 3 && max <= 4;
+        } else if (players === '5+') {
+            matchPlayers = max >= 5;
+        }
+
+        return matchName && matchDifficulty && matchPlayers;
+    });
+
+    currentPage = 1;
+    paginateGames();
+}
+
+
+
+
+
+
+function paginateGames() {
+    const totalGames = filteredGames.length;
+    const totalPages = Math.ceil(totalGames / gamesPerPage);
+
+    document.querySelectorAll('.game-card').forEach(card => card.style.display = 'none');
+
+
+    const start = (currentPage - 1) * gamesPerPage;
+    const end = start + gamesPerPage;
+
+    filteredGames.slice(start, end).forEach(card => card.style.display = 'block');
+
+
+    renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+    const paginationContainer = document.getElementById('gamesPagination');
+    if (!paginationContainer) return;
+
+    paginationContainer.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.className = 'px-3 py-1 border rounded mx-1';
+        if (i === currentPage) btn.classList.add('bg-primary', 'text-white');
+
+        btn.addEventListener('click', () => {
+            currentPage = i;
+            paginateGames();
+        });
+
+        paginationContainer.appendChild(btn);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    allGameCards = Array.from(document.querySelectorAll('.game-card'));
+    filteredGames = [...allGameCards];
+    paginateGames();
+
+    document.querySelector('input[name="keyword"]').addEventListener('input', filterGames);
+    document.querySelector('select[name="difficulty"]').addEventListener('change', filterGames);
+    document.querySelector('select[name="players"]').addEventListener('change', filterGames);
+});
+</script>
+
+
+
+
 
 @endsection

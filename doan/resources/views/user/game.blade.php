@@ -4,12 +4,14 @@
 
 <div class="px-4 sm:px-8 md:px-20 lg:px-40 py-10">
 
-    <h1 class="text-4xl lg:text-5xl font-black text-text-light dark:text-text-dark mb-6">
+     <h1 class="text-4xl lg:text-5xl font-black text-text-light dark:text-text-dark mb-6">
         Find the Perfect Game for Your Picnic
     </h1>
-    <p class="text-subtle-light dark:text-subtle-dark mb-10">
-        Select a category below to get started.
+    <p class="text-subtle-light dark:text-subtle-dark mb-6">
+        Search and filter games by keyword, difficulty, or number of players.
     </p>
+
+    
 
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
 
@@ -28,6 +30,9 @@
         @endforeach
 
     </div>
+
+
+
 
     @foreach ($data as $item)
     <div class="mb-12" id="category-{{ $item['category']->id }}">

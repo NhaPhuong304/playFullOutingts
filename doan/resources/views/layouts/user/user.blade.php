@@ -92,11 +92,7 @@
 
 
                     <div class="flex flex-col items-start pl-0 ml-0 leading-tight">
-                        <a href="#" class="flex items-center">
-                            <img src="{{ asset('user/images/logouser.png') }}"
-                                alt="Logo"
-                                class="w-20 h-20 object-contain">
-                        </a>
+                        <!-- cd  -->
 
                         <div class="text-sm font-bold text-text-light dark:text-text-dark mt-0">
                            <!-- <span>{{ number_format(\DB::table('visits')->first()->counter ?? 0) }} visits</span> -->
@@ -119,12 +115,15 @@
                                 <div id="games-menu"
                                     class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
 
-                                    @foreach ($categoriesList as $cat)
-                                        <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary"
-                                        href="{{ route('games.category', $cat->id) }}#picnic-title">
-                                            {{ $cat->name }}
-                                        </a>
-                                    @endforeach
+                                   @foreach ($categoriesList as $cat)
+                                    <a class="block px-4 py-2 text-sm 
+                                            {{ $category && $category->id == $cat->id ? 'bg-primary/20 text-primary font-bold' : '' }} 
+                                            hover:bg-primary/10 hover:text-primary"
+                                    href="{{ route('games.category', $cat->id) }}#picnic-title">
+                                        {{ $cat->name }}
+                                    </a>
+                                @endforeach
+
 
                                 </div>
                             </li>
@@ -154,15 +153,14 @@
                         @endif
 
 
-                        {{-- HIỆN AVATAR KHI ĐÃ LOGIN --}}
-                        @if(Auth::check() && Auth::user() != null)
+                       @if(Auth::check() && Auth::user() != null)
                         <div id="avatar-dropdown" class="relative">
                             <button id="avatar-button"
                                 class="flex items-center justify-center size-12 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                                 <img id="avatarPreview"
-                             class="profile-avatar"
-                             src="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('images/no_image.jpg') }}">
-
+                                    class="w-12 h-12 rounded-full object-cover"
+                                    src="{{ Auth::user()->photo ? asset('storage/avatars/' . Auth::user()->photo) : asset('storage/avatars/no-image.jpg') }}"
+                                    alt="{{ Auth::user()->name }}">
                             </button>
 
                             <div id="avatar-menu"
@@ -183,6 +181,8 @@
                             </div>
                         </div>
                         @endif
+
+
 
                     </div>
 
