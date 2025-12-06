@@ -81,7 +81,7 @@
 
 
 
-                    <a href="{{ route('user.detailGame') }}"
+                    <a href="{{ route('user.itinerary') }}"
                         class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden 
                rounded-xl h-12 px-6 bg-gray-200 dark:bg-border-dark text-text-light 
                dark:text-text-dark text-base font-bold leading-normal tracking-wide 
