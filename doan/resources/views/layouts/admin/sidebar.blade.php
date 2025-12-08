@@ -12,6 +12,45 @@
                 <li><a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ Request::is('admin/dashboard') ? 'active' : '' }}"><i class="fa-solid fa-house"></i><p>Dashboard</p></a></li>
                 <li><a href="{{route('admin.game')}}" class="sidebar-link {{ Request::is('admin/game*') ? 'active' : '' }}"><i class="fa-solid fa-gamepad"></i><p>Game</p></a></li>
                 <li><a href="{{ route('admin.category') }}" class="sidebar-link {{ Request::is('admin/category*') ? 'active' : '' }}"><i class="fa-solid fa-list"></i></i><p>Category</p></a></li>
+                <li><a href="{{ route('product_admin') }}" class="sidebar-link {{ Request::is('admin/category*') ? 'active' : '' }}"><i class="fa-solid fa-list"></i></i>
+                    <p>Products</p>
+                </a></li>
+            <li>
+                <a href="#" class="sidebar-link submenu-parent">
+                    <i class="fa-solid fa-list"></i>
+                    <p>Order <i class="fa-solid fa-chevron-right right-icon"></i></p>
+                </a>
+
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="{{ route('orderPending_admin') }}" class="submenu-link">
+                            <i class="fa-solid fa-fingerprint"></i>
+                            <p>Pending</p>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('orderShipped_admin') }}" class="submenu-link">
+                            <i class="fa-solid fa-user-plus"></i>
+                            <p>Shipped</p>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('orderDelivered_admin') }}" class="submenu-link">
+                            <i class="fa-solid fa-recycle"></i>
+                            <p>Delivered</p>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('orderCanceled_admin') }}" class="submenu-link">
+                            <i class="fa-solid fa-recycle"></i>
+                            <p>Canceled</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
                 <li><a href="{{ route('admin.categoryLocation') }}" class="sidebar-link {{ Request::is('admin/category-location*') ? 'active' : '' }}"><i class="fa-solid fa-list"></i></i><p>Category Location</p></a></li>
                 <li><a href="{{route('admin.user')}}" class="sidebar-link {{ Request::is('admin/user*') ? 'active' : '' }}"><i class="fa-solid fa-users"></i><p>Accounts</p></a></li>
                 <li><a href="{{route('admin.material')}}" class="sidebar-link {{ Request::is('admin/material*') ? 'active' : '' }}"><i class="fa-solid fa-screwdriver-wrench"></i><p>Material</p></a></li>

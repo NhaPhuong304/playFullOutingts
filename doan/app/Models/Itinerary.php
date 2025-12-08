@@ -12,6 +12,7 @@ class Itinerary extends Model
     protected $fillable = [
         'name',
         'description',
+        'image',
         'days',
         'status',
         'is_delete',

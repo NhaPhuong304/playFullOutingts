@@ -33,7 +33,7 @@ class AuthController extends Controller
             'is_delete' => 0,
         ]);
 
-        return redirect()->route('login')->with('success', 'Đăng ký thành công. Vui lòng đăng nhập.');
+        return redirect()->route('login')->with('success', 'Registration successful. Please log in.');
     }
 
     public function showLogin()
@@ -41,65 +41,55 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
-    {
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ]);
+public function login(Request $request)
+{
+    $request->validate([
+        'username' => 'required|string',
+        'password' => 'required|string',
+    ]);
 
-        $user = User::where(function ($query) use ($request) {
+
+    $user = User::where(function ($query) use ($request) {
             $query->where('username', $request->username)
                   ->orWhere('email', $request->username);
         })
-        ->where('status', 1)
         ->where('is_delete', 0)
         ->first();
-        if ($user && Hash::check($request->password, $user->password)) {
 
-            // Đăng nhập người dùng và tạo session mới
-            Auth::login($user, true);
-            $request->session()->regenerate();
-
-            // Điều hướng theo vai trò user
-            if ($user->role_id == 2 || $user-> role_id == 3) {
-                // Nếu là ADMIN (role_id == 2): Đăng nhập và chuyển hướng tới Admin Dashboard
-                // KHÔNG tăng lượt truy cập.
-                return redirect()->route('admin.dashboard');
-            }
-
-            // Nếu là USER thường (role_id != 2):
-
-            // 1. TĂNG LƯỢT ĐĂNG NHẬP CÁ NHÂN (users.visits)
-            // Sau khi đăng nhập thành công, tăng cột visits của người dùng hiện tại lên 1
-            $user->increment('visits');
-
-            // 2. Tăng lượt truy cập CHUNG hệ thống (visits table)
-            DB::table('visits')->updateOrInsert(
-                [],  // chỉ có 1 dòng duy nhất
-                [
-                    'counter' => DB::raw('counter + 1'),
-                    'updated_at' => now(),
-                ]
-            );
-
-            // Chuyển hướng tới User Dashboard
-            return redirect()->route('user.dashboard');
-        }
-
-        if ($user && Hash::check($request->password, $user->password)) {
-            Auth::login($user, true);
-            $request->session()->regenerate();
-            
-            if ($user->role_id == 2 || $user->role_id == 3) {
-                return redirect()->route('admin.dashboard');
-            }
-
-            return redirect()->route('user.dashboard');
-        }
-
-        return back()->withErrors(['username' => 'Thông tin đăng nhập không hợp lệ.'])->withInput();
+    if (!$user) {
+        return back()->withErrors(['username' => 'Account does not exist'])->withInput();
     }
+
+    if ($user->status == 0) {
+        return back()->withErrors(['username' => 'Account has been disabled!'])->withInput();
+    }
+
+    if (!Hash::check($request->password, $user->password)) {
+        return back()->withErrors(['password' => 'Incorrect password.'])->withInput();
+    }
+
+
+    Auth::login($user, true);
+    $request->session()->regenerate();
+
+
+    if ($user->role_id == 2 || $user->role_id == 3) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    $user->increment('visits');
+
+    DB::table('visits')->updateOrInsert(
+        [],
+        [
+            'counter' => DB::raw('counter + 1'),
+            'updated_at' => now(),
+        ]
+    );
+
+    return redirect()->route('user.dashboard');
+}
+
     
 
     public function logout(Request $request)

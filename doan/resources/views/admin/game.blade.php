@@ -48,8 +48,8 @@
                 <div class="col-auto">
                     <select class="form-select" name="status" id="searchStatus">
                         <option value="">All</option>
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
+                        <option value="0">Active</option>
+                        <option value="1">Inactive</option>
                     </select>
                 </div>
                 <div class="col-auto">

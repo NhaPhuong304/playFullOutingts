@@ -9,11 +9,14 @@ class ItineraryController extends Controller
 {
     public function itinerary(){
         $data = [
-            'itinerary' => Itinerary::all(),
+            'itineraries' => Itinerary::all(),
             'locations' => \App\Models\Location::where('is_delete', 0)->orderBy('id', 'desc')->get(),
 
         ];
         return view('user/itinerary', $data);
     }
-    
+    public function itineraryDetail($id){
+        $itinerary = Itinerary::with('locations')->find($id);
+        return view('user/detailItinerary', compact('itinerary'));
+    }
 }

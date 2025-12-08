@@ -92,6 +92,11 @@
 
 
                     <div class="flex flex-col items-start pl-0 ml-0 leading-tight">
+                        <a href="#" class="flex items-center">
+                            <img src="{{ asset('user/images/logouser.png') }}"
+                                alt="Logo"
+                                class="w-20 h-20 object-contain">
+                        </a>
                         <!-- cd  -->
 
                         <div class="text-sm font-bold text-text-light dark:text-text-dark mt-0">
@@ -127,7 +132,7 @@
 
                                 </div>
                             </li>
-
+                            <li><a class="nav-link" href="{{route('user_shop')}}">Shop</a></li>
                             <li><a class="hover:text-primary transition-colors" href="{{ route('user.blog.index') }}">Blogs</a></li>
                             <li><a class="hover:text-primary transition-colors" href="{{route('admin.dashboard')}}">DashBoard</a></li>
                             <li><a class="hover:text-primary transition-colors" href="{{url('user/itinerary')}}">Itinerary</a></li>
@@ -137,6 +142,29 @@
                     </div>
 
                     <div id="header-right" class="flex items-center gap-2">
+                        {{-- CART ICON --}}
+                        <a id="cart-icon" href="{{ route('cart_user') }}"
+                            class="relative flex items-center justify-center w-12 h-12 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition">
+
+
+                            <span class="material-symbols-outlined text-[28px]">
+                                shopping_cart
+                            </span>
+
+                            @auth
+                            @php
+                            $cartCount = \App\Models\Cart::where('user_id', Auth::id())->sum('quantity');
+                            @endphp
+
+                            @if($cartCount > 0)
+                            <span id="cart-count-badge" class="absolute -top-1 -right-1 bg-primary text-white text-[12px] font-bold
+w-5 h-5 flex items-center justify-center rounded-full shadow">
+                                {{ $cartCount }}
+                            </span>
+
+                            @endif
+                            @endauth
+                        </a>
 
                         {{-- HIỆN NÚT REGISTER + LOGIN KHI CHƯA LOGIN --}}
                         @if(!Auth::check() || Auth::user() == null)
@@ -165,15 +193,15 @@
 
                             <div id="avatar-menu"
                                 class="dropdown-menu absolute right-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
-                                <a class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary transition"
-                                    href="#">
+                                <a class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary transition nav-link"
+                                    href="{{ route('user.profile') }}">
                                     <span class="material-symbols-outlined text-base">account_circle</span>
                                     {{ Auth::user()->name }}
                                 </a>
                                 <form action="{{ url('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit"
-                                        class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary transition w-full text-left">
+                                        class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary transition w-full text-left nav-link">
                                         <span class="material-symbols-outlined text-base">logout</span>
                                         Logout
                                     </button>
@@ -251,6 +279,144 @@
     </div>
     </div>
     @include('layouts.user.chat-widget')
+        <script>
+        // ⭐ HEADER SCROLL EFFECT
+        window.addEventListener("scroll", function() {
+            const header = document.getElementById("main-header");
+
+            if (window.scrollY > 50) {
+                header.classList.remove("header-transparent");
+                header.classList.remove("absolute");
+                header.classList.add("sticky");
+                header.classList.add("header-scrolled");
+            } else {
+                header.classList.add("absolute");
+                header.classList.add("header-transparent");
+                header.classList.remove("sticky");
+                header.classList.remove("header-scrolled");
+            }
+        });
+
+        window.dispatchEvent(new Event("scroll"));
+
+        // ⭐ TOAST FUNCTION
+        function showToast(message, isError = false) {
+            const toast = document.createElement("div");
+            toast.className = `
+            fixed left-1/2 top-20 -translate-x-1/2 z-[500] 
+            px-6 py-3 rounded-xl shadow-lg opacity-0 pointer-events-none 
+            transition-all duration-500 font-semibold 
+        `;
+            toast.style.backgroundColor = isError ? "#dc2626" : "#10b981";
+            toast.style.color = "white";
+            toast.textContent = message;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = "1";
+                toast.style.transform = "translate(-50%, -50%) scale(1.05)";
+            }, 10);
+
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translate(-50%, -50%) scale(0.9)";
+            }, 1800);
+
+            setTimeout(() => toast.remove(), 2400);
+        }
+
+        // ⭐ UPDATE HEADER BADGE
+        function updateHeaderCartBadge(total) {
+            let badge = document.querySelector("#cart-count-badge");
+            const cartIcon = document.querySelector("#cart-icon");
+
+            if (!cartIcon) return;
+
+            if (!badge) {
+                badge = document.createElement("span");
+                badge.id = "cart-count-badge";
+                badge.className =
+                    "absolute -top-1 -right-1 bg-primary text-white text-[12px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow";
+                cartIcon.appendChild(badge);
+            }
+
+            badge.textContent = total;
+        }
+
+        // ⭐ ADD TO CART (WITH STOCK CHECK)
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.preventDefault();
+
+                    let form = this.closest("form");
+                    let formData = new FormData(form);
+                    let productCard = this.closest(".product-card") ?? this.closest(".rounded-xl");
+                    let stock = parseInt(productCard.dataset.stock); // ⭐ lấy stock
+                    let quantity = parseInt(form.querySelector('[name="quantity"]').value);
+
+                    // ❗Nếu vượt stock → báo lỗi
+                    if (quantity > stock) {
+                        showToast("⚠ Insufficient stock. Remaining: " + stock, true);
+                        return;
+                    }
+
+                    // ------------------------ FETCH ADD TO CART ------------------------
+                    fetch("{{ route('cart.add') }}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": form.querySelector('input[name="_token"]').value,
+                                "X-Requested-With": "XMLHttpRequest",
+                            },
+                            body: formData
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log("ADD CART RESPONSE:", data);
+
+                            // ❗Case: Stock không đủ từ server
+                            if (data.error === "not_enough_stock") {
+                                showToast("⚠ Insufficient stock. Remaining: " + data.available, true);
+                                return;
+                            }
+
+                            // ✔ Thành công
+                            if (data.success) {
+                                showToast("Added to cart ✔");
+                                updateHeaderCartBadge(data.total);
+                            }
+
+                            // ❗Chưa đăng nhập
+                            else if (data.error === "unauthenticated") {
+                                window.location.href = "{{ url('login') }}";
+                            }
+
+                        })
+                        .catch(err => console.error(err));
+                });
+            });
+        });
+    </script>
+
+
+    <style>
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade {
+            animation: fade .3s ease-out;
+        }
+    </style>
 
 </body>
 

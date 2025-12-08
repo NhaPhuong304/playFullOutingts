@@ -30,18 +30,88 @@ use App\Http\Controllers\User\ContactController;
 use App\Http\Controllers\User\GameUserController;
 use App\Http\Controllers\User\ItineraryController as UserItineraryController;
 use App\Http\Controllers\User\ProfileUserController;
+use App\Http\Controllers\User\DashboardController;
 
-Route::get('/', function () {
-    return redirect()->route('user.dashboard');
-});
+
+// Route hiển thị giao diện quản lý sản phẩm (admin - tĩnh)
+Route::get('/product', function () {
+    return view('admin.product');
+})->name('product_admin'); // Đặt tên route là product_admin
+
+// -------------------- QUẢN LÝ SẢN PHẨM (ADMIN) --------------------
+
+use App\Http\Controllers\Admin\ProductController;
+
+// Hiển thị danh sách sản phẩm
+Route::get('/admin/product', [ProductController::class, 'index'])->name('product_admin');
+
+// Thêm sản phẩm mới
+Route::post('/admin/product/store', [ProductController::class, 'store'])->name('product_admin.store');
+
+// Cập nhật sản phẩm
+Route::post('/admin/product/update', [ProductController::class, 'update'])->name('admin.product.update');
+
+// Xóa sản phẩm
+Route::post('/admin/product/delete', [ProductController::class, 'delete'])->name('admin.product.delete');
+
+//--------------------Quản lý Order-----------------------------
+use App\Http\Controllers\Admin\OrderController;
+
+Route::get('/admin/orderPending', [OrderController::class, 'pending'])->name('orderPending_admin');
+Route::get('/admin/orderShipped', [OrderController::class, 'shipped'])->name('orderShipped_admin');
+Route::get('/admin/orderDelivered', [OrderController::class, 'delivered'])->name('orderDelivered_admin');
+Route::get('/admin/orderCanceled', [OrderController::class, 'canceled'])->name('orderCanceled_admin');
+Route::post('/admin/order/update-status', [OrderController::class, 'updateStatus'])->name('order.updateStatus');
+
+//--------------------Quản lý client-----------------------------
+// Route hiển thị detail
+use App\Http\Controllers\User\ProductController as UserProductController;
+
+Route::get('/user/detail/{id}', [UserProductController::class, 'detail'])->name('user_detail');
+
+// Route hiển thị Shop
+Route::get('/user/shop', [UserProductController::class, 'shop'])->name('user_shop');
+
+use App\Http\Controllers\User\CartController;
+
+// --------------------Quản lý cart-----------------------------
+Route::get('/cart', [CartController::class, 'index'])->name('cart_user');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+
+//--------------------Quản lý profile-----------------------------
+use App\Http\Controllers\User\UserController as ClientUserController;
+
+Route::get('/profile', [ClientUserController::class, 'profile'])->name('user.profile');
+Route::post('/profile/update', [ClientUserController::class, 'updateProfile'])->name('user.profile.update');
+
+//--------------------Quản lý Checkout-----------------------------
+
+Route::get('/checkout', [CartController::class, 'checkout'])
+    ->middleware('auth') // ⛔ Chặn nếu chưa login
+    ->name('checkout_user');
+Route::post('/checkout', [CartController::class, 'store'])->name('checkout.store');
+
+// ====================== PayPal Routes ======================
+use App\Http\Controllers\User\PayPalController;
+
+Route::post('/paypal/create-order', [PayPalController::class, 'createOrder'])
+    ->name('paypal.createOrder')
+    ->middleware('auth');
+
+Route::post('/paypal/capture-order', [PayPalController::class, 'captureOrder'])
+    ->name('paypal.captureOrder')
+    ->middleware('auth');
+
+Route::get('/', [DashboardController::class, 'dashboard'])->name('user.dashboard');
+
+Route::get('user/dashboard', [DashboardController::class, 'dashboard'])->name('user.dashboard');
+
+
 
 Route::get('/games/category/{id}', [GameUserController::class, 'category'])
     ->name('games.category');
-
-
-Route::get('user/dashboard', function () {
-        return view('user.dashboard');
-    })->name('user.dashboard');
 
 
     Route::get('/user/game', [GameUserController::class, 'game'])->name('user.game');
@@ -50,19 +120,17 @@ Route::get('user/dashboard', function () {
         
 
 
-Route::get('user/aboutus', [AboutusController::class, 'aboutus'])->name('user.aboutus');
-Route::get('user/itinerary', [UserItineraryController::class, 'itinerary'])->name('user.itinerary');
-Route::get('user/contact', [ContactController::class, 'contact'])->name('user.contact');
+    Route::get('user/aboutus', [AboutusController::class, 'aboutus'])->name('user.aboutus');
+    Route::get('user/itinerary', [UserItineraryController::class, 'itinerary'])->name('user.itinerary');
+    Route::get('user/itinerary/{id}', [UserItineraryController::class, 'itineraryDetail'])->name('user.itinerary.detail');
+    Route::get('user/contact', [ContactController::class, 'contact'])->name('user.contact');
 
-// Blog pages for user
-Route::get('/blog', [BlogUserController::class, 'index'])->name('user.blog.index');
-Route::get('/blog/{id}', [BlogUserController::class, 'show'])->name('user.blog.show');
+    // Blog pages for user
+    Route::get('/blog', [BlogUserController::class, 'index'])->name('user.blog.index');
+    Route::get('/blog/{id}', [BlogUserController::class, 'show'])->name('user.blog.show');
 
 
-    Route::get('/user/profile/{id}', [ProfileUserController::class, 'profile'])->name('user.profile');
-    Route::post('/user/profile/{id}/update', [ProfileUserController::class, 'updateProfile'])->name('user.profile.update');
-    Route::post('/user/profile/{id}/photo', [ProfileUserController::class, 'updatePhoto'])->name('user.profile.updatePhoto');
-    Route::post('/user/profile/{id}/change-password', [ProfileUserController::class, 'changePassword'])->name('user.profile.changePassword');
+   
 
 // Authentication
 Route::get('register', [AuthController::class, 'showRegister'])->name('register');
@@ -151,7 +219,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('admin/itineraries', [ItineraryAdminController::class, 'itinerary'])->name('admin.itineraries');
     Route::post('admin/itineraries/add', [ItineraryAdminController::class, 'add'])->name('admin.itineraries.add');
     Route::get('admin/itineraries/{id}', [ItineraryAdminController::class, 'show'])->name('admin.itineraries.show');
-    Route::post('admin/itineraries/update/{id}', [ItineraryAdminController::class, 'update'])->name('admin.itineraries.update');
+    Route::put('admin/itineraries/update/{id}', [ItineraryAdminController::class, 'update'])->name('admin.itineraries.update');
     Route::delete('admin/itineraries/delete/{id}', [ItineraryAdminController::class, 'delete'])->name('admin.itineraries.delete');
 
    

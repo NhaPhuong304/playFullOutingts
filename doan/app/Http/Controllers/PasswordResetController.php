@@ -30,7 +30,7 @@ class PasswordResetController extends Controller
         $email = $request->input('email');
         $user = User::where('email', $email)->first();
         if (!$user) {
-            return back()->withErrors(['email' => 'Không tìm thấy tài khoản với email này.']);
+            return back()->withErrors(['email' => 'Account does not exist'])->withInput();
         }
 
         // Generate 6-digit code
@@ -47,8 +47,8 @@ class PasswordResetController extends Controller
 
         // Send email with code (simple text email) and log errors
         try {
-            Mail::raw("Mã đặt lại mật khẩu của bạn: {$code}\nMã có hiệu lực 60 phút.", function ($m) use ($user) {
-                $m->to($user->email)->subject('Mã đặt lại mật khẩu');
+            Mail::raw("Your password reset code: {$code}\nThe code is valid for 60 minutes.", function ($m) use ($user) {
+                $m->to($user->email)->subject('Password Reset Code');
             });
         } catch (\Exception $e) {
             // Log the mail error for diagnosis
@@ -60,16 +60,16 @@ class PasswordResetController extends Controller
                 $request->session()->put('password_reset_email', $user->email);
                 // Store the dev code in session for display (only in non-production)
                 $request->session()->put('password_reset_dev_code', $code);
-                return redirect()->route('password.verify')->with('success', "Mã đã được tạo (dev): {$code}");
+                return redirect()->route('password.verify')->with('success', "Code generated (dev): {$code}");
             }
 
-            return back()->withErrors(['email' => 'Không thể gửi email. Kiểm tra cấu hình mail.']);
+            return back()->withErrors(['email' => 'Unable to send email. Check mail configuration.']);
         }
 
         // Store email in session for verification step
         $request->session()->put('password_reset_email', $user->email);
 
-        return redirect()->route('password.verify')->with('success', 'Mã đã được gửi tới email của bạn.');
+        return redirect()->route('password.verify')->with('success', 'The code has been sent to your email.');
     }
 
     // Show verify code form
@@ -96,18 +96,18 @@ class PasswordResetController extends Controller
 
         $record = DB::table('password_resets')->where('email', $email)->first();
         if (!$record) {
-            return redirect()->route('password.request')->withErrors(['identity' => 'Yêu cầu đặt lại mật khẩu không tồn tại.']);
+            return redirect()->route('password.request')->withErrors(['identity' => 'Password reset request does not exist.']);
         }
 
         // check expiry (60 minutes)
         $created = Carbon::parse($record->created_at);
         if (Carbon::now()->diffInMinutes($created) > 60) {
             DB::table('password_resets')->where('email', $email)->delete();
-            return redirect()->route('password.request')->withErrors(['identity' => 'Mã đã hết hạn. Vui lòng yêu cầu lại.']);
+            return redirect()->route('password.request')->withErrors(['identity' => 'The code has expired. Please request again.']);
         }
 
         if (!Hash::check($request->input('code'), $record->token)) {
-            return back()->withErrors(['code' => 'Mã không hợp lệ.']);
+            return back()->withErrors(['code' => 'Invalid code.']);
         }
 
         // mark verified in session
@@ -142,7 +142,7 @@ class PasswordResetController extends Controller
 
         $user = User::where('email', $email)->first();
         if (!$user) {
-            return redirect()->route('password.request')->withErrors(['identity' => 'Tài khoản không tồn tại.']);
+            return redirect()->route('password.request')->withErrors(['identity' => 'Account does not exist.']);
         }
 
         $user->password = Hash::make($request->input('password'));
@@ -152,6 +152,6 @@ class PasswordResetController extends Controller
         DB::table('password_resets')->where('email', $email)->delete();
         $request->session()->forget(['password_reset_email', 'password_reset_verified']);
 
-        return redirect()->route('login')->with('success', 'Mật khẩu đã được thay đổi. Vui lòng đăng nhập.');
+        return redirect()->route('login')->with('success', 'Password has been changed. Please log in.');
     }
 }

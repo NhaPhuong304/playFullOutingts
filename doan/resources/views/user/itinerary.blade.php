@@ -55,46 +55,52 @@
             <div class="mt-10">
                 <h3 class="text-2xl font-bold text-charcoal dark:text-off-white">Suggested Itineraries</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
-                    <div class="bg-white dark:bg-charcoal rounded-xl overflow-hidden shadow-md transition-transform hover:scale-105 hover:shadow-xl flex flex-col">
-                        <img class="w-full h-48 object-cover" data-alt="Brighton Pier extending into the sea under a blue sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgVCYxYQsehMfYcF76-Q3jIKnuvxLaeqzHPVLfSSZx745GKa4KpkBKSEWPex4XfDR0G9w_fDoFYD8GiYjUTElYk37rRGwiOBm6Hpu13yVYin8c6us8qqp0P8hTdZINd8-ozTZ3oAHeea65bPPMAoXQ1DYcYVpNtI4ZuwVmTblaL-fQ605Py6kTicR8Pr0kuJVIX8wsQuTF6OMSrhuoqa-_-Ua5cdw-ifdIEQ0Vwx66D-oSjQqWdjaZiXhi9yEmoSGrdo_bzGS_lj0" />
-                        <div class="p-6 flex flex-col flex-grow">
-                            <div class="flex gap-2 mb-2">
-                                <span class="text-xs font-semibold bg-primary/20 text-primary px-2 py-1 rounded-full">Full-Day</span>
-                                <span class="text-xs font-semibold bg-primary/20 text-primary px-2 py-1 rounded-full">Beach</span>
-                            </div>
-                            <h4 class="text-xl font-bold text-charcoal dark:text-off-white">Coastal Escape in Brighton</h4>
-                            <p class="text-sm text-charcoal/80 dark:text-off-white/80 mt-2 flex-grow">Enjoy a day of sun, sea, and pebbles. Explore the iconic pier and relax on the vibrant beachfront.</p>
+                    @foreach ($itineraries as $itinerary)
+<div class="bg-white dark:bg-charcoal rounded-xl overflow-hidden shadow-md transition-transform hover:scale-105 hover:shadow-xl flex flex-col">
+
+    {{-- IMAGE --}}
+    <img class="w-full h-48 object-cover"
+         src="{{ $itinerary->image ? asset('storage/itineraries/' . $itinerary->image) : asset('storage/avatars/no-image.jpg') }}"
+         alt="{{ $itinerary->name }}">
+
+    <div class="p-6 flex flex-col flex-grow">
+
+        {{-- TAGS --}}
+        <div class="flex gap-2 mb-2">
+            <span class="text-xs font-semibold bg-primary/20 text-primary px-2 py-1 rounded-full">
+                {{ $itinerary->days }} Days
+            </span>
+
+            {{-- IN CASE MANY LOCATIONS --}}
+            @foreach($itinerary->locations as $loc)
+            <span class="text-xs font-semibold bg-primary/20 text-primary px-2 py-1 rounded-full">
+                {{ $loc->name }}
+            </span>
+            @endforeach
+        </div>
+
+        {{-- TITLE --}}
+        <h4 class="text-xl font-bold text-charcoal dark:text-off-white">
+            {{ $itinerary->name }}
+        </h4>
+
+        {{-- SHORT DESCRIPTION --}}
+        <p class="text-sm text-charcoal/80 dark:text-off-white/80 mt-2 flex-grow">
+            {{ Str::limit($itinerary->description, 120) }}
+        </p>
+
+        {{-- VIEW DETAIL BUTTON --}}
+        <a href="{{route('user.itinerary.detail', $itinerary->id)}}"
+                class="mt-auto flex w-full items-center justify-center rounded-lg h-10 px-4 
+                        bg-primary/10 text-primary text-sm font-bold hover:bg-primary hover:text-white transition">
+                View Details
+            </a>
+
+    </div>
+</div>
+@endforeach
 
 
-
-                        </div>
-                    </div>
-                    <div class="bg-white dark:bg-charcoal rounded-xl overflow-hidden shadow-md transition-transform hover:scale-105 hover:shadow-xl flex flex-col">
-                        <img class="w-full h-48 object-cover" data-alt="A tranquil lake surrounded by mountains and pine trees" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLLFrQ3NeIcMMnq8HdTRY4xnu_sY1q1_Ff38eEU60B8mfaPKWXPbcG_u50lFvXGH2LQ7jOcDFymEgs0LVxxlHNEsJNbI7KmtphUYygIonJeG8LyGGQdtex7WZKYJ5p-H7dJTZKk9hrRGQ-S_A0eHDUOhpBCwrBwMOrtyq90T-stLIvbunUqloAc65TuT9TrOwykvkyFspqYoIRDGneU2Wyszl7ql4ByJyRHdbC9yRq35RaWeJZ26YcTcQa0iY586Kd190V6RaXCVI" />
-                        <div class="p-6 flex flex-col flex-grow">
-                            <div class="flex gap-2 mb-2">
-                                <span class="text-xs font-semibold bg-primary/20 text-primary px-2 py-1 rounded-full">Weekend</span>
-                                <span class="text-xs font-semibold bg-primary/20 text-primary px-2 py-1 rounded-full">Mountain</span>
-                            </div>
-                            <h4 class="text-xl font-bold text-charcoal dark:text-off-white">Lake District Retreat</h4>
-                            <p class="text-sm text-charcoal/80 dark:text-off-white/80 mt-2 flex-grow">A two-day adventure hiking scenic trails, enjoying boat rides, and picnicking by serene lakes.</p>
-
-
-                        </div>
-                    </div>
-                    <div class="bg-white dark:bg-charcoal rounded-xl overflow-hidden shadow-md transition-transform hover:scale-105 hover:shadow-xl flex flex-col">
-                        <img class="w-full h-48 object-cover" data-alt="Lush green fields and trees of Richmond Park under a cloudy sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANmwphOIDy4gGFXkN97jEkykHhuDlmFzJ38BNCah1hIfbpwv-qQfcVDnnVr-sXAsAl0-cQwvzNo7w4COj3H7CVSKEi69pHUI1QEiBtnqvMIsz1CvQehpiUTTOnikkIIC1ng2kLHKJSVAvRxP_JSpDHS7pBWdzGjoie34fXR2D-r9PkQMCTvH2QZWBpY6SXOSUrW6qUEi_t_H4QzYEuaMB6CpFr10EnBcuzHwLIEIZ2XKZ3E2BSEeulrHOqvMoivxEnt6RRc98Gmfc" />
-                        <div class="p-6 flex flex-col flex-grow">
-                            <div class="flex gap-2 mb-2">
-                                <span class="text-xs font-semibold bg-primary/20 text-primary px-2 py-1 rounded-full">Half-Day</span>
-                                <span class="text-xs font-semibold bg-primary/20 text-primary px-2 py-1 rounded-full">Park</span>
-                            </div>
-                            <h4 class="text-xl font-bold text-charcoal dark:text-off-white">Afternoon in Richmond Park</h4>
-                            <p class="text-sm text-charcoal/80 dark:text-off-white/80 mt-2 flex-grow">Spot wild deer, explore beautiful gardens, and find a perfect spot for a classic park picnic.</p>
-
-
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="mt-16">

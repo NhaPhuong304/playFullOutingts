@@ -7,9 +7,6 @@
      <h1 class="text-4xl lg:text-5xl font-black text-text-light dark:text-text-dark mb-6">
         Find the Perfect Game for Your Picnic
     </h1>
-    <p class="text-subtle-light dark:text-subtle-dark mb-6">
-        Search and filter games by keyword, difficulty, or number of players.
-    </p>
 
     
 
