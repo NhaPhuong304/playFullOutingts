@@ -124,10 +124,11 @@
                         <ul class="flex items-center gap-x-6 lg:gap-x-8 text-sm font-medium">
                             <li>
                                 <a href="{{ url('user/dashboard') }}"
-                                    class="{{ Request::is('user/dashboard') ? 'text-primary' : 'hover:text-primary' }}">
+                                    class="{{ Request::is('user/dashboard*') ? 'text-primary' : 'hover:text-primary' }}">
                                     Home
                                 </a>
                             </li>
+
 
                             <!-- Games Dropdown -->
                             <li class="relative nav-item">
