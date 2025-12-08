@@ -81,13 +81,28 @@
             left: 100%;
             margin-top: 8px;
         }
+
+        #navbar.default {
+            background-color: rgba(255, 255, 255, 1) !important;
+        }
+
+        #navbar.scrolled {
+            background-color: rgba(255, 255, 255, 0.25) !important;
+            backdrop-filter: blur(18px) !important;
+            -webkit-backdrop-filter: blur(18px) !important;
+            border-bottom: none !important;
+        }
+
+        html.dark #navbar.scrolled {
+            background-color: rgba(0, 0, 0, 0.25) !important;
+        }
     </style>
 </head>
 
 <body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark">
     <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-        <header class="sticky top-0 z-50">
-            <nav class="bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-border-light dark:border-border-dark">
+        <header class="fixed top-0 left-0 w-full z-50">
+            <nav id="navbar" class="fixed top-0 w-full z-50 bg-white">
                 <div class="flex items-center justify-between mx-auto max-w-7xl py-3 h-auto">
 
 
@@ -99,38 +114,77 @@
                         </a>
 
                         <div class="text-sm font-bold text-text-light dark:text-text-dark mt-0">
-                           <span>{{ number_format(\DB::table('visits')->first()->counter ?? 0) }} visits</span>
+
+                            <span>{{ number_format(\DB::table('visits')->first()->counter ?? 0) }} visits</span>
                         </div>
                     </div>
 
 
                     <div class="hidden md:flex flex-1 justify-center">
                         <ul class="flex items-center gap-x-6 lg:gap-x-8 text-sm font-medium">
-                            <li><a class="text-primary" href="{{url('user/dashboard')}}">Home</a></li>
+                            <li>
+                                <a href="{{ url('user/dashboard') }}"
+                                    class="{{ Request::is('user/dashboard') ? 'text-primary' : 'hover:text-primary' }}">
+                                    Home
+                                </a>
+                            </li>
 
                             <!-- Games Dropdown -->
                             <li class="relative nav-item">
                                 <button id="games-button"
-                                    class="flex items-center gap-1 hover:text-primary transition-colors">
-                                    <a href="{{route('user.game')}}#picnic-title">Games</a>
+                                    class="flex items-center gap-1 {{ Request::is('user/game*') ? 'text-primary' : 'hover:text-primary' }}">
+                                    <a href="{{route('user.game')}}">Games</a>
                                     <span class="material-symbols-outlined text-base">expand_more</span>
                                 </button>
 
-                                <div id="games-menu"
-                                    class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.indoorGame')}}#picnic-title">Indoor Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.outdoorsGame')}}#picnic-title">Outdoor Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.kidsGame')}}#picnic-title">Kids Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.malesGame')}}#picnic-title">Male Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.femalesGame')}}#picnic-title">Female Games</a>
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary" href="{{route('user.familyGame')}}#picnic-title">Family Games</a>
+                                <div id="games-menu" class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
+                                    @foreach($categories as $category)
+                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary"
+                                        href="{{ route('user.categoryGame', $category->slug) }}#picnic-title">
+                                        {{ $category->name }}
+                                    </a>
+                                    @endforeach
                                 </div>
+
                             </li>
-                            <li><a class="hover:text-primary transition-colors" href="{{ route('user.blog.index') }}">Blogs</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="{{route('admin.dashboard')}}">DashBoard</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="{{url('user/itinerary')}}">Itinerary</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="{{url('user/aboutus')}}">About Us</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="{{url('user/contact')}}">Contact Us</a></li>
+
+                            <li>
+                                <a href="{{ route('user.blog.index') }}"
+                                    class="{{ Route::currentRouteNamed('user.blog.*') ? 'text-primary' : 'hover:text-primary' }}">
+                                    Blogs
+                                </a>
+                            </li>
+
+
+                            <li>
+                                <a href="{{ route('admin.dashboard') }}"
+                                    class="{{ Request::is('admin/dashboard') ? 'text-primary' : 'hover:text-primary' }}">
+                                    DashBoard
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ url('user/itinerary') }}"
+                                    class="{{ Request::is('user/itinerary') ? 'text-primary' : 'hover:text-primary' }}">
+                                    Itinerary
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ url('user/aboutus') }}"
+                                    class="{{ Request::is('user/aboutus') ? 'text-primary' : 'hover:text-primary' }}">
+                                    About Us
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{{ url('user/contact') }}"
+                                    class="{{ Request::is('user/contact') ? 'text-primary' : 'hover:text-primary' }}">
+                                    Contact Us
+                                </a>
+                            </li>
+
+
                         </ul>
                     </div>
 
@@ -190,7 +244,9 @@
             </nav>
 
         </header>
-        <main class="flex-1">
+
+        <main class="flex-1 mt-[120px]">
+
 
             @yield('content')
         </main>
@@ -245,7 +301,21 @@
         </footer>
     </div>
     </div>
+
     @include('layouts.user.chat-widget')
+
+    <script>
+        document.addEventListener("scroll", function() {
+            const navbar = document.getElementById("navbar");
+            if (window.scrollY > 50) {
+                navbar.classList.remove("default");
+                navbar.classList.add("scrolled");
+            } else {
+                navbar.classList.add("default");
+                navbar.classList.remove("scrolled");
+            }
+        });
+    </script>
 
 </body>
 

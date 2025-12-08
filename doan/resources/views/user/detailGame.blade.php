@@ -48,108 +48,140 @@
 </head>
 
 <body class="font-display bg-background-light dark:bg-background-dark">
-    <div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
-        <div class="layout-container flex h-full grow flex-col">
-            <main id="detail" class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+    <div class="relative flex min-h-screen flex-col overflow-x-hidden">
+        <div class="layout-container flex flex-col grow">
+            <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+                
+                <!-- Breadcrumbs -->
+                <nav class="flex flex-wrap gap-2 mb-6 text-sm text-text-light-secondary dark:text-text-dark-secondary">
+                    <a href="{{ url('user/dashboard') }}" class="hover:text-primary">Home</a>
+                    <span>/</span>
+                    <a href="{{ url('user/game') }}" class="hover:text-primary">Games</a>
+                    <span>/</span>
+                    <span class="text-text-light-primary dark:text-text-dark-primary">{{ $game->name }}</span>
+                </nav>
+
                 <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
-                    <!-- Main Content (Left Column) -->
-                    <div class="w-full lg:w-2/3">
-                        <div class="flex flex-wrap gap-2 mb-6">
-                            <a class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-medium leading-normal hover:text-primary" href="{{url('user/dashboard')}}">Home</a>
-                            <span class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-medium leading-normal">/</span>
-                            <a class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-medium leading-normal hover:text-primary" href="{{url('user/game')}}">Games</a>
-                            <span class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-medium leading-normal">/</span>
-                            <span class="text-text-light-primary dark:text-text-dark-primary text-sm font-medium leading-normal">Spoon Race</span>
+
+                    <!-- Main Content -->
+                    <div class="w-full lg:w-2/3 space-y-8">
+
+                        <!-- Game Title -->
+                        <h1 class="text-4xl lg:text-5xl font-black text-text-light-primary dark:text-text-dark-primary leading-tight">
+                            {{ $game->name }}
+                        </h1>
+
+                        <!-- Game Banner / Video -->
+                        <div class="relative aspect-video rounded-xl overflow-hidden">
+                            @if($game->video_url)
+                                <iframe class="w-full h-full rounded-xl" src="{{ $game->video_url }}" frameborder="0" allowfullscreen></iframe>
+                            @else
+                                <img src="{{ $game->image }}" alt="{{ $game->name }}" class="w-full h-full object-cover">
+                            @endif
                         </div>
-                        <div class="flex flex-wrap justify-between gap-3 mb-6">
-                            <h1 class="text-text-light-primary dark:text-text-dark-primary text-4xl lg:text-5xl font-black leading-tight tracking-[-0.033em] min-w-72">Spoon Race Challenge</h1>
-                        </div>
-                        <div class="mb-10">
-                            <div class="relative flex items-center justify-center bg-gray-900 bg-cover bg-center aspect-video rounded-xl" data-alt="A group of people happily playing the spoon race game in a sunny park." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAbKU3ru4N0LvlWSorW_ARKhdGN2miitrtDWYc5qX8tF-gWNY-SXV9MkqjlNEiynv509ev6USCSHu8FhkHV8GgGLJoDG2xlvK94YgGxf6fSYBQWuHzIk5pQ0qbMTMLYn0HPcAdJSiqBBHQlGw2dLCeWgmRRF7eiLdoGU6lWy6WsblRuoOhACtAcqKpVH0zuJJxKTrir9hxrT2-cTdYgF5BT72Pz43s3yjr_AD7zN0L8o9_kTNfrhL1mwHFB16Q88ccAC3hDISGebIQ");'>
-                                <button class="flex shrink-0 items-center justify-center rounded-full size-16 bg-black/50 text-white hover:bg-black/70 transition-colors">
-                                    <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-                                </button>
-                                <div class="absolute inset-x-0 bottom-0 px-4 py-3">
-                                    <div class="flex h-4 items-center justify-center">
-                                        <div class="h-1 flex-1 rounded-full bg-white"></div>
-                                        <div class="relative">
-                                            <div class="absolute -left-2 -top-2 size-4 rounded-full bg-white"></div>
-                                        </div>
-                                        <div class="h-1 flex-1 rounded-full bg-white opacity-40"></div>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <p class="text-white text-xs font-medium leading-normal tracking-[0.015em]">0:37</p>
-                                        <p class="text-white text-xs font-medium leading-normal tracking-[0.015em]">2:23</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+
+                        <!-- Sections -->
                         <div class="space-y-8 text-text-light-secondary dark:text-text-dark-secondary">
+
+                            <!-- Materials -->
                             <div>
-                                <h2 class="text-text-light-primary dark:text-text-dark-primary text-2xl font-bold leading-tight tracking-[-0.015em] pb-3 border-b border-gray-200 dark:border-gray-700 mb-4">Required Materials</h2>
+                                <h2 class="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
+                                    Required Materials
+                                </h2>
                                 <ul class="list-disc list-inside space-y-2">
-                                    <li>Spoons (one per player)</li>
-                                    <li>Eggs or small potatoes (one per player)</li>
-                                    <li>Cones or markers for start and finish lines</li>
+                                    @foreach(explode(',', $game->materials ?? '') as $material)
+                                        <li>{{ $material }}</li>
+                                    @endforeach
                                 </ul>
                             </div>
+
+                            <!-- Setup -->
                             <div>
-                                <h2 class="text-text-light-primary dark:text-text-dark-primary text-2xl font-bold leading-tight tracking-[-0.015em] pb-3 border-b border-gray-200 dark:border-gray-700 mb-4">Game Setup</h2>
+                                <h2 class="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
+                                    Game Setup
+                                </h2>
                                 <ol class="list-decimal list-inside space-y-2">
-                                    <li>Set up a start line and a finish line about 20-30 feet apart.</li>
-                                    <li>If playing in teams, have players form equal lines behind the start line.</li>
-                                    <li>Give each player at the front of the line a spoon and an egg.</li>
+                                    @foreach(explode("\n", $game->setup ?? '') as $step)
+                                        <li>{{ $step }}</li>
+                                    @endforeach
                                 </ol>
                             </div>
+
+                            <!-- Rules -->
                             <div>
-                                <h2 class="text-text-light-primary dark:text-text-dark-primary text-2xl font-bold leading-tight tracking-[-0.015em] pb-3 border-b border-gray-200 dark:border-gray-700 mb-4">Rules &amp; Instructions</h2>
+                                <h2 class="text-2xl font-bold text-text-light-primary dark:text-text-dark-primary border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
+                                    Rules & Instructions
+                                </h2>
                                 <ol class="list-decimal list-inside space-y-2">
-                                    <li>Players must balance the egg on their spoon.</li>
-                                    <li>On "Go!", the first player from each team walks or runs to the finish line and back.</li>
-                                    <li>They must not touch the egg with their hands. If the egg drops, they must pick it up, return to the start line, and begin again.</li>
-                                    <li>Once a player returns, they pass the spoon and egg to the next person in their line.</li>
-                                    <li>The first team to have all its players complete the race wins.</li>
+                                    @foreach(explode("\n", $game->instructions ?? '') as $rule)
+                                        <li>{{ $rule }}</li>
+                                    @endforeach
                                 </ol>
                             </div>
+
                         </div>
                     </div>
-                    <!-- Action Sidebar (Right Column) -->
-                    <aside class="w-full lg:w-1/3 lg:sticky lg:top-12 h-fit">
+
+                    <!-- Sidebar -->
+                    <aside class="w-full lg:w-1/3 lg:sticky lg:top-12 space-y-6">
                         <div class="bg-sidebar-light dark:bg-sidebar-dark p-6 lg:p-8 rounded-xl space-y-6">
+
+                            <!-- About -->
                             <div>
-                                <h3 class="text-text-light-primary dark:text-text-dark-primary font-bold text-xl mb-2">About The Game</h3>
-                                <p class="text-text-light-secondary dark:text-text-dark-secondary text-sm leading-relaxed">A classic test of balance and speed! Players race while balancing an egg on a spoon, making for hilarious and suspenseful fun for all ages.</p>
+                                <h3 class="text-xl font-bold text-text-light-primary dark:text-text-dark-primary mb-2">About The Game</h3>
+                                <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary leading-relaxed">
+                                    {{ $game->description ?? 'No description available.' }}
+                                </p>
                             </div>
+
                             <div class="space-y-4">
                                 <div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-accent text-3xl">groups</span>
                                     <div>
-                                        <p class="text-text-light-secondary dark:text-text-dark-secondary text-xs">Players</p>
-                                        <p class="text-text-light-primary dark:text-text-dark-primary font-bold">4 - 10 Players</p>
+                                        <p class="text-xs">Players</p>
+                                        <p class="font-bold text-text-light-primary dark:text-text-dark-primary">{{ $game->players ?? 'N/A' }}</p>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-accent text-3xl">timer</span>
                                     <div>
-                                        <p class="text-text-light-secondary dark:text-text-dark-secondary text-xs">Estimated Time</p>
-                                        <p class="text-text-light-primary dark:text-text-dark-primary font-bold">15 - 20 mins</p>
+                                        <p class="text-xs">Estimated Time</p>
+                                        <p class="font-bold text-text-light-primary dark:text-text-dark-primary">{{ $game->duration ?? 'N/A' }} mins</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-accent text-3xl">signal_cellular_alt</span>
+                                    <div>
+                                        <p class="text-xs">Difficulty</p>
+                                        <p class="font-bold text-text-light-primary dark:text-text-dark-primary">{{ $game->level ?? 'N/A' }}</p>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Download -->
+                            @if($game->download_file)
                             <div class="border-t border-gray-300 dark:border-gray-600 pt-6">
-                                <p class="text-text-light-secondary dark:text-text-dark-secondary text-sm mb-4">Want to take these instructions with you? Download our handy printable guide.</p>
-                                <button class="w-full flex items-center justify-center gap-2 cursor-pointer rounded-lg h-12 px-4 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-green-600 transition-colors">
+                                <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
+                                    Download our printable guide:
+                                </p>
+                                <a href="{{ asset($game->download_file) }}" target="_blank" 
+                                   class="w-full flex items-center justify-center gap-2 rounded-lg h-12 px-4 bg-primary text-white font-bold hover:bg-green-600 transition-colors">
                                     <span class="material-symbols-outlined">download</span>
-                                    <span class="truncate">Download Printable Guide</span>
-                                </button>
+                                    <span class="truncate">Download Guide</span>
+                                </a>
                             </div>
+                            @endif
+
                         </div>
                     </aside>
+
                 </div>
             </main>
         </div>
     </div>
 </body>
+
 
 </html>
 

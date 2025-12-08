@@ -18,20 +18,7 @@
                             </div>
                         </label>
                     </div>
-                    <div class="flex gap-2 flex-wrap justify-start w-full md:w-auto">
-                        <div class="flex h-12 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-lg bg-primary/20 dark:bg-primary/30 px-4">
-                            <p class="text-primary dark:text-off-white text-sm font-medium leading-normal">All</p>
-                        </div>
-                        <div class="flex h-12 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-charcoal px-4">
-                            <p class="text-charcoal dark:text-off-white text-sm font-medium leading-normal">Half-Day</p>
-                        </div>
-                        <div class="flex h-12 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-charcoal px-4">
-                            <p class="text-charcoal dark:text-off-white text-sm font-medium leading-normal">Full-Day</p>
-                        </div>
-                        <div class="flex h-12 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-lg bg-white dark:bg-charcoal px-4">
-                            <p class="text-charcoal dark:text-off-white text-sm font-medium leading-normal">Weekend</p>
-                        </div>
-                    </div>
+                    
                 </div>
                 <div class="flex gap-2 flex-wrap">
                     <div class="flex h-8 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-full bg-white dark:bg-charcoal px-4">
@@ -45,13 +32,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-10">
-                <div class="flex flex-wrap gap-2 p-4 bg-white/50 dark:bg-charcoal/50 rounded-lg">
-                    <a class="text-primary text-base font-medium leading-normal" href="#">Home</a>
-                    <span class="text-charcoal/50 dark:text-off-white/50 text-base font-medium leading-normal">/</span>
-                    <span class="text-charcoal dark:text-off-white text-base font-medium leading-normal">Itineraries</span>
-                </div>
-            </div>
+           
             <div class="mt-10">
                 <h3 class="text-2xl font-bold text-charcoal dark:text-off-white">Suggested Itineraries</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
@@ -64,7 +45,7 @@
                             </div>
                             <h4 class="text-xl font-bold text-charcoal dark:text-off-white">Coastal Escape in Brighton</h4>
                             <p class="text-sm text-charcoal/80 dark:text-off-white/80 mt-2 flex-grow">Enjoy a day of sun, sea, and pebbles. Explore the iconic pier and relax on the vibrant beachfront.</p>
-                            <a href="{{ route('user.detailGame') }}"
+                            <a href="{{ route('user.detailItinerary')}}"
                                 class="flex min-w-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-2 bg-orange-300 text-white font-bold hover:bg-orange-600 transition-colors mt-3">
                                 View Details
                             </a>
@@ -83,7 +64,7 @@
                             </div>
                             <h4 class="text-xl font-bold text-charcoal dark:text-off-white">Lake District Retreat</h4>
                             <p class="text-sm text-charcoal/80 dark:text-off-white/80 mt-2 flex-grow">A two-day adventure hiking scenic trails, enjoying boat rides, and picnicking by serene lakes.</p>
-                            <a href="{{ route('user.detailGame') }}"
+                            <a href="{{ route('user.detailItinerary')}}"
                                 class="flex min-w-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-2 bg-orange-300 text-white font-bold hover:bg-orange-600 transition-colors mt-3">
                                 View Details
                             </a>
@@ -99,7 +80,7 @@
                             </div>
                             <h4 class="text-xl font-bold text-charcoal dark:text-off-white">Afternoon in Richmond Park</h4>
                             <p class="text-sm text-charcoal/80 dark:text-off-white/80 mt-2 flex-grow">Spot wild deer, explore beautiful gardens, and find a perfect spot for a classic park picnic.</p>
-                            <a href="{{ route('user.detailGame') }}"
+                            <a href="{{ route('user.detailItinerary') }}"
                                 class="flex min-w-[64px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-2 bg-orange-300 text-white font-bold hover:bg-orange-600 transition-colors mt-3">
                                 View Details
                             </a>
