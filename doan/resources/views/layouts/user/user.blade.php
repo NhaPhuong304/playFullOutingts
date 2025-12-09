@@ -237,6 +237,11 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Google Map Section -->
+                    <div class="mt-8 mb-6">
+                        <h3 class="font-bold mb-4 text-lg">Our Location</h3>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31352.01839768961!2d106.64146637431641!3d10.811135099999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752934c609c5bd%3A0x751f71739b98ebc4!2zQXB0ZWNoIENvbXB1dGVyIEVkdWNhdGlvbiAtIEjhu4cgdGjhu5FuZyDEkMOgbyB04bqhbyBM4bqtcCB0csOsbmggdmnDqm4gUXXhu5FjIHThur8gQXB0ZWNo!5e0!3m2!1svi!2s!4v1764916133942!5m2!1svi!2s" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-lg"></iframe>
+                    </div>
                     <div class="border-t border-border-dark mt-8 pt-6 text-center text-sm text-text-dark/50">
                         <p>© 2024 PlayFullOutings. All rights reserved.</p>
                     </div>
