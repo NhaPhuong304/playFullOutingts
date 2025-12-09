@@ -32,7 +32,6 @@ use App\Http\Controllers\User\ItineraryController as UserItineraryController;
 use App\Http\Controllers\User\ProfileUserController;
 use App\Http\Controllers\User\DashboardController;
 
-
 // Route hiển thị giao diện quản lý sản phẩm (admin - tĩnh)
 Route::get('/product', function () {
     return view('admin.product');
@@ -104,10 +103,19 @@ Route::get('/', [DashboardController::class, 'dashboard'])->name('user.dashboard
 
 Route::get('user/dashboard', [DashboardController::class, 'dashboard'])->name('user.dashboard');
 
+Route::get('/', function () {
+    return redirect()->route('user.dashboard');
+});
+
 
 
 Route::get('/games/category/{id}', [GameUserController::class, 'category'])
     ->name('games.category');
+
+
+// Contact form POST and captcha generation
+Route::post('user/contact', [ContactController::class, 'send'])->name('user.contact.send');
+Route::get('captcha/generate', [ContactController::class, 'generateCaptcha'])->name('captcha.generate');
 
 
     Route::get('/user/game', [GameUserController::class, 'game'])->name('user.game');
@@ -150,6 +158,10 @@ Route::middleware(['role:user', 'check.password'])->group(function () {
 
 Route::middleware(['role:admin'])->group(function () {
     Route::get('admin/dashboard', function () { return view('admin.dashboard');})->name('admin.dashboard');
+    Route::get('admin/contact', [\App\Http\Controllers\Admin\ContactController::class, 'index'])->name('admin.contact');
+    Route::put('admin/contact/{id}/status', [\App\Http\Controllers\Admin\ContactController::class, 'updateStatus'])->name('admin.contact.updateStatus');
+    Route::post('admin/contact/{id}/reply', [\App\Http\Controllers\Admin\ContactController::class, 'reply'])->name('admin.contact.reply');
+    
     Route::get('admin/user', [UserController::class, 'user'])->name('admin.user');
     Route::put('admin/user/{id}', [UserController::class, 'update'])->name('admin.user.update');
     Route::put('/admin/user/{user}/block', [UserController::class, 'block'])->name('admin.user.block');
