@@ -2,7 +2,6 @@
 
 @section('content')
 
-{{-- 🌄 HERO --}}
 <section class="w-full pt-32 pb-16 bg-gradient-to-b from-primary/10 to-white dark:from-primary/20 dark:to-gray-900">
     <div class="max-w-6xl mx-auto px-6 text-center">
         <h1 class="text-4xl font-bold tracking-tight">Your Profile</h1>
@@ -67,10 +66,7 @@
 </script>
 @endif
 
-{{-- 🌿 MAIN CONTENT --}}
 <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
-
-    {{-- ⭐ LEFT — USER CARD --}}
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
 
         <div class="flex justify-between items-center mb-6">
@@ -95,9 +91,10 @@
 
         {{-- Info --}}
         <div class="space-y-2 text-gray-700 dark:text-gray-300">
-            <p><span class="font-semibold">Full Name:</span> {{ $user->name }}</p>
+            <p><span class="font-semibold">Full Name:</span> {{ $user->fullname }}</p>
             <p><span class="font-semibold">Email:</span> {{ $user->email }}</p>
             <p><span class="font-semibold">Phone:</span> {{ $user->phone }}</p>
+            <p><span class="font-semibold">Birthday:</span> {{ $user->birthday }}</p>
             <p><span class="font-semibold">Address:</span> {{ $user->address }}</p>
             <p><span class="font-semibold">Gender:</span> {{ $user->gender }}</p>
             <p><span class="font-semibold">Member Since:</span> {{ $user->created_at->format('d/m/Y') }}</p>
@@ -105,7 +102,6 @@
 
     </div>
 
-    {{-- ⭐ RIGHT — ORDER HISTORY --}}
     <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
 
         <h2 class="text-2xl font-bold mb-6 text-center">Order History</h2>
@@ -158,14 +154,12 @@
 
                         <td class="px-4 py-3 flex items-center gap-2">
 
-                            {{-- VIEW BUTTON --}}
                             <button
                                 class="px-3 py-1 bg-primary text-white rounded-lg text-sm hover:bg-primary/80 transition"
                                 onclick='openOrderModal(@json($order))'>
                                 View
                             </button>
 
-                            {{-- CANCEL BUTTON — only show when pending or shipped --}}
                             @if(in_array(strtolower($order->status), ['pending', 'shipped']))
                             <button
                                 onclick="openCancelDialog()"
@@ -187,8 +181,6 @@
 
 </div>
 
-{{-- ================================================================================= --}}
-{{-- ⭐ MODAL — EDIT PROFILE --}}
 <div id="editModal"
     class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[999]">
 
@@ -217,6 +209,12 @@
                     value="{{ $user->address }}"
                     class="w-full mt-1 px-4 py-2 rounded-lg border bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
             </div>
+            <div>
+                <label class="font-semibold">Birthday</label>
+                <input type="text" name="birthday"
+                    value="{{ $user->birthday }}"
+                    class="w-full mt-1 px-4 py-2 rounded-lg border bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+            </div>
 
             <div>
                 <label class="font-semibold">Gender</label>
@@ -225,7 +223,6 @@
                     class="w-full mt-1 px-4 py-2 rounded-lg border bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
             </div>
 
-            {{-- Avatar --}}
             <div>
                 <label class="font-semibold">New Avatar</label>
                 <input type="file" name="photo"
@@ -248,8 +245,6 @@
     </div>
 </div>
 
-{{-- ================================================================================= --}}
-{{-- ⭐ MODAL — ORDER DETAILS --}}
 <div id="orderModal"
     class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[999]">
 
@@ -266,8 +261,6 @@
     </div>
 </div>
 
-{{-- ================================================================================= --}}
-{{-- ⭐ MODAL — CANCEL WARNING --}}
 <div id="cancelModal"
     class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-[999]">
 
@@ -294,8 +287,6 @@
 
 
 
-{{-- ================================================================================= --}}
-{{-- ⭐ JS --}}
 <script>
     function openEditModal() {
         document.getElementById("editModal").classList.remove("hidden");
@@ -337,7 +328,6 @@
         const html = `
         <h3 class="text-xl font-semibold mb-4">Order ID: #${order.id}</h3>
 
-        <!-- ⭐ RECEIVER INFORMATION -->
         <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 mb-5">
             <h4 class="text-lg font-bold mb-2">Receiver Information</h4>
 
@@ -348,7 +338,6 @@
             <p><span class="font-semibold">Payment Method:</span> ${order.payment_method ?? 'N/A'}</p>
         </div>
 
-        <!-- ⭐ PRODUCT TABLE -->
         <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
@@ -393,10 +382,6 @@
     function closeCancelDialog() {
         document.getElementById("cancelModal").classList.add("hidden");
     }
-
-    // ================================
-    // ⭐ PAGINATION FOR ORDER HISTORY
-    // ================================
 
     document.addEventListener("DOMContentLoaded", function() {
 
@@ -444,7 +429,6 @@
             }
         }
 
-        // Initialize on first load
         renderTable();
     });
 </script>

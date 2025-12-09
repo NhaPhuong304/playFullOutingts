@@ -1,4 +1,5 @@
 @extends('admin.dashboard')
+@section('page-title', 'Order Delivered')
 
 @section('content')
 <div class="row mt-4">
@@ -56,11 +57,11 @@
                         <td>{{ $order->pay }}</td>
                         <td><span class="badge bg-success">{{ $order->status }}</span></td>
                         <td>
-                            <button class="btn btn-info btn-view-order"
+                            <button class="btn btn-sm btn-outline-info btn-view-order"
                                 data-bs-toggle="modal"
                                 data-bs-target="#viewOrderModal"
                                 data-order="{{ $order->toJson() }}">
-                                View
+                                <i class="fa-regular fa-eye"></i>
                             </button>
                         </td>
                     </tr>
@@ -162,69 +163,68 @@
 </div>
 
 <script>
-    const rowsPerPage = 3;
-    let currentPage = 1;
-    let filteredRows = []; // ✅ ADD THIS LINE at the start of the script
+const rowsPerPage = 5;
+let currentPage = 1;
+let allRows = [];
+let filteredRows = [];
 
-    function paginateTable() {
-        const totalRows = filteredRows.length;
-        const totalPages = Math.ceil(totalRows / rowsPerPage);
+document.addEventListener("DOMContentLoaded", () => {
+    allRows = Array.from(document.querySelectorAll("#orderTable tbody tr"));
+    filteredRows = [...allRows];
 
-        // Hide all rows
-        document.querySelectorAll("#orderTable tbody tr").forEach(row => row.style.display = "none");
+    renderTable();
 
-        // Show rows for the current page
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        filteredRows.slice(start, end).forEach(row => row.style.display = "");
+    document.getElementById("searchInput").addEventListener("input", filterTable);
+});
 
-        renderPagination(totalPages);
-    }
+function filterTable() {
+    const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
 
+    filteredRows = allRows.filter(row => {
+        const id = row.cells[0].innerText.toLowerCase();
+        const customer = row.cells[1].innerText.toLowerCase();
+        const receiver = row.cells[2].innerText.toLowerCase();
 
-    function renderPagination(totalPages) {
-        const pagination = document.getElementById("pagination");
-        pagination.innerHTML = "";
-
-        for (let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement("button");
-            btn.textContent = i;
-            btn.className = "btn btn-sm btn-outline-primary mx-1";
-            if (i === currentPage) btn.classList.add("active");
-            btn.onclick = () => {
-                currentPage = i;
-                paginateTable();
-            };
-            pagination.appendChild(btn);
-        }
-    }
-
-    // Call on load
-    document.addEventListener("DOMContentLoaded", () => {
-        filterTable(); // Call filter to ensure the initial state is correct
+        return (
+            id.includes(keyword) ||
+            customer.includes(keyword) ||
+            receiver.includes(keyword)
+        );
     });
 
-    function filterTable() {
-        const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+    currentPage = 1;
+    renderTable();
+}
 
-        const rows = document.querySelectorAll("#orderTable tbody tr");
-        filteredRows = [];
+function renderTable() {
+    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
-        rows.forEach(row => {
-            const orderIdCell = row.querySelector("td:first-child"); // First column: Order ID
-            const orderId = orderIdCell ? orderIdCell.textContent.trim().toLowerCase() : "";
+    allRows.forEach(r => r.style.display = "none");
 
-            if (orderId.includes(keyword)) {
-                row.style.display = "";
-                filteredRows.push(row);
-            } else {
-                row.style.display = "none";
-            }
-        });
+    const start = (currentPage - 1) * rowsPerPage;
+    filteredRows.slice(start, start + rowsPerPage).forEach(r => r.style.display = "");
 
-        currentPage = 1;
-        paginateTable();
+    renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = "";
+
+    for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = i;
+        btn.className = "btn btn-sm btn-outline-primary mx-1";
+        if (i === currentPage) btn.classList.add("active");
+
+        btn.onclick = () => {
+            currentPage = i;
+            renderTable();
+        };
+
+        pagination.appendChild(btn);
     }
+}
 
     const confirmModal = document.getElementById('confirmStatusModal');
     confirmModal.addEventListener('show.bs.modal', function(event) {

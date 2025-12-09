@@ -29,9 +29,6 @@ class CartController extends Controller
         return view('user.cart', compact('carts'));
     }
 
-    /**
-     * Xóa 1 sản phẩm khỏi giỏ hàng
-     */
     public function remove($id)
     {
         $cart = Cart::findOrFail($id);
@@ -45,9 +42,7 @@ class CartController extends Controller
         return redirect()->route('cart_user')->with('success', 'Product removed from cart');
     }
 
-    /**
-     * Thêm sản phẩm vào giỏ hàng (Ajax hoặc Form)
-     */
+
     public function add(Request $request)
     {
         Log::info('🛒 ADD TO CART => REQUEST', $request->all());
@@ -71,14 +66,12 @@ class CartController extends Controller
 
         $userId = Auth::id();
 
-        // Kiểm tra sản phẩm đã có trong cart chưa?
         $cartItem = Cart::where('user_id', $userId)
             ->where('product_id', $productId)
             ->first();
 
         $newQuantity = $cartItem ? ($cartItem->quantity + $quantity) : $quantity;
 
-        // ❗ CHECK STOCK
         if ($newQuantity > $product->stock) {
             return response()->json([
                 'success' => false,
@@ -88,7 +81,6 @@ class CartController extends Controller
             ], 422);
         }
 
-        // Nếu hợp lệ → lưu lại cart
         if ($cartItem) {
             $cartItem->quantity = $newQuantity;
             $cartItem->save();
@@ -100,7 +92,6 @@ class CartController extends Controller
             ]);
         }
 
-        // Cập nhật tổng quantity
         $totalQty = Cart::where('user_id', $userId)->sum('quantity');
 
         return response()->json([
@@ -110,10 +101,6 @@ class CartController extends Controller
     }
 
 
-
-    /**
-     * Cập nhật số lượng sản phẩm trong giỏ
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -128,7 +115,6 @@ class CartController extends Controller
 
         $product = $cart->product;
 
-        // ❗ Kiểm tra stock
         if ($request->quantity > $product->stock) {
             return response()->json([
                 'success' => false,
@@ -145,9 +131,6 @@ class CartController extends Controller
     }
 
 
-    /**
-     * Hiển thị trang checkout
-     */
     public function checkout()
     {
         if (!Auth::check()) {
@@ -169,9 +152,6 @@ class CartController extends Controller
         return view('user.checkout', compact('carts', 'subtotal', 'total'));
     }
 
-    /**
-     * Thanh toán — tạm thời yêu cầu dùng PayPal
-     */
     public function store(Request $request)
     {
         return redirect()->back()->with('error', 'Please use PayPal to complete your order.');

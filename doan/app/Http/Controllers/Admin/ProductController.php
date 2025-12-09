@@ -21,7 +21,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'        => 'required|string|max:100',
+            'name'        => 'required|string|max:100|unique:products,name',
             'description' => 'nullable|string',
             'price'       => 'required|numeric',
             'stock'       => 'required|integer',
@@ -31,14 +31,7 @@ class ProductController extends Controller
         $photoName = 'no-image.jpg';
 
         if ($request->hasFile('photo') && $request->file('photo')->isValid()) {
-
-            // Tên file duy nhất
             $photoName = time() . '_' . uniqid() . '.' . $request->photo->extension();
-
-            // 1️⃣ Lưu vào storage/app/public/images
-            $request->photo->storeAs('images', $photoName, 'public');
-
-            // 2️⃣ Copy sang public/images
             $request->photo->move(public_path('storage/images'), $photoName);
         }
 
@@ -58,7 +51,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'id'          => 'required|exists:products,id',
-            'name'        => 'required|string|max:100',
+            'name'        => 'required|string|max:100|unique:products,name,'.$request->id,
             'description' => 'nullable|string',
             'price'       => 'required|numeric',
             'stock'       => 'required|integer',
@@ -72,29 +65,10 @@ class ProductController extends Controller
         $product->stock = $request->stock;
 
         if ($request->hasFile('photo')) {
-
-            // Xoá ảnh cũ trong storage
-            if ($product->photo && $product->photo !== 'no-image.jpg') {
-
-
-                // Xoá ảnh trong public/images
-                $publicPath = public_path('storage/images/' . $product->photo);
-                if (file_exists($publicPath)) {
-                    unlink($publicPath);
-                }
-            }
-
-            // Tên file mới
-            $photoName = time() . '_' . uniqid() . '.' . $request->photo->extension();
-
-            // 1️⃣ Lưu storage/app/public/images
-            $request->photo->storeAs('images', $photoName, 'public');
-
-            // 2️⃣ Copy sang public/images
-            $request->photo->move(public_path('images'), $photoName);
-
-            // Cập nhật DB
-            $product->photo = $photoName;
+            $file = $request->file('photo');
+            $imageName = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('storage/images'), $imageName);
+            $product->photo = $imageName;
         }
 
         $product->save();

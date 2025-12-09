@@ -14,9 +14,6 @@ use App\Models\Cart;
 
 class PayPalController extends Controller
 {
-    /**
-     * Lấy cấu hình PayPal
-     */
     private function paypal()
     {
         $mode = config('services.paypal.mode');
@@ -31,9 +28,6 @@ class PayPalController extends Controller
         ];
     }
 
-    /**
-     * Tạo AccessToken của PayPal
-     */
     private function accessToken()
     {
         $paypal = $this->paypal();
@@ -47,9 +41,7 @@ class PayPalController extends Controller
         return $response['access_token'];
     }
 
-    /**
-     * Tạo PayPal Order
-     */
+
     public function createOrder(Request $request)
     {
         $user = Auth::user();
@@ -86,9 +78,6 @@ class PayPalController extends Controller
         ]);
     }
 
-    /**
-     * Capture PayPal Order → Lưu vào DB
-     */
     public function captureOrder(Request $request)
     {
         try {
@@ -102,7 +91,6 @@ class PayPalController extends Controller
             $accessToken = $this->accessToken();
             $url         = $paypal['base_url'] . "/v2/checkout/orders/{$orderID}/capture";
 
-            // Capture không gửi body
             $capture = Http::withToken($accessToken)
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->send('POST', $url);
@@ -114,7 +102,6 @@ class PayPalController extends Controller
 
             $data = $capture->json();
 
-            // Kiểm tra trạng thái PayPal COMPLETED
             $rootStatus  = $data['status'] ?? null;
             $innerStatus = $data['purchase_units'][0]['payments']['captures'][0]['status'] ?? null;
 
@@ -125,7 +112,6 @@ class PayPalController extends Controller
                 ], 400);
             }
 
-            // Tạo đơn hàng trong DB
             $user  = Auth::user();
             $carts = Cart::with('product')->where('user_id', $user->id)->get();
 
@@ -138,14 +124,12 @@ class PayPalController extends Controller
             $order = Order::create([
                 'user_id'          => $user->id,
 
-                // 🆕 Thông tin người nhận
                 'receiver_name'    => $request->full_name,
                 'receiver_email'   => $request->email,
                 'delivery_phone'   => $request->phone,
                 'delivery_address' => $request->address,
                 'payment_method'   => $request->payment_method,
 
-                // 🧾 Thông tin đơn hàng
                 'total_price'      => $total,
                 'pay'              => $total,
                 'purchase_date'    => now(),
@@ -157,10 +141,9 @@ class PayPalController extends Controller
 
                 $product = $item->product;
 
-                // 🛑 Nếu vì lý do gì đó product không tồn tại
                 if (!$product) continue;
 
-                // 🛑 Kiểm tra stock
+
                 if ($product->stock < $item->quantity) {
                     return response()->json([
                         'error' => "Product {$product->name} does not have enough stock!",
@@ -168,11 +151,9 @@ class PayPalController extends Controller
                     ], 400);
                 }
 
-                // 🟢 Trừ stock
                 $product->stock -= $item->quantity;
                 $product->save();
 
-                // 🟢 Lưu order detail
                 OrderDetail::create([
                     'order_id'      => $order->id,
                     'product_id'    => $item->product_id,

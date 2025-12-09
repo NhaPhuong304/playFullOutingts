@@ -27,6 +27,8 @@ class ProfileController extends Controller
         $request->validate([
             'username' => 'required|max:255|unique:users,username,' . $id,
             'fullname' => 'nullable|max:255',
+            'birthday' => 'nullable|date',
+            'address'  => 'nullable|max:500',
             'phone'    => ['nullable', 'regex:/^\d{10}$/'],
             'email'    => 'required|email|max:255',
             'gender'   => 'nullable|in:male,female,other',
@@ -34,6 +36,8 @@ class ProfileController extends Controller
 
         $user->username = $request->username;
         $user->fullname = $request->fullname;
+        $user->birthday = $request->birthday;
+        $user->address  = $request->address;
         $user->phone    = $request->phone;
         $user->email    = $request->email;
         $user->gender   = $request->gender;

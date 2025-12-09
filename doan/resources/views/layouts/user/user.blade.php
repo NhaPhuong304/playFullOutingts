@@ -280,7 +280,6 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
     </div>
     @include('layouts.user.chat-widget')
         <script>
-        // ⭐ HEADER SCROLL EFFECT
         window.addEventListener("scroll", function() {
             const header = document.getElementById("main-header");
 
@@ -299,7 +298,6 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
 
         window.dispatchEvent(new Event("scroll"));
 
-        // ⭐ TOAST FUNCTION
         function showToast(message, isError = false) {
             const toast = document.createElement("div");
             toast.className = `
@@ -326,7 +324,6 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
             setTimeout(() => toast.remove(), 2400);
         }
 
-        // ⭐ UPDATE HEADER BADGE
         function updateHeaderCartBadge(total) {
             let badge = document.querySelector("#cart-count-badge");
             const cartIcon = document.querySelector("#cart-icon");
@@ -343,8 +340,6 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
 
             badge.textContent = total;
         }
-
-        // ⭐ ADD TO CART (WITH STOCK CHECK)
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
                 btn.addEventListener("click", function(e) {
@@ -353,16 +348,15 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
                     let form = this.closest("form");
                     let formData = new FormData(form);
                     let productCard = this.closest(".product-card") ?? this.closest(".rounded-xl");
-                    let stock = parseInt(productCard.dataset.stock); // ⭐ lấy stock
+                    let stock = parseInt(productCard.dataset.stock); 
                     let quantity = parseInt(form.querySelector('[name="quantity"]').value);
 
-                    // ❗Nếu vượt stock → báo lỗi
+
                     if (quantity > stock) {
                         showToast("⚠ Insufficient stock. Remaining: " + stock, true);
                         return;
                     }
 
-                    // ------------------------ FETCH ADD TO CART ------------------------
                     fetch("{{ route('cart.add') }}", {
                             method: "POST",
                             headers: {

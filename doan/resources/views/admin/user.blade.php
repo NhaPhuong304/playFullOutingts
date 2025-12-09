@@ -119,6 +119,9 @@
                                     <button class="btn btn-sm btn-outline-info viewUserBtn" data-bs-toggle="tooltip" title="View"
                                             data-id="{{ $user->id }}"
                                             data-name="{{ $user->username }}"
+                                            data-phone="{{ $user->phone }}"
+                                            data-address="{{ $user->address }}"
+
                                             data-fullname="{{ $user->fullname }}"
                                             data-birthday="{{ $user->birthday }}"
                                             data-gender="{{ $user->gender }}"
@@ -142,6 +145,8 @@
                                     <button class="btn btn-sm btn-outline-success editUserBtn" data-bs-toggle="tooltip" title="Edit"
                                             data-id="{{ $user->id }}"
                                             data-name="{{ $user->username }}"
+                                            data-phone="{{ $user->phone }}"
+                                            data-address="{{ $user->address }}"
                                             data-fullname="{{ $user->fullname }}"
                                             data-birthday="{{ $user->birthday }}"
                                             data-gender="{{ $user->gender }}"
@@ -217,6 +222,14 @@
                                     <strong>Birthday:</strong>
                                     <span id="viewBirthday"></span>
                                 </div>
+                                <div class="mb-2">
+                                    <strong>Phone:</strong>
+                                    <span id="viewPhone"></span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Address:</strong>
+                                    <span id="viewAddress"></span>
+                                    </div>
 
                                 <div class="mb-2">
                                     <strong>Gender:</strong>
@@ -370,6 +383,11 @@
                                 <input type="date" class="form-control" name="birthday" id="editBirthday">
                             </div>
                             <div class="mb-3">
+                                <label>Phone</label>
+                                <input type="text" class="form-control" name="phone" id="editPhone">
+                            </div>
+                                        
+                            <div class="mb-3">
                                 <label>Gender</label>
                                 <select class="form-control" name="gender" id="editGender">
                                     <option value="male">Male</option>
@@ -515,6 +533,8 @@ function initUserModals() {
         else if(this.dataset.role_id == 3) roleName = 'SupperAdmin';
 
         document.getElementById("viewId").textContent = this.dataset.id;
+        document.getElementById("viewPhone").textContent = this.dataset.phone || '-';
+        document.getElementById("viewAddress").textContent = this.dataset.address || '-';
         document.getElementById("viewUserName").textContent = this.dataset.username;
         document.getElementById("viewFullname").textContent = this.dataset.fullname;
         document.getElementById("viewBirthday").textContent = this.dataset.birthday || '-';
@@ -551,6 +571,8 @@ function initUserModals() {
             const id = this.dataset.id;
             const username = this.dataset.username;
             const fullname = this.dataset.fullname;
+            const phone = this.dataset.phone;
+            const address = this.dataset.address;
             const birthday = this.dataset.birthday;
             const gender = this.dataset.gender;
             const email = this.dataset.email;
@@ -560,6 +582,8 @@ function initUserModals() {
 
             document.getElementById("editUserName").value = username;
             document.getElementById("editFullname").value = this.dataset.fullname;
+            document.getElementById("editPhone").value = phone;
+            document.getElementById("editAddress").value = address;
             document.getElementById("editBirthday").value = this.dataset.birthday;
             document.getElementById("editGender").value = this.dataset.gender;
             document.getElementById("editEmail").value = email;

@@ -42,20 +42,16 @@ Route::get('/product', function () {
 
 use App\Http\Controllers\Admin\ProductController;
 
-// Hiển thị danh sách sản phẩm
 Route::get('/admin/product', [ProductController::class, 'index'])->name('product_admin');
 
-// Thêm sản phẩm mới
 Route::post('/admin/product/store', [ProductController::class, 'store'])->name('product_admin.store');
 
-// Cập nhật sản phẩm
 Route::post('/admin/product/update', [ProductController::class, 'update'])->name('admin.product.update');
-
-// Xóa sản phẩm
 Route::post('/admin/product/delete', [ProductController::class, 'delete'])->name('admin.product.delete');
 
 //--------------------Quản lý Order-----------------------------
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\RecycleProductController;
 
 Route::get('/admin/orderPending', [OrderController::class, 'pending'])->name('orderPending_admin');
 Route::get('/admin/orderShipped', [OrderController::class, 'shipped'])->name('orderShipped_admin');
@@ -166,6 +162,10 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('admin/trashLocation', [RecycleLocationController::class, 'trash'])->name('admin.trashLocation');
     Route::delete('admin/recycle-location/delete/{id}',[RecycleLocationController::class, 'forceDelete'])->name('admin.recycleLocation.delete');
     Route::post('admin/recycle-location/restore/{id}', [RecycleLocationController::class, 'restore'])->name('admin.recycleLocation.restore');
+
+    Route::get('admin/trashProduct', [RecycleProductController::class, 'trash'])->name('admin.trashProduct');
+    Route::delete('admin/recycle-product/delete/{id}', [RecycleProductController::class, 'delete'])->name('admin.recycleProduct.delete');
+    Route::post('admin/recycle-product/restore/{id}', [RecycleProductController::class, 'restore'])->name('admin.recycleProduct.restore');
 
 
     Route::get('admin/category', [CategoryController::class, 'category'])->name('admin.category');
