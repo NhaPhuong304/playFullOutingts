@@ -12,6 +12,8 @@ class Material extends Model
     protected $fillable = [
         'name',
         'image',
+        'status',
+        'is_delete',
     ];
 
     // Quan hệ với Games

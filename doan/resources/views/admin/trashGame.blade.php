@@ -2,6 +2,22 @@
 @section('page-title', 'Recycle Games')
 
 @section('content')
+<style>
+.category-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+.category-thumb:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+</style>
 
 <div class="main-content">
     <div class="card mt-4">
@@ -9,6 +25,24 @@
             <h5 class="card-title">Trash Games</h5>
         </div>
         <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
             <div class="row g-2 align-items-center mb-4">
                 <div class="col-12 col-md-4 col-lg-3 ms-auto">
                     <div class="position-relative">
@@ -20,7 +54,7 @@
 
             <div class="table-responsive">
                 <table class="table table-hover" id="gameTable">
-                    <thead>
+                    <thead class="table-dark">
                         <tr>
                             <th>Image</th>
                             <th>Name</th>

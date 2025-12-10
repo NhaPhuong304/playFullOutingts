@@ -12,13 +12,19 @@ class Itinerary extends Model
     protected $fillable = [
         'name',
         'description',
+        'image',
         'days',
         'status',
         'is_delete',
     ];
     public function locations()
-        {
-            return $this->hasMany(Location::class);
-        }
+    {
+        return $this->belongsToMany(
+            Location::class,
+            'location_itinerary',
+            'itinerary_id',
+            'location_id'
+        );
+    }
 
 }

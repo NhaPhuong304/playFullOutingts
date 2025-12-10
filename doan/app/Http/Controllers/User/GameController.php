@@ -29,10 +29,9 @@ class GameController extends Controller
     public function detailGame($slug)
     {
         $game = Game::where('slug', $slug)
-            ->with('categories', 'materials') // eager load quan hệ nếu cần
+            ->with('categories', 'materials')
             ->firstOrFail();
 
-        // Lấy tất cả categories để menu hiển thị
         $categories = Category::where('is_delete', 0)->where('status', 1)->get();
 
         return view('user.detailGame', compact('game', 'categories'));
@@ -41,14 +40,11 @@ class GameController extends Controller
     public function categoryGame($slug)
     {
         $category = Category::where('slug', $slug)->firstOrFail();
-
-        // Lấy toàn bộ game của category này
         $games = $category->games()
             ->where('status', 1)
             ->where('is_delete', 0)
             ->get();
 
-        // Lấy categories để hiển thị menu
         $categories = Category::where('status', 1)->where('is_delete', 0)->get();
 
         return view('user.categoryGame', compact('category', 'games', 'categories'));

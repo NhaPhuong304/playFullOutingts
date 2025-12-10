@@ -2,30 +2,71 @@
 @section('page-title', 'Materials')
 
 @section('content')
+<style>
+.location-thumb {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.location-thumb:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+</style>
+
 <div class="main-content">
     <div class="card mt-4">
         <div class="card-header">
             <h5 class="card-title">Materials</h5>
         </div>
         <div class="card-body">
+
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <ul class="mb-0">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
             <div class="row g-2 align-items-center mb-4">
                 <div class="col-auto">
-                    <button class="btn btn-success" id="addMaterialBtn">Add</button>
+                    <select class="form-select" id="searchStatus">
+                        <option value="">All</option>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-success" id="addMaterialBtn">Add Material</button>
                 </div>
                 <div class="col-auto ms-auto">
-                    <div class="position-relative">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search">
-                        <span class="fa fa-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></span>
-                    </div>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search Materials...">
                 </div>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover" id="materialTable">
-                    <thead>
+                <table class="table table-hover text-center align-middle" id="materialTable">
+                    <thead class="table-dark">
                         <tr>
                             <th>Image</th>
                             <th>Name</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -33,19 +74,28 @@
                         @foreach($materials as $material)
                         <tr>
                             <td>
-                                @if($material->image)
-                                    <img src="{{ asset('storage/'.$material->image) }}" width="50" height="50" class="rounded">
-                                @else
-                                    <img src="{{ asset('storage/materials/no-image.jpg') }}" width="50" height="50" class="rounded">
-                                @endif
+                                <img src="{{ $material->image ? asset('storage/materials/'.$material->image) : asset('storage/materials/no-image.jpg') }}" class="location-thumb">
                             </td>
                             <td>{{ $material->name }}</td>
                             <td>
+                                <span class="badge {{ $material->status ? 'bg-success' : 'bg-danger' }}">
+                                    {{ $material->status ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+                            <td>
                                 <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-info viewMaterialBtn"
+                                        data-id="{{ $material->id }}"
+                                        data-name="{{ $material->name }}"
+                                        data-status="{{ $material->status }}"
+                                        data-image="{{ $material->image ? asset('storage/materials/'.$material->image) : asset('storage/materials/no-image.jpg') }}">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
                                     <button class="btn btn-sm btn-outline-success editMaterialBtn"
                                         data-id="{{ $material->id }}"
                                         data-name="{{ $material->name }}"
-                                        data-image="{{ $material->image }}">
+                                        data-status="{{ $material->status }}"
+                                        data-image="{{ $material->image ? asset('storage/materials/'.$material->image) : asset('storage/materials/no-image.jpg') }}">
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
                                     <button class="btn btn-sm btn-outline-danger deleteMaterialBtn"
@@ -61,92 +111,102 @@
                 </table>
             </div>
 
-            <nav>
-                <ul class="pagination justify-content-center" id="pagination"></ul>
-            </nav>
+            <ul class="pagination justify-content-center" id="pagination"></ul>
         </div>
     </div>
 </div>
 
-<!-- Add Material Modal -->
+<!-- View Modal -->
+<div class="modal fade" id="viewMaterialModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">View Material</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="viewMaterialImage" style="width:150px;height:150px;object-fit:cover;" class="rounded mb-2">
+                <p><strong>Name:</strong> <span id="viewMaterialName"></span></p>
+                <p><strong>Status:</strong> <span id="viewMaterialStatus"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Modal -->
 <div class="modal fade" id="addMaterialModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title">Add Material</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form action="{{ route('admin.material.add') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="modal-body">
-                    <div class="mb-2">
-                        <label>Image</label>
-                        <input type="file" class="form-control" name="image" id="addMaterialImageInput">
-                        <img id="addMaterialImagePreview" src="{{ asset('storage/materials/no-image.jpg') }}" width="100" height="100" class="mt-2 rounded">
-                    </div>
-                    <div class="mb-2">
-                        <label>Name</label>
-                        <input type="text" class="form-control" name="name" required>
-                    </div>
+                <div class="modal-body text-center">
+                    <img id="addMaterialImagePreview" src="{{ asset('storage/materials/no-image.jpg') }}" style="width:150px;height:150px;" class="rounded mb-2">
+                    <input type="file" name="image" class="form-control mb-2" id="addMaterialImageInput">
+                    <input type="text" name="name" class="form-control mb-2" placeholder="Name" required>
+                    <select name="status" class="form-control mb-2">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Add Material</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success">Add</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Edit Material Modal -->
+<!-- Edit Modal -->
 <div class="modal fade" id="editMaterialModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-warning text-white">
                 <h5 class="modal-title">Edit Material</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form id="editMaterialForm" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                <input type="hidden" id="editMaterialId" name="id">
-                <div class="modal-body">
-                    <div class="mb-2">
-                        <label>Image</label>
-                        <input type="file" class="form-control" id="editMaterialImageInput" name="image">
-                        <img id="editMaterialImagePreview" src="{{ asset('storage/materials/no-image.jpg') }}" width="100" height="100" class="mt-2 rounded">
-                    </div>
-                    <div class="mb-2">
-                        <label>Name</label>
-                        <input type="text" class="form-control" id="editMaterialName" name="name" required>
-                    </div>
+                <div class="modal-body text-center">
+                    <img id="editMaterialImagePreview" src="{{ asset('storage/materials/no-image.jpg') }}" style="width:150px;height:150px;" class="rounded mb-2">
+                    <input type="file" name="image" class="form-control mb-2" id="editMaterialImageInput">
+                    <input type="text" name="name" class="form-control mb-2" id="editMaterialName" placeholder="Name" required>
+                    <select name="status" class="form-control mb-2" id="editMaterialStatus">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-warning">Save Changes</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-warning">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Delete Material Modal -->
+<!-- Delete Modal -->
 <div class="modal fade" id="deleteMaterialModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Confirm Delete</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title">Delete Material</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body text-center">
                 Are you sure to delete <strong id="deleteMaterialName"></strong>?
             </div>
             <div class="modal-footer">
                 <form id="deleteMaterialForm" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger">Delete</button>
                 </form>
             </div>
         </div>
@@ -154,86 +214,108 @@
 </div>
 
 <script>
-const rowsPerPage = 6;
+const rowsPerPage = 5;
 let currentPage = 1;
 let filteredRows = [];
 
-// Search & Pagination
 function filterRows() {
     const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const selectedStatus = document.getElementById('searchStatus').value;
+
     filteredRows = Array.from(document.querySelectorAll("#materialTable tbody tr")).filter(row => {
         const name = row.cells[1].innerText.toLowerCase();
-        return name.includes(searchText);
+        const status = row.cells[2].innerText.includes('Active') ? '1' : '0';
+        return name.includes(searchText) && (selectedStatus === "" || status === selectedStatus);
     });
+
     currentPage = 1;
-    paginationTable();
+    paginate();
 }
 
-function paginationTable() {
-    const totalRows = filteredRows.length;
-    const totalPages = Math.ceil(totalRows / rowsPerPage);
-    document.querySelectorAll("#materialTable tbody tr").forEach(r => r.style.display = "none");
-    filteredRows.slice((currentPage-1)*rowsPerPage, currentPage*rowsPerPage).forEach(r => r.style.display = "");
-    renderPagination(totalPages);
-}
+function paginate() {
+    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+    document.querySelectorAll("#materialTable tbody tr").forEach(r => r.style.display='none');
+    filteredRows.slice((currentPage-1)*rowsPerPage, currentPage*rowsPerPage).forEach(r => r.style.display='');
 
-function renderPagination(totalPages) {
-    const pagination = document.getElementById("pagination");
-    pagination.innerHTML = "";
-    for (let i=1;i<=totalPages;i++){
-        const btn = document.createElement("button");
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+    for(let i=1;i<=totalPages;i++){
+        const btn = document.createElement('button');
         btn.textContent=i;
-        btn.className="btn btn-sm btn-outline-primary mx-1";
-        if(i===currentPage) btn.classList.add("active");
-        btn.onclick=()=>{currentPage=i;paginationTable();};
+        btn.className='btn btn-sm btn-outline-primary mx-1';
+        if(i===currentPage) btn.classList.add('active');
+        btn.onclick = () => { currentPage=i; paginate(); };
         pagination.appendChild(btn);
     }
 }
 
-// Modals
 function initMaterialModals() {
-    // Add
-    document.getElementById('addMaterialBtn').addEventListener('click', () => {
-        new bootstrap.Modal(document.getElementById('addMaterialModal')).show();
-    });
+    const addPreview = document.getElementById('addMaterialImagePreview');
+    addPreview.dataset.default = addPreview.src;
 
-    // Image preview
-    document.getElementById('addMaterialImageInput').addEventListener('change', function(e){
-        if(e.target.files && e.target.files[0]){
+    const editPreview = document.getElementById('editMaterialImagePreview');
+    editPreview.dataset.default = editPreview.src;
+
+    previewImage('addMaterialImageInput', 'addMaterialImagePreview');
+    previewImage('editMaterialImageInput', 'editMaterialImagePreview');
+    document.getElementById('addMaterialBtn').addEventListener('click', ()=>new bootstrap.Modal(document.getElementById('addMaterialModal')).show());
+
+    // View
+    // Preview image khi chọn file
+function previewImage(inputId, previewId) {
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+
+    input.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
             const reader = new FileReader();
-            reader.onload = e => document.getElementById('addMaterialImagePreview').src = e.target.result;
-            reader.readAsDataURL(e.target.files[0]);
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = preview.dataset.default; // nếu muốn reset về default
         }
     });
-    document.getElementById('editMaterialImageInput').addEventListener('change', function(e){
-        if(e.target.files && e.target.files[0]){
-            const reader = new FileReader();
-            reader.onload = e => document.getElementById('editMaterialImagePreview').src = e.target.result;
-            reader.readAsDataURL(e.target.files[0]);
-        }
+}
+    document.querySelectorAll('.viewMaterialBtn').forEach(btn=>{
+        btn.addEventListener('click', function(){
+            document.getElementById('viewMaterialName').textContent=this.dataset.name;
+            document.getElementById('viewMaterialStatus').textContent=this.dataset.status=='1'?'Active':'Inactive';
+            document.getElementById('viewMaterialImage').src=this.dataset.image;
+            new bootstrap.Modal(document.getElementById('viewMaterialModal')).show();
+        });
     });
 
     // Edit
-    document.querySelectorAll('.editMaterialBtn').forEach(btn => btn.addEventListener('click', function(){
-        document.getElementById('editMaterialId').value = this.dataset.id;
-        document.getElementById('editMaterialName').value = this.dataset.name;
-        document.getElementById('editMaterialImagePreview').src = this.dataset.image ? `/storage/${this.dataset.image}` : "{{ asset('storage/materials/no-image.jpg') }}";
-        document.getElementById('editMaterialForm').action = `/admin/material/${this.dataset.id}`;
-        new bootstrap.Modal(document.getElementById('editMaterialModal')).show();
-    }));
+    document.querySelectorAll('.editMaterialBtn').forEach(btn=>{
+        btn.addEventListener('click', function(){
+            const form = document.getElementById('editMaterialForm');
+            form.action=`/admin/material/${this.dataset.id}`;
+            document.getElementById('editMaterialName').value=this.dataset.name;
+            document.getElementById('editMaterialStatus').value=this.dataset.status;
+            document.getElementById('editMaterialImagePreview').src=this.dataset.image;
+            new bootstrap.Modal(document.getElementById('editMaterialModal')).show();
+        });
+    });
 
     // Delete
-    document.querySelectorAll('.deleteMaterialBtn').forEach(btn => btn.addEventListener('click', function(){
-        document.getElementById('deleteMaterialName').textContent = this.dataset.name;
-        document.getElementById('deleteMaterialForm').action = `/admin/material/${this.dataset.id}`;
-        new bootstrap.Modal(document.getElementById('deleteMaterialModal')).show();
-    }));
+    document.querySelectorAll('.deleteMaterialBtn').forEach(btn=>{
+        btn.addEventListener('click', function(){
+            document.getElementById('deleteMaterialName').textContent=this.dataset.name;
+            document.getElementById('deleteMaterialForm').action=`/admin/material/${this.dataset.id}`;
+            new bootstrap.Modal(document.getElementById('deleteMaterialModal')).show();
+        });
+    });
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
+    
     filteredRows = Array.from(document.querySelectorAll("#materialTable tbody tr"));
-    paginationTable();
+    paginate();
     document.getElementById('searchInput').addEventListener('input', filterRows);
+    document.getElementById('searchStatus').addEventListener('change', filterRows);
     initMaterialModals();
 });
 </script>

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -40,9 +39,9 @@ class SetPasswordController extends Controller
         $request->validate([
             'password' => 'required|min:8|confirmed',
         ], [
-            'password.required' => 'Mật khẩu không được để trống',
-            'password.min' => 'Mật khẩu phải có ít nhất 8 ký tự',
-            'password.confirmed' => 'Xác nhận mật khẩu không khớp',
+            'password.required' => 'Password is required',
+            'password.min' => 'Password must be at least 8 characters',
+            'password.confirmed' => 'Password confirmation does not match',
         ]);
 
         // Update user password
@@ -51,6 +50,6 @@ class SetPasswordController extends Controller
             'password_set' => true,
         ]);
 
-        return redirect()->route('user.dashboard')->with('success', 'Đặt mật khẩu thành công!');
+        return redirect()->route('user.dashboard')->with('success', 'Password has been set successfully!');
     }
 }

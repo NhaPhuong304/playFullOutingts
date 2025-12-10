@@ -2,6 +2,28 @@
 @section('page-title', 'Itinerary')
 
 @section('content')
+<style>
+.game-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: 0.25s;
+    cursor: pointer;
+}
+.game-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+#viewImage {
+    width: 250px;   
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 20px auto;
+    border-radius: 10px;
+}
+</style>
 
 <div class="main-content">
     <div class="card mt-4">
@@ -11,34 +33,52 @@
 
         <div class="card-body">
 
-            <div class="row g-2 align-items-center mb-4">
+            {{-- SUCCESS --}}
+            @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show">
+                {{ session('success') }}
+                <button class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
+
+            {{-- ERRORS --}}
+            @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show">
+                <strong>Error:</strong>
+                <ul class="mb-0">
+                    @foreach($errors->all() as $e) <li>{{ $e }}</li> @endforeach
+                </ul>
+                <button class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
+
+            {{-- FILTER + ADD --}}
+            <div class="row g-2 mb-4">
                 <div class="col-auto">
-                    <select class="form-select" name="status" id="searchStatus">
+                    <select id="searchStatus" class="form-select">
                         <option value="">All</option>
                         <option value="1">Active</option>
                         <option value="0">Inactive</option>
                     </select>
                 </div>
 
-
                 <div class="col-auto">
-                    <button class="btn btn-success" id="addItineraryBtn">
+                    <button id="addItineraryBtn" class="btn btn-success">
                         Add Itinerary
                     </button>
                 </div>
 
                 <div class="col-auto ms-auto">
-                    <div class="position-relative">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search itinerary...">
-                        <span class="fa fa-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></span>
-                    </div>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search itinerary...">
                 </div>
             </div>
 
+            {{-- TABLE --}}
             <div class="table-responsive">
                 <table class="table table-hover table-sm" id="itineraryTable">
-                    <thead>
+                    <thead class="table-dark">
                         <tr>
+                            <th>Img</th>
                             <th>Name</th>
                             <th>Description</th>
                             <th>Days</th>
@@ -46,140 +86,138 @@
                             <th style="width:120px;">Actions</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        @foreach($itineraries as $itinerary)
+                        @foreach($itineraries as $it)
                         <tr>
-                            <td>{{ $itinerary->name }}</td>
-                            <td>{{ Str::limit($itinerary->description, 60) }}</td>
-                            <td>{{ $itinerary->days }}</td>
                             <td>
-                                @if($itinerary->status == 1)
-                                    <span class="badge bg-success">Active</span>
+                                @if($it->image)
+                                    <img class="game-thumb" src="{{ asset('storage/itineraries/'.$it->image) }}">
                                 @else
-                                    <span class="badge bg-danger">Inactive</span>
+                                    <img class="game-thumb" src="{{ asset('storage/avatars/no-image.jpg') }}">
                                 @endif
                             </td>
+
+                            <td>{{ $it->name }}</td>
+                            <td>{{ Str::limit($it->description, 50) }}</td>
+                            <td>{{ $it->days }}</td>
+
+                            <td>
+                                <span class="badge {{ $it->status ? 'bg-success' : 'bg-danger' }}">
+                                    {{ $it->status ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+
                             <td>
                                 <div class="btn-group">
-                                    <button class="btn btn-sm btn-outline-info viewItineraryBtn"
-                                            data-id="{{ $itinerary->id }}"
-                                            data-name="{{ $itinerary->name }}"
-                                            data-description="{{ $itinerary->description }}"
-                                            data-days="{{ $itinerary->days }}"
-                                            data-status="{{ $itinerary->status }}"
-                                            title="View">
-                                        <i class="fa-regular fa-eye"></i>
-                                    </button>
+                                <button class="btn btn-sm btn-outline-info viewItineraryBtn"
+                                    data-name="{{ $it->name }}"
+                                    data-description="{{ $it->description }}"
+                                    data-days="{{ $it->days }}"
+                                    data-status="{{ $it->status }}"
+                                    data-image="{{ $it->image }}"
+                                    data-locations='@json($it->locations)'>
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
 
-                                    <button class="btn btn-sm btn-outline-success editItineraryBtn"
-                                            data-id="{{ $itinerary->id }}"
-                                            data-name="{{ $itinerary->name }}"
-                                            data-description="{{ $itinerary->description }}"
-                                            data-days="{{ $itinerary->days }}"
-                                            data-status="{{ $itinerary->status }}"
-                                            title="Edit">
-                                        <i class="fa-solid fa-pencil"></i>
-                                    </button>
+                                <button class="btn btn-sm btn-outline-success editItineraryBtn"
+                                    data-id="{{ $it->id }}"
+                                    data-name="{{ $it->name }}"
+                                    data-description="{{ $it->description }}"
+                                    data-days="{{ $it->days }}"
+                                    data-status="{{ $it->status }}"
+                                    data-image="{{ $it->image }}"
+                                    data-locations='@json($it->locations)'>
+                                    <i class="fa-solid fa-pencil"></i>
+                                </button>
 
-                                    <button class="btn btn-sm btn-outline-danger deleteItineraryBtn"
-                                            data-id="{{ $itinerary->id }}"
-                                            data-name="{{ $itinerary->name }}"
-                                            title="Delete">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
+                                <button class="btn btn-sm btn-outline-danger deleteItineraryBtn"
+                                    data-id="{{ $it->id }}"
+                                    data-name="{{ $it->name }}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
                                 </div>
                             </td>
+
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
 
-            <nav aria-label="Page navigation">
+            <nav>
                 <ul class="pagination justify-content-center" id="pagination"></ul>
             </nav>
-
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="viewItineraryModal" tabindex="-1">
+{{-- ========================= VIEW MODAL ========================= --}}
+<div class="modal fade" id="viewItineraryModal">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content shadow-lg rounded-4">
+        <div class="modal-content">
 
-            <div class="modal-header bg-primary text-white rounded-top-4">
-                <h5 class="modal-title">Itinerary Details</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header bg-primary text-white">
+                <h5>Itinerary Details</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
+                <img id="viewImage" class="img-fluid rounded mb-3" alt="Image">
 
-                <div class="mb-2">
-                    <strong>Name:</strong>
-                    <span id="viewName"></span>
-                </div>
-
-                <div class="mb-2">
-                    <strong>Description:</strong>
-                    <span id="viewDescription"></span>
-                </div>
-
-                <div class="mb-2">
-                    <strong>Days:</strong>
-                    <span id="viewDays"></span>
-                </div>
-
-                <div class="mb-2">
-                    <strong>Status:</strong>
-                    <span id="viewStatus"></span>
-                </div>
+                <p><label>Name:</label> <span id="viewName"></span></p>
+                <p><label>Description:</label> <span id="viewDescription"></span></p>
+                <p><label>Days:</label> <span id="viewDays"></span></p>
+                <p><label>Status:</label> <span id="viewStatus"></span></p>
 
                 <hr>
 
                 <h6>Locations</h6>
                 <div id="viewLocations"></div>
-
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="addItineraryModal" tabindex="-1">
+{{-- ========================= ADD MODAL ========================= --}}
+<div class="modal fade" id="addItineraryModal">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Add Itinerary</h5>
+                <h5>Add Itinerary</h5>
                 <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
-            <form method="POST" action="{{ route('admin.itineraries.add') }}">
+            <form method="POST" action="{{ route('admin.itineraries.add') }}" enctype="multipart/form-data">
                 @csrf
+
                 <div class="modal-body">
+                    <label>Image</label>
+                    <input type="file" name="image" class="form-control mb-2">
+                    <label>Name</label>
+                    <input name="name" class="form-control mb-2" required>
 
-                    <div class="mb-3">
-                        <label>Name</label>
-                        <input name="name" class="form-control" required>
-                    </div>
+                    <label>Description</label>
+                    <textarea name="description" class="form-control mb-2"></textarea>
 
-                    <div class="mb-3">
-                        <label>Description</label>
-                        <textarea name="description" class="form-control" required></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Days</label>
-                        <input type="number" name="days" class="form-control" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Status</label>
-                        <select class="form-control" name="status">
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
+                    <label>Days</label>
+                    <input type="number" name="days" class="form-control mb-2" required>
+                    <label>Locations</label>
+                        <select name="location_ids[]" class="form-control mb-2" multiple>
+                            @foreach($locations as $loc)
+                                <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                            @endforeach
                         </select>
-                    </div>
 
+
+                    <label>Status</label>
+                    <select name="status" class="form-control mb-2">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+
+                    
                 </div>
 
                 <div class="modal-footer">
@@ -192,49 +230,54 @@
     </div>
 </div>
 
-<div class="modal fade" id="editItineraryModal" tabindex="-1">
+
+{{-- ========================= EDIT MODAL ========================= --}}
+<div class="modal fade" id="editItineraryModal">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header bg-warning text-white">
-                <h5 class="modal-title">Edit Itinerary</h5>
+                <h5>Edit Itinerary</h5>
                 <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
-            <form id="editItineraryForm" method="POST">
+            <form id="editItineraryForm" method="POST" enctype="multipart/form-data">
                 @csrf
-                @method('PUT')
+                @method("PUT")
 
                 <div class="modal-body">
+                    <label>Image (optional)</label>
+                    <input type="file" name="image" class="form-control mb-2">
 
-                    <div class="mb-3">
-                        <label>Name</label>
-                        <input id="editName" name="name" class="form-control">
-                    </div>
+                    <label>Name</label>
+                    <input id="editName" name="name" class="form-control mb-2">
 
-                    <div class="mb-3">
-                        <label>Description</label>
-                        <textarea id="editDescription" name="description" class="form-control"></textarea>
-                    </div>
+                    <label>Description</label>
+                    <textarea id="editDescription" name="description" class="form-control mb-2"></textarea>
 
-                    <div class="mb-3">
-                        <label>Days</label>
-                        <input id="editDays" name="days" type="number" class="form-control">
-                    </div>
-
-                    <div class="mb-3">
-                        <label>Status</label>
-                        <select id="editStatus" name="status" class="form-control">
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
+                    <label>Days</label>
+                    <input id="editDays" name="days" type="number" class="form-control mb-2">
+                    <label>Locations</label>
+                        <select name="location_ids[]" id="editLocations" class="form-control mb-2" multiple>
+                            @foreach($locations as $loc)
+                                <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                            @endforeach
                         </select>
-                    </div>
+
+
+                    <label>Status</label>
+                    <select id="editStatus" name="status" class="form-control mb-2">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+
+                    
 
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-warning">Save Changes</button>
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-warning">Save</button>
                 </div>
 
             </form>
@@ -243,7 +286,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="deleteItineraryModal" tabindex="-1">
+
+{{-- ========================= DELETE MODAL ========================= --}}
+<div class="modal fade" id="deleteItineraryModal">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
@@ -253,14 +298,14 @@
             </div>
 
             <div class="modal-body">
-                <p>Do you really want to delete <strong id="deleteName"></strong>?</p>
+                Do you want to delete <strong id="deleteName"></strong>?
             </div>
 
             <div class="modal-footer">
                 <form id="deleteItineraryForm" method="POST">
                     @csrf
-                    @method('DELETE')
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    @method("DELETE")
+                    <button class="btn btn-secondary">Cancel</button>
                     <button class="btn btn-danger">Delete</button>
                 </form>
             </div>
@@ -269,33 +314,44 @@
     </div>
 </div>
 
+
 <script>
-const rowsPerPage = 4;
+let rowsPerPage = 5;
 let currentPage = 1;
 let filteredRows = [];
 
+/* ========================= FILTER / SEARCH ========================= */
 function filterRows() {
-    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const keyword = document.getElementById('searchInput').value.toLowerCase();
     const selectedStatus = document.getElementById('searchStatus').value;
 
     filteredRows = Array.from(document.querySelectorAll("#itineraryTable tbody tr")).filter(row => {
-        const name = row.cells[0].innerText.toLowerCase();
-        const statusText = row.cells[3].innerText.trim() === "Active" ? "1" : "0";
 
-        const matchName = name.includes(searchText);
-        const matchStatus = selectedStatus === "" || statusText === selectedStatus;
+        const name = row.cells[1].innerText.toLowerCase();
+        const desc = row.cells[2].innerText.toLowerCase();
+        const days = row.cells[3].innerText.toLowerCase();
 
-        return matchName && matchStatus;
+        const statusCell = row.cells[4].innerText.trim();
+        const status = statusCell.includes("Active") ? "1" : "0";
+
+        const matchKeyword =
+            name.includes(keyword) ||
+            desc.includes(keyword) ||
+            days.includes(keyword);
+
+        const matchStatus =
+            selectedStatus === "" || selectedStatus === status;
+
+        return matchKeyword && matchStatus;
     });
 
     currentPage = 1;
-    paginationTable();
+    paginate();
 }
 
-
+/* ========================= PAGINATION ========================= */
 function paginate() {
-    const total = filteredRows.length;
-    const pages = Math.ceil(total / rowsPerPage);
+    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
 
     document.querySelectorAll("#itineraryTable tbody tr").forEach(row => row.style.display = "none");
 
@@ -304,17 +360,18 @@ function paginate() {
 
     filteredRows.slice(start, end).forEach(row => row.style.display = "");
 
-    renderPagination(pages);
+    renderPagination(totalPages);
 }
 
-function renderPagination(pages) {
+function renderPagination(totalPages) {
     const container = document.getElementById("pagination");
     container.innerHTML = "";
 
-    for (let i = 1; i <= pages; i++) {
+    for (let i = 1; i <= totalPages; i++) {
         const btn = document.createElement("button");
         btn.textContent = i;
         btn.className = "btn btn-sm btn-outline-primary mx-1";
+
         if (i === currentPage) btn.classList.add("active");
 
         btn.onclick = () => {
@@ -326,90 +383,86 @@ function renderPagination(pages) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    // lấy toàn bộ rows
+/* ========================= MODALS (VIEW / EDIT / DELETE) ========================= */
+function initModals() {
+
+    // --- VIEW ---
+    document.querySelectorAll(".viewItineraryBtn").forEach(btn => {
+        btn.onclick = () => {
+            document.getElementById("viewName").innerText = btn.dataset.name;
+            document.getElementById("viewDescription").innerText = btn.dataset.description;
+            document.getElementById("viewDays").innerText = btn.dataset.days;
+            document.getElementById("viewStatus").innerText = btn.dataset.status == 1 ? "Active" : "Inactive";
+
+            const img = btn.dataset.image ? `/storage/itineraries/${btn.dataset.image}` : "/no-image.jpg";
+            document.getElementById("viewImage").src = img;
+
+            let locations = JSON.parse(btn.dataset.locations || "[]");
+            let html = "";
+            locations.forEach(loc => {
+                html += `
+                    <div class="border rounded p-2 mb-2">
+                        <strong>${loc.name}</strong><br>
+                        ${loc.description ?? ""}<br>
+                        ${loc.image ? `<img src="/storage/locations/${loc.image}" width="120">` : ""}
+                    </div>`;
+            });
+
+            document.getElementById("viewLocations").innerHTML = html;
+
+            new bootstrap.Modal(document.getElementById("viewItineraryModal")).show();
+        };
+    });
+
+    // --- ADD ---
+    document.getElementById("addItineraryBtn").onclick = () => {
+        new bootstrap.Modal(document.getElementById("addItineraryModal")).show();
+    };
+
+    // --- EDIT ---
+    document.querySelectorAll(".editItineraryBtn").forEach(btn => {
+        btn.onclick = () => {
+            const id = btn.dataset.id;
+
+            document.getElementById("editName").value = btn.dataset.name;
+            document.getElementById("editDescription").value = btn.dataset.description;
+            document.getElementById("editDays").value = btn.dataset.days;
+            document.getElementById("editStatus").value = btn.dataset.status;
+            let selectedLocations = JSON.parse(btn.dataset.locations).map(l => l.id);
+
+            [...document.getElementById('editLocations').options].forEach(opt => {
+                opt.selected = selectedLocations.includes(parseInt(opt.value));
+            });
+
+
+            document.getElementById("editItineraryForm").action = `/admin/itineraries/update/${id}`;
+
+            new bootstrap.Modal(document.getElementById("editItineraryModal")).show();
+        };
+    });
+
+    // --- DELETE ---
+    document.querySelectorAll(".deleteItineraryBtn").forEach(btn => {
+        btn.onclick = () => {
+            document.getElementById("deleteName").innerText = btn.dataset.name;
+            document.getElementById("deleteItineraryForm").action = `/admin/itineraries/delete/${btn.dataset.id}`;
+            new bootstrap.Modal(document.getElementById("deleteItineraryModal")).show();
+        };
+    });
+}
+
+/* ========================= INITIAL LOAD ========================= */
+document.addEventListener("DOMContentLoaded", () => {
+
     filteredRows = Array.from(document.querySelectorAll("#itineraryTable tbody tr"));
     paginate();
 
     document.getElementById("searchInput").addEventListener("input", filterRows);
+    document.getElementById("searchStatus").addEventListener("change", filterRows);
 
     initModals();
 });
-
-function initModals() {
-
-    document.getElementById("addItineraryBtn").addEventListener("click", () => {
-        new bootstrap.Modal(document.getElementById("addItineraryModal")).show();
-    });
-
-
-    document.querySelectorAll(".viewItineraryBtn").forEach(btn => {
-        btn.addEventListener("click", function () {
-
-            let id = this.dataset.id;
-
-            fetch(`/admin/itineraries/${id}`)
-                .then(res => res.json())
-                .then(data => {
-
-                    document.getElementById("viewName").innerText = data.name;
-                    document.getElementById("viewDescription").innerText = data.description;
-                    document.getElementById("viewDays").innerText = data.days;
-                    document.getElementById("viewStatus").innerText = data.status == 1 ? "Active" : "Inactive";
-
-                    let html = "";
-                    data.locations.forEach(loc => {
-                        html += `
-                            <div class="border rounded p-2 mb-2">
-                                <strong>${loc.name}</strong><br>
-                                ${loc.description}<br>
-                                ${loc.image ? `<img src="/uploads/${loc.image}" width="120">` : ""}
-                            </div>
-                        `;
-                    });
-
-                    document.getElementById("viewLocations").innerHTML = html;
-
-                    new bootstrap.Modal(document.getElementById("viewItineraryModal")).show();
-                });
-        });
-    });
-
-
-    document.querySelectorAll(".editItineraryBtn").forEach(btn => {
-        btn.addEventListener("click", function () {
-
-            let id = this.dataset.id;
-
-            document.getElementById("editName").value = this.dataset.name;
-            document.getElementById("editDescription").value = this.dataset.description;
-            document.getElementById("editDays").value = this.dataset.days;
-            document.getElementById("editStatus").value = this.dataset.status;
-
-            document.getElementById("editItineraryForm").action =
-                `/admin/itineraries/update/${id}`;
-
-            new bootstrap.Modal(document.getElementById("editItineraryModal")).show();
-        });
-    });
-
-
-    document.querySelectorAll(".deleteItineraryBtn").forEach(btn => {
-        btn.addEventListener("click", function () {
-
-            let id = this.dataset.id;
-            let name = this.dataset.name;
-
-            document.getElementById("deleteName").innerText = name;
-
-            document.getElementById("deleteItineraryForm").action =
-                `/admin/itineraries/delete/${id}`;
-
-            new bootstrap.Modal(document.getElementById("deleteItineraryModal")).show();
-        });
-    });
-
-}
 </script>
+
 
 @endsection

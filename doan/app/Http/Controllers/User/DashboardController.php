@@ -8,6 +8,7 @@ use App\Models\Itinerary;
 
 class DashboardController extends Controller
 
+
 {
     
     public function dashboard()
@@ -37,3 +38,4 @@ class DashboardController extends Controller
 
     
 }
+

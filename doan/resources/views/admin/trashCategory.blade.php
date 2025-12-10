@@ -2,6 +2,22 @@
 @section('page-title', 'Category')
 
 @section('content')
+<style>
+.category-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+.category-thumb:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+</style>
 
 <div class="main-content">
     <div class="card mt-4">
@@ -9,6 +25,24 @@
             <h5 class="card-title">Category</h5>
         </div>
         <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
             <div class="row g-2 align-items-center mb-4">
                 <!-- Dropdown Role -->
                 <div class="col-auto">
@@ -36,7 +70,7 @@
                 
             <div class="table-responsive" >
                 <table class="table table-hover" id="categoryTable">
-                    <thead>
+                    <thead class="table-dark">
                         <tr>
                             <th>Name</th>
                             <th>Slug</th>
@@ -77,14 +111,15 @@
                                         data-name="{{ $category->name }}">
                                     <i class="fa fa-trash"></i>
                                 </button>
-                                <button  class="btn btn-sm btn-outline-success editCategoryBtn" data-bs-toggle="tooltip" title="Edit"
+                                <button class="btn btn-sm btn-outline-success restoreCategoryBtn" 
+                                        data-bs-toggle="tooltip" 
+                                        title="Restore"
                                         data-id="{{ $category->id }}"
-                                        data-name="{{ $category->name }}"
-                                        data-slug="{{ $category->slug }}"
-                                        data-description="{{ $category->description }}"
-                                        data-status="{{ $category->status }}">
-                                    <i class="fa-solid fa-pencil"></i>
+                                        data-name="{{ $category->name }}">
+                                    <i class="fa-solid fa-rotate-left"></i>
                                 </button>
+
+
                                 </div>
                             </td>
                         </tr>
@@ -174,6 +209,33 @@
                 </div>
             </div>
         </div>
+        <!-- Restore Modal -->
+<div class="modal fade" id="restoreCategoryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Confirm Restore</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you want to restore 
+                <strong id="restoreCategoryName"></strong>?
+            </div>
+
+            <div class="modal-footer">
+                <form id="restoreCategoryForm" method="POST" action="">
+                    @csrf
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Yes, Restore</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <!-- Add -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -339,7 +401,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initCategoryModals() {
-
+// View
     document.querySelectorAll(".viewCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
             const id = this.dataset.id;
@@ -358,7 +420,7 @@ function initCategoryModals() {
         });
     });
 
-    // delete
+    // Delete permanently
     document.querySelectorAll(".deleteCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
             const id = this.dataset.id;
@@ -371,25 +433,19 @@ function initCategoryModals() {
         });
     });
 
-    // edit
-    document.querySelectorAll(".editCategoryBtn").forEach(btn => {
+    // Restore Category
+    document.querySelectorAll(".restoreCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {
             const id = this.dataset.id;
             const name = this.dataset.name;
-            const slug = this.dataset.slug;
-            const description = this.dataset.description;
-            const status = this.dataset.status;
 
-            document.getElementById("editName").value = name;
-            document.getElementById("editSlug").value = slug;
-            document.getElementById("editDescription").value = description;
-            document.getElementById("editStatus").value = status;
+            document.getElementById("restoreCategoryName").textContent = `"${name}"`;
+            document.getElementById("restoreCategoryForm").action = `/admin/recycle-category/restore/${id}`;
 
-            document.getElementById("editCategoryForm").action = `/admin/category/${id}`;
-
-            new bootstrap.Modal(document.getElementById("editCategoryModal")).show();
+            new bootstrap.Modal(document.getElementById("restoreCategoryModal")).show();
         });
     });
+
 }
 
 document.addEventListener("DOMContentLoaded", () => {

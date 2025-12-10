@@ -25,13 +25,31 @@
             <h5 class="card-title">Games</h5>
         </div>
         <div class="card-body">
+                    @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
             <!-- Filters & Add Button -->
             <div class="row g-2 align-items-center mb-4">
                 <div class="col-auto">
                     <select class="form-select" name="status" id="searchStatus">
                         <option value="">All</option>
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
+                        <option value="0">Active</option>
+                        <option value="1">Inactive</option>
                     </select>
                 </div>
                 <div class="col-auto">
@@ -39,7 +57,7 @@
                 </div>
                 <div class="col-auto ms-auto">
                     <div class="position-relative">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search Game">
                         <span class="fa fa-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></span>
                     </div>
                 </div>
@@ -54,6 +72,7 @@
                             <th>Name</th>
                             <th>Slug</th>
                             <th>Duration</th>
+                            <th>Players</th>
                             <th>Category</th>
                             <th>Material</th>
                             <th>Video</th>
@@ -71,6 +90,7 @@
                             <td>{{ $game->name }}</td>
                             <td>{{ $game->slug }}</td>
                             <td>{{ $game->duration }} min</td>
+                            <td>{{ $game->players }}</td>
                             <td>
                                 @foreach($game->categories as $category)
                                     <span>{{ $category->name }}</span>
@@ -94,12 +114,16 @@
                                         data-id="{{ $game->id }}"
                                         data-name="{{ $game->name }}"
                                         data-slug="{{ $game->slug }}"
+                                        data-game_setup="{{ $game->game_setup }}"
+                                        data-game_rules="{{ $game->game_rules }}"
                                         data-duration="{{ $game->duration }}"
                                         data-instructions="{{ $game->instructions }}"
                                         data-status="{{ $game->status }}"
                                         data-image="{{ $game->image ? asset('storage/games/images/'.$game->image) : asset('storage/games/no-image.jpg') }}"
                                         data-video="{{ $game->video_url }}"
+                                        data-players="{{ $game->players }}"
                                         data-file="{{ $game->download_file }}"
+                                        data-difficulty="{{ $game->difficulty }}"
                                         data-categories='@json($game->categories->pluck("id"))'
                                         data-materials='@json($game->materials->pluck("id"))'>
                                         <i class="fa-regular fa-eye"></i>
@@ -109,7 +133,11 @@
                                         data-id="{{ $game->id }}"
                                         data-name="{{ $game->name }}"
                                         data-slug="{{ $game->slug }}"
+                                        data-players="{{ $game->players }}"
+                                        data-game_setup="{{ $game->game_setup }}"
+                                        data-game_rules="{{ $game->game_rules }}"
                                         data-duration="{{ $game->duration }}"
+                                        data-difficulty="{{ $game->difficulty }}"
                                         data-instructions="{{ $game->instructions }}"
                                         data-status="{{ $game->status }}"
                                         data-image="{{ $game->image ? asset('storage/games/images/'.$game->image) : asset('storage/games/no-image.jpg') }}"
@@ -157,6 +185,10 @@
                     <p><strong>Name:</strong> <span id="viewGameName"></span></p>
                     <p><strong>Slug:</strong> <span id="viewGameSlug"></span></p>
                     <p><strong>Duration:</strong> <span id="viewGameDuration"></span> min</p>
+                    <p><strong>Players:</strong> <span id="viewGamePlayers"></span></p>
+                    <p><strong>Difficulty:</strong> <span id="viewGameDifficulty"></span></p>
+                    <p><strong>Game Setup:</strong> <span id="viewGameSetup"></span></p>
+                    <p><strong>Game Rules:</strong> <span id="viewGameRules"></span></p>
                     <p><strong>Instructions:</strong> <span id="viewGameInstructions"></span></p>
                     <p><strong>Categories:</strong> <span id="viewGameCategories"></span></p>
                     <p><strong>Materials:</strong> <span id="viewGameMaterials"></span></p>
@@ -192,6 +224,10 @@
                         <input type="text" class="form-control mb-2" name="name" placeholder="Name" required>
                         <input type="text" class="form-control mb-2" name="slug" placeholder="Slug" required>
                         <input type="number" class="form-control mb-2" name="duration" placeholder="Duration">
+                        <input type="number" class="form-control mb-2" name="players" placeholder="Players">
+                        <input type="text" class="form-control mb-2" name="difficulty" placeholder="Difficulty">
+                        <input type="text" class="form-control mb-2" name="game_setup" placeholder="Game Setup">
+                        <input type="text" class="form-control mb-2" name="game_rules" placeholder="Game Rules">
                         <textarea class="form-control mb-2" name="instructions" id="instructions" placeholder="Instructions"></textarea>
 
                         <label>Categories</label>
@@ -248,6 +284,10 @@
                         <input type="text" class="form-control mb-2" name="name" id="editGameName" placeholder="Name" required>
                         <input type="text" class="form-control mb-2" name="slug" id="editGameSlug" placeholder="Slug" required>
                         <input type="number" class="form-control mb-2" name="duration" id="editGameDuration" placeholder="Duration">
+                        <input type="number" class="form-control mb-2" name="players" id="editGamePlayers" placeholder="Players">
+                        <input type="text" class="form-control mb-2" name="difficulty" id="editGameDifficulty" placeholder="Difficulty">
+                        <input type="text" class="form-control mb-2" name="game_setup" id="editGameSetup" placeholder="Game Setup">
+                        <input type="text" class="form-control mb-2" name="game_rules" id="editGameRules" placeholder="Game Rules">
                         <textarea class="form-control mb-2" name="instructions" id="editGameInstructions" placeholder="Instructions"></textarea>
 
                         <label>Categories</label>
@@ -373,6 +413,10 @@ function initGameModals() {
         document.getElementById('viewGameName').textContent = this.dataset.name;
         document.getElementById('viewGameSlug').textContent = this.dataset.slug;
         document.getElementById('viewGameDuration').textContent = this.dataset.duration;
+        document.getElementById('viewGamePlayers').textContent = this.dataset.players;
+        document.getElementById('viewGameDifficulty').textContent = this.dataset.difficulty;
+        document.getElementById('viewGameSetup').textContent = this.dataset.game_setup;
+        document.getElementById('viewGameRules').textContent = this.dataset.game_rules;
         document.getElementById('viewGameInstructions').textContent = this.dataset.instructions;
         document.getElementById('viewGameStatus').textContent = this.dataset.status == '1' ? 'Active' : 'Inactive';
         document.getElementById('viewGameImage').src = this.dataset.image;
@@ -427,10 +471,15 @@ function initGameModals() {
         document.getElementById('editGameName').value = this.dataset.name;
         document.getElementById('editGameSlug').value = this.dataset.slug;
         document.getElementById('editGameDuration').value = this.dataset.duration;
+        document.getElementById('editGamePlayers').value = this.dataset.players;
+        document.getElementById('editGameDifficulty').value = this.dataset.difficulty;
+        document.getElementById('editGameSetup').value = this.dataset.game_setup;
+        document.getElementById('editGameRules').value = this.dataset.game_rules;
         document.getElementById('editGameInstructions').value = this.dataset.instructions;
         document.getElementById('editGameStatus').value = this.dataset.status;
         document.getElementById('editGameImagePreview').src = this.dataset.image || "{{ asset('storage/games/no-image.jpg') }}";
         document.getElementById('editGameVideo').value = this.dataset.video || "";
+        
 
         // Categories
         const selectCat = document.getElementById('editGameCategories');

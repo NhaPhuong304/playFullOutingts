@@ -1,213 +1,241 @@
 @extends('admin.dashboard')
-@section('page-title', 'Profile')
+@section('page-title', 'Profile Settings')
 
 @section('content')
+
+<style>
+/* Avatar */
+.profile-avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    border: 4px solid #fff;
+    transition: 0.25s ease;
+}
+.profile-avatar:hover {
+    transform: scale(1.05);
+}
+
+/* Section Card */
+.setting-card {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 8px 26px rgba(0,0,0,0.06);
+}
+
+/* Title */
+.section-title {
+    font-weight: 700;
+    font-size: 20px;
+    border-left: 4px solid #007bff;
+    padding-left: 12px;
+}
+
+/* Input */
+.form-control {
+    border-radius: 10px;
+    padding: 10px 14px;
+}
+
+/* Buttons */
+.btn-custom {
+    padding: 10px 18px;
+    border-radius: 10px;
+}
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 39px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+    transition: 0.2s;
+}
+.toggle-password:hover {
+    color: #000;
+}
+
+
+</style>
+
 <div class="main-content">
-    <div class="row mt-4">
 
-        <!-- Left Column: Avatar + Account Details -->
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <img id="profilePreview" 
-                         src="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('storage/avatars/no-image.jpg') }}" 
-                         class="rounded-circle mb-3" 
-                         style="width:150px;height:150px;object-fit:cover;">
+    <div class="container mt-4">
 
-                    <form id="photoForm" enctype="multipart/form-data">
-                        @csrf
-                        <input type="file" name="photo" id="photoInput" accept="image/*" style="display:none;">
-                        <button type="button" class="btn btn-outline-primary btn-sm" id="changePhotoBtn">Change Photo</button>
-                    </form>
+        {{-- ROW WRAPPER --}}
+        <div class="row g-4">
 
-                    <h5 class="mt-3" id="userName">{{ $user->name }}</h5>
-                    <div class="mt-3 text-start">
-                        <p><small class="text-muted">Email:</small> <span id="userEmail">{{ $user->email }}</span></p>
-                        <p><small class="text-muted">Phone:</small> <span id="userPhone">{{ $user->phone ?? '-' }}</span></p>
-                        <p><small class="text-muted">Birthday:</small> {{ $user->birthday ?? '-' }}</p>
-                        <p><small class="text-muted">Last Login:</small> {{ $user->last_login ?? '-' }}</p>
+            {{-- LEFT SIDE: AVATAR + BASIC INFO --}}
+            <div class="col-lg-4">
+                <div class="card setting-card p-4 text-center">
+
+                    <div class="mb-3">
+                        <img id="avatarPreview"
+                             class="profile-avatar"
+                             src="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('images/no_image.jpg') }}">
                     </div>
+
+                    {{-- Change Avatar --}}
+                    <form id="photoForm" action="{{ route('admin.profile.updatePhoto', $user->id) }}" 
+                        method="POST" enctype="multipart/form-data">
+                        @csrf
+
+                        <input type="file" name="photo" id="photoInput" class="d-none" accept="image/*">
+
+                        <button type="button" class="btn btn-outline-primary btn-custom" id="changePhotoBtn">
+                            <i class="fa-regular fa-image"></i> Change Photo
+                        </button>
+                    </form>
+
+
+                    <hr class="my-4">
+
+                    <h4 class="fw-bold">{{ $user->username }}</h4>
+                    <p class="text-muted mb-1"><i class="fa-regular fa-envelope"></i> {{ $user->email }}</p>
+                    <p class="text-muted mb-1"><i class="fa-solid fa-phone"></i> {{ $user->phone ?? '-' }}</p>
+                    <p class="text-muted mb-1"><i class="fa-regular fa-calendar"></i> {{ $user->birthday ?? '-' }}</p>
+                    <p class="text-muted"><i class="fa-solid fa-clock"></i> Last Login: {{ $user->last_login ?? '-' }}</p>
                 </div>
             </div>
-        </div>
 
-        <!-- Right Column -->
-        <div class="col-md-8">
+            {{-- RIGHT SIDE: FORMS --}}
+            <div class="col-lg-8">
 
-            <!-- Edit Profile -->
-            <div class="card mb-4">
-                <div class="card-header"><h5>Edit Profile</h5></div>
-                <div class="card-body">
-                    <form id="profileForm">
+                {{-- SUCCESS --}}
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                {{-- ERRORS --}}
+                @if($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <ul class="mb-0">
+                            @foreach($errors->all() as $e)
+                                <li>{{ $e }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                {{-- EDIT PROFILE --}}
+                <div class="card setting-card p-4 mb-4">
+                    <div class="section-title mb-3">Edit Profile</div>
+
+                    <form action="{{ route('admin.profile.update', $user->id) }}" method="POST">
                         @csrf
+
                         <div class="mb-3">
-                            <label class="form-label">Name</label>
-                            <input type="text" class="form-control" name="name" value="{{ $user->name }}" required>
+                            <label class="fw-semibold">Username</label>
+                            <input type="text" class="form-control" name="username"
+                                   value="{{ old('username', $user->username) }}">
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control" name="fullname" value="{{ $user->fullname }}">
+                            <label class="fw-semibold">Full Name</label>
+                            <input type="text" class="form-control" name="fullname"
+                                   value="{{ old('fullname', $user->fullname) }}">
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" value="{{ $user->email }}" required>
+                            <label class="fw-semibold">Email</label>
+                            <input type="email" class="form-control" name="email"
+                                   value="{{ $user->email }}" readonly>
                         </div>
+
                         <div class="mb-3">
-                            <label class="form-label">Phone</label>
-                            <input type="text" class="form-control" name="phone" value="{{ $user->phone }}">
+                            <label class="fw-semibold">Phone Number</label>
+                            <input type="text" class="form-control" name="phone"
+                                   value="{{ old('phone', $user->phone) }}">
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+
+                        <button class="btn btn-primary btn-custom" type="submit">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                        </button>
                     </form>
                 </div>
-            </div>
 
-            <!-- Change Password -->
-            <div class="card">
-                <div class="card-header"><h5>Change Password</h5></div>
-                <div class="card-body">
-                    <form id="passwordForm">
+                {{-- CHANGE PASSWORD --}}
+                <div class="card setting-card p-4">
+                    <div class="section-title mb-3">Change Password</div>
+
+                    <form action="{{ route('admin.profile.changePassword', $user->id) }}" method="POST">
                         @csrf
+
                         <div class="mb-3 position-relative">
                             <label class="form-label">Current Password</label>
-                            <input type="password" class="form-control" name="currentPassword" required>
-                            <span class="toggle-password" style="position:absolute; right:10px; top:35px; cursor:pointer;">👁️</span>
+                            <input type="password" class="form-control password-field" name="currentPassword" required>
+                            <i class="fa-solid fa-eye toggle-password"></i>
                         </div>
 
                         <div class="mb-3 position-relative">
                             <label class="form-label">New Password</label>
-                            <input type="password" class="form-control" name="newPassword" required>
-                            <span class="toggle-password" style="position:absolute; right:10px; top:35px; cursor:pointer;">👁️</span>
+                            <input type="password" class="form-control password-field" name="newPassword" required>
+                            <i class="fa-solid fa-eye toggle-password"></i>
                         </div>
 
                         <div class="mb-3 position-relative">
                             <label class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control" name="confirmPassword" required>
-                            <span class="toggle-password" style="position:absolute; right:10px; top:35px; cursor:pointer;">👁️</span>
+                            <input type="password" class="form-control password-field" name="newPassword_confirmation" required>
+                            <i class="fa-solid fa-eye toggle-password"></i>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Update Password</button>
+
+                        <button class="btn btn-warning btn-custom" type="submit">
+                            <i class="fa-solid fa-key"></i> Update Password
+                        </button>
+
                     </form>
                 </div>
-            </div>
 
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function(){
+document.getElementById('photoInput').addEventListener('change', function(){
+    if(this.files && this.files[0]){
+        document.getElementById('avatarPreview').src = URL.createObjectURL(this.files[0]);
+    }
+});
 
-    // --- Upload avatar ---
-    document.getElementById('changePhotoBtn').addEventListener('click', function(){
-        document.getElementById('photoInput').click();
-    });
+document.getElementById('changePhotoBtn').addEventListener('click', function () {
+    document.getElementById('photoInput').click();
+});
 
-    document.getElementById('photoInput').addEventListener('change', function(){
-        let formData = new FormData();
-        formData.append('photo', this.files[0]);
-        formData.append('_token','{{ csrf_token() }}');
+document.getElementById('photoInput').addEventListener('change', function () {
+    if (this.files && this.files[0]) {
 
-        fetch("{{ route('admin.profile.update', $user->id) }}", {method:'POST', body: formData})
-        .then(res => res.json())
-        .then(data=>{
-            if(data.success && data.user.photo){
-                document.getElementById('profilePreview').src = '/storage/avatars/'+data.user.photo;
-            }
-        });
-    });
+        // Preview ngay
+        document.getElementById('avatarPreview').src = URL.createObjectURL(this.files[0]);
 
-    // --- Profile form submit ---
-    document.getElementById('profileForm').addEventListener('submit', function(e){
-        e.preventDefault();
-
-        let formData = new FormData(this);
-        let phone = formData.get('phone');
-        let email = formData.get('email');
-        let name = formData.get('name');
-
-        // --- Client-side validation ---
-        if(!name.trim()){
-            alert('Tên không được để trống');
-            return;
-        }
-        if(!/^\S+@\S+\.\S+$/.test(email)){
-            alert('Email không hợp lệ');
-            return;
-        }
-        if(phone && !/^\d{10}$/.test(phone)){
-            alert('Số điện thoại phải đủ 10 chữ số');
-            return;
-        }
-
-        fetch("{{ route('admin.profile.update', $user->id) }}", {method:'POST', body: formData})
-        .then(res => res.json())
-        .then(data=>{
-            if(data.success){
-                document.getElementById('userName').innerText = data.user.name;
-                document.getElementById('userEmail').innerText = data.user.email;
-                document.getElementById('userPhone').innerText = data.user.phone ?? '-';
-                alert('Profile updated successfully!');
-            }
-        });
-    });
-
-        // Password form submit
-        document.getElementById('passwordForm').addEventListener('submit', function(e){
-            e.preventDefault();
-
-            let formData = new FormData(this);
-            let newPassword = formData.get('newPassword');
-            let confirmPassword = formData.get('confirmPassword');
-
-// Thêm field Laravel expected
-formData.append('newPassword_confirmation', confirmPassword);
-
-
-            if(newPassword.length < 6){
-                alert('Mật khẩu mới phải ít nhất 6 ký tự');
-                return;
-            }
-            if(newPassword !== confirmPassword){
-                alert('Xác nhận mật khẩu không khớp');
-                return;
-            }
-
-           fetch("{{ route('admin.profile.changePassword', $user->id) }}", {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success){
-                    alert(data.message);
-                    this.reset();
-                } else if(data.error){
-                    alert(data.error);
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Đã có lỗi xảy ra!');
-            });
-
-        });
-
-    // --- Toggle password visibility ---
+        // Upload tự động
+        document.getElementById('photoForm').submit();
+    }
+});
 document.querySelectorAll('.toggle-password').forEach(icon => {
-    icon.addEventListener('click', function(){
-        const input = this.previousElementSibling; // input ngay trước icon
-        if(input.type === 'password'){
-            input.type = 'text';     
-            this.textContent = '👁️';
+    icon.addEventListener('click', function () {
+        let input = this.previousElementSibling;
+
+        if (input.type === "password") {
+            input.type = "text";
+            this.classList.remove("fa-eye");
+            this.classList.add("fa-eye-slash");
         } else {
-            input.type = 'password';
-            this.textContent = '🙈';
+            input.type = "password";
+            this.classList.remove("fa-eye-slash");
+            this.classList.add("fa-eye");
         }
     });
 });
 
 
-
-});
 </script>
+
 @endsection

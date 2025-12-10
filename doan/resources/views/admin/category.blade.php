@@ -25,6 +25,24 @@
             <h5 class="card-title">Category</h5>
         </div>
         <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
 
             <!-- Filter + Add + Search -->
             <div class="row g-2 align-items-center mb-4">
@@ -42,7 +60,7 @@
 
                 <div class="col-auto ms-auto">
                     <div class="position-relative">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search by name">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search Categories...">
                         <span class="fa fa-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></span>
                     </div>
                 </div>
@@ -89,6 +107,7 @@
                                         data-name="{{ $category->name }}"
                                         data-slug="{{ $category->slug }}"
                                         data-description="{{ $category->description }}"
+                                        data-games='@json($category->games)'
                                         data-status="{{ $category->status }}">
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
@@ -199,6 +218,10 @@
                         <input type="text" class="form-control" name="description" id="editDescription">
                     </div>
                     <div class="mb-3">
+                        <label>Games</label>
+                        <div id="editGamesList" class="row g-2"></div>
+                    </div>
+                    <div class="mb-3">
                         <label>Status</label>
                         <select class="form-control" name="status" id="editStatus">
                             <option value="1">Active</option>
@@ -239,7 +262,12 @@
 </div>
 
 <script>
-const rowsPerPage = 5;
+    const allGames = @json($allGames);
+</script>
+
+<script>
+
+const rowsPerPage = 10;
 let currentPage = 1;
 let filteredRows = [];
 
@@ -334,15 +362,39 @@ function initCategoryModals() {
     });
 
     document.querySelectorAll(".editCategoryBtn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            document.getElementById("editName").value = this.dataset.name;
-            document.getElementById("editSlug").value = this.dataset.slug;
-            document.getElementById("editDescription").value = this.dataset.description;
-            document.getElementById("editStatus").value = this.dataset.status;
-            document.getElementById("editCategoryForm").action = `/admin/category/${this.dataset.id}`;
-            new bootstrap.Modal(document.getElementById("editCategoryModal")).show();
+    btn.addEventListener("click", function () {
+
+        // Set form fields
+        document.getElementById("editName").value = this.dataset.name;
+        document.getElementById("editSlug").value = this.dataset.slug;
+        document.getElementById("editDescription").value = this.dataset.description;
+        document.getElementById("editStatus").value = this.dataset.status;
+        document.getElementById("editCategoryForm").action = `/admin/category/${this.dataset.id}`;
+
+        // ------ Render GAME CHECKBOX ------
+        const gamesInCategory = JSON.parse(this.dataset.games || "[]");
+
+        const selectedIds = gamesInCategory.map(g => g.id);
+
+        const container = document.getElementById("editGamesList");
+        container.innerHTML = "";
+
+        allGames.forEach(game => {
+            const checked = selectedIds.includes(game.id) ? "checked" : "";
+            container.innerHTML += `
+                <div class="col-md-6">
+                    <label class="border rounded p-2 d-flex align-items-center gap-2">
+                        <input type="checkbox" name="games[]" value="${game.id}" ${checked}>
+                        <span>${game.name}</span>
+                    </label>
+                </div>
+            `;
         });
+
+        new bootstrap.Modal(document.getElementById("editCategoryModal")).show();
     });
+});
+
 
     document.querySelectorAll(".deleteCategoryBtn").forEach(btn => {
         btn.addEventListener("click", function () {

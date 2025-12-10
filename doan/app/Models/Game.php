@@ -19,6 +19,10 @@ class Game extends Model
         'download_file',
         'status',
         'is_delete',
+        'players',
+        'difficulty',
+        'game_setup',
+        'game_rules',
     ];
 
     public function categories()

@@ -1,48 +1,90 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Itinerary;
+use App\Models\Location;
 use Illuminate\Http\Request;
 
 class ItineraryAdminController extends Controller
 {
-    public function itineraries()
+    public function itinerary()
     {
-        $itineraries = Itinerary::where('is_delete', 0)->get();
-        return view('admin.itineraries', compact('itineraries'));
+        $itineraries = Itinerary::where('is_delete', 0)->orderBy('id', 'desc')->get();
+        $locations = Location::where('status', 1)->get();
+        return view('admin.itineraries', compact('itineraries', 'locations'));
     }
 
     public function add(Request $request)
     {
-        Itinerary::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'days' => $request->days,
-            'status' => $request->status,
+        $request->validate([
+            'name' => 'required|string|max:255|unique:itineraries,name',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'days' => 'nullable|integer',
+            'status' => 'required|in:0,1',
         ]);
+        $imageName = null;
+                if ($request->hasFile('image')) {
+                    $file = $request->file('image');
+                    $imageName = time().'_'.$file->getClientOriginalName();
+                    $file->move(public_path('storage/itineraries'), $imageName);
+                }
 
-        return back()->with('success', 'Thêm chuyến đi thành công!');
-    }
+        $itinerary = Itinerary::create([
+        'name' => $request->name,
+        'description' => $request->description,
+        'days' => $request->days,
+        'status' => $request->status,
+        'image' => $imageName
+    ]);
 
-    public function show($id)
-    {
-        $itinerary = Itinerary::with('locations')->findOrFail($id);
-        return response()->json($itinerary);
+    $itinerary->locations()->sync($request->location_ids);
+
+
+        return back()->with('success', 'Added itinerary successfully!');
     }
 
     public function update(Request $request, $id)
     {
         $itinerary = Itinerary::findOrFail($id);
-        $itinerary->update($request->all());
 
-        return back()->with('success', 'Cập nhật chuyến đi thành công!');
+        $request->validate([
+            'name' => 'required|string|max:255|unique:itineraries,name,' . $id,
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'days' => 'nullable|integer',
+            'status' => 'required|in:0,1',
+        ]);
+
+        $itinerary->update([
+            'name' => $request->name,
+            'image' => $request->image,
+            'description' => $request->description,
+            'days' => $request->days,
+            'status' => $request->status,
+        ]);
+        
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $imageName = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('storage/itineraries'), $imageName);
+            $itinerary->update(['image' => $imageName]);
+        }   
+$itinerary->locations()->sync($request->location_ids);
+
+
+        return back()->with('success', 'Updated itinerary successfully!');
     }
 
     public function delete($id)
     {
-        Itinerary::where('id', $id)->update(['is_delete' => 1]);
-        return back()->with('success', 'Đã xóa chuyến đi');
+        $itinerary = Itinerary::findOrFail($id);
+        $itinerary->update([
+            'is_delete' => 1,
+            'status' => 0
+        ]);
+
+        return back()->with('success', 'Deleted itinerary successfully!');
     }
 }
