@@ -21,7 +21,7 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#4CAF50",
+                        "primary": "#13ec13",
                         "background-light": "#FFFFFF",
                         "background-dark": "#102210",
                         "sidebar-light": "#F5F5DC",
