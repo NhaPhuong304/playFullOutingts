@@ -82,13 +82,13 @@
             </div>
 
             <!-- BREADCRUMB -->
-            <!-- <div class="mt-10">
+            <div class="mt-10">
                 <div class="flex flex-wrap gap-2 p-4 bg-white/50 dark:bg-charcoal/50 rounded-lg">
                     <a class="text-primary font-medium" href="#">Home</a>
                     <span class="text-charcoal/50">/</span>
                     <span class="text-charcoal dark:text-off-white font-medium">Itineraries</span>
                 </div>
-            </div> -->
+            </div>
 
             <!-- ITINERARY LIST -->
             <div class="mt-10">

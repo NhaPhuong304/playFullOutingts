@@ -74,7 +74,7 @@
 
                     {{-- Game Name --}}
                     <div class="absolute bottom-3 left-3 right-3">
-                        <p class="text-white text-base font-bold leading-tight drop-shadow-md">
+                        <p class="text-black  text-base font-bold leading-tight drop-shadow-md">
                             {{ $cat->name }} - {{ $game->name }}
                         </p>
                     </div>
