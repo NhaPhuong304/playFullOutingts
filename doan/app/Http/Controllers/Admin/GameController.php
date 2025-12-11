@@ -83,41 +83,58 @@ class GameController extends Controller
 }
 
 
-    // Update game
+// Update game
     public function update(Request $request, $id)
     {
         $game = Game::findOrFail($id);
 
+        // Update các trường text
         $game->name = $request->name;
         $game->slug = $request->slug;
         $game->duration = $request->duration;
-        $game->players = $request->players;
-        $game->game_setup = $request->game_setup;
-        $game->game_rules = $request->game_rules;
         $game->instructions = $request->instructions;
-        $game->difficulty = $request->difficulty;
         $game->status = $request->status;
-        $game->video_url = $request->video_url;
-        $game->download_file = $request->download_file;
+        $game->video_url = $request->video_url ?? $game->video_url;
 
+        /* -----------------------------
+            XỬ LÝ IMAGE
+        ------------------------------*/
         if ($request->hasFile('image')) {
+            // Xóa file cũ
+            if ($game->image && file_exists(public_path('storage/games/images/'.$game->image))) {
+                unlink(public_path('storage/games/images/'.$game->image));
+            }
+
             $file = $request->file('image');
             $filename = time().'_'.$file->getClientOriginalName();
             $file->move(public_path('storage/games/images'), $filename);
+
             $game->image = $filename;
         }
 
-    if($request->hasFile('download_file')){
-            $fileName = time().'_'.$request->download_file->getClientOriginalName();
-            $request->download_file->move(public_path('storage/games/files'), $fileName);
+        /* -----------------------------
+            XỬ LÝ FILE DOWNLOAD
+        ------------------------------*/
+        if ($request->hasFile('download_file')) {
+
+            // Xóa file cũ
+            if ($game->download_file && Storage::exists('public/games/files/'.$game->download_file)) {
+                Storage::delete('public/games/files/'.$game->download_file);
+            }
+
+            $file = $request->file('download_file');
+            $fileName = time().'_'.$file->getClientOriginalName();
+            $file->storeAs('public/games/files', $fileName);
+
             $game->download_file = $fileName;
         }
+
+        // Lưu update
         $game->save();
 
-        // Sync categories
-         $game->categories()->sync($request->categories ?? []);
+        // Sync categories & materials
+        $game->categories()->sync($request->categories ?? []);
         $game->materials()->sync($request->materials ?? []);
-    $game->video_url = $request->video_url ?? null;
 
         return redirect()->back()->with('success', 'Game updated successfully.');
     }

@@ -165,7 +165,7 @@
                                     <span class="material-symbols-outlined text-accent text-3xl">signal_cellular_alt</span>
                                     <div>
                                         <p class="text-xs">Difficulty</p>
-                                        <p class="font-bold text-text-light-primary dark:text-text-dark-primary">{{ $game->level ?? 'N/A' }}</p>
+                                        <p class="font-bold text-text-light-primary dark:text-text-dark-primary">{{ $game->difficulty ?? 'N/A' }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -186,31 +186,6 @@
 
                         </div>
                     </aside>
-
-                                        <p class="text-text-light-secondary dark:text-text-dark-secondary text-xs">Estimated Time</p>
-                                        <p class="text-text-light-primary dark:text-text-dark-primary font-bold">{{$game->duration}}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="border-t border-gray-300 dark:border-gray-600 pt-6">
-                                <p class="text-text-light-secondary dark:text-text-dark-secondary text-sm mb-4">
-                                    Want to take these instructions with you? Download our handy printable guide.
-                                </p>
-
-                                @if($game->download_file)
-                                    <a href="{{ asset('storage/games/files/' . $game->download_file) }}" 
-                                    download
-                                    class="w-full flex items-center justify-center gap-2 cursor-pointer rounded-lg h-12 px-4 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-green-600 transition-colors">
-                                        Download Guide
-                                    </a>
-                                @else
-                                    <div class="w-full h-12 flex items-center justify-center rounded-lg px-4 bg-gray-400 text-white text-base font-bold">
-                                        No Guide Available
-                                    </div>
-                                @endif
-                            </div>
-
-                        </div>
                 </div>
             </main>
         </div>

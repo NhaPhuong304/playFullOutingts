@@ -133,31 +133,34 @@
                             </li>
 
 
-                            <!-- Games Dropdown -->
-                            <li class="relative nav-item">
-                                <button id="games-button"
-                                    class="flex items-center gap-1 {{ Request::is('user/game*') ? 'text-primary' : 'hover:text-primary' }}">
-                                    <a href="{{route('user.game')}}">Games</a>
-                                    <span class="material-symbols-outlined text-base">expand_more</span>
-                                </button>
+                           <li class="relative nav-item select-none">
+<a href="{{ route('user.game') }}"
+   id="games-button"
+   class="flex items-center gap-1 px-4 py-2 text-sm cursor-pointer
+          {{ Request::is('user/game*') ? 'text-primary' : 'hover:text-primary' }}
+          hover:bg-primary/10">
+
+    <span>Games</span>
+    <span class="material-symbols-outlined text-base">expand_more</span>
+</a>
 
 
-                                <div id="games-menu"
-                                    class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
+    <div id="games-menu"
+        class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark 
+               rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
 
-                                    @foreach ($categoriesList as $cat)
-                                    <a class="block px-4 py-2 text-sm 
-                                            {{ $category && $category->id == $cat->id ? 'bg-primary/20 text-primary font-bold' : '' }} 
-                                            hover:bg-primary/10 hover:text-primary"
-                                        href="{{ route('games.category', $cat->id) }}#picnic-title">
-                                        {{ $cat->name }}
-                                    </a>
-                                    @endforeach
-
-
-                                </div>
-
+        <!-- Category -->
+                            @foreach ($categoriesList as $cat)
+                            <a class="block px-4 py-2 text-sm
+                                        {{ $category && $category->id == $cat->id ? 'bg-primary/20 text-primary font-bold' : '' }}
+                                        hover:bg-primary/10 hover:text-primary"
+                                href="{{ route('games.category', $cat->id) }}#picnic-title">
+                                {{ $cat->name }}
+                            </a>
+                            @endforeach
+                            </div>
                             </li>
+
                             <li>
                                 <a href="{{ route('user_shop') }}"
                                     class="{{ Route::currentRouteNamed('user_shop') ? 'text-primary' : 'hover:text-primary' }}">
@@ -609,6 +612,33 @@ document.getElementById("sendZaloMessage").addEventListener("click", () => {
     // (Nếu cần) show thông báo nhỏ
     alert("Message sent!");
 });
+document.addEventListener("DOMContentLoaded", () => {
+
+    const gamesBtn = document.getElementById("games-button");
+    const gamesMenu = document.getElementById("games-menu");
+
+    if (gamesBtn && gamesMenu) {
+
+        // Toggle dropdown
+        gamesBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+
+            // Đóng avatar nếu mở
+            const avatarMenu = document.getElementById("avatar-menu");
+            if (avatarMenu) avatarMenu.classList.remove("dropdown-open");
+
+            // Toggle games dropdown
+            gamesMenu.classList.toggle("dropdown-open");
+        });
+
+        // Click ra ngoài → đóng menu
+        document.addEventListener("click", () => {
+            gamesMenu.classList.remove("dropdown-open");
+        });
+    }
+
+});
+
 </script>
 </body>
 
