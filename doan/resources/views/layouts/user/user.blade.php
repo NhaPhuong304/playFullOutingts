@@ -133,31 +133,34 @@
                             </li>
 
 
-                            <!-- Games Dropdown -->
-                            <li class="relative nav-item">
-                                <button id="games-button"
-                                    class="flex items-center gap-1 {{ Request::is('user/game*') ? 'text-primary' : 'hover:text-primary' }}">
-                                    <a href="{{route('user.game')}}">Games</a>
+                            <li class="relative nav-item select-none">
+                                <a href="{{ route('user.game') }}"
+                                    id="games-button"
+                                    class="flex items-center gap-1 px-4 py-2 text-sm cursor-pointer
+          {{ Request::is('user/game*') ? 'text-primary' : 'hover:text-primary' }}
+          hover:bg-primary/10">
+
+                                    <span>Games</span>
                                     <span class="material-symbols-outlined text-base">expand_more</span>
-                                </button>
+                                </a>
 
 
                                 <div id="games-menu"
-                                    class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
+                                    class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark 
+               rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
 
+                                    <!-- Category -->
                                     @foreach ($categoriesList as $cat)
-                                    <a class="block px-4 py-2 text-sm 
-                                            {{ $category && $category->id == $cat->id ? 'bg-primary/20 text-primary font-bold' : '' }} 
-                                            hover:bg-primary/10 hover:text-primary"
+                                    <a class="block px-4 py-2 text-sm
+                                        {{ $category && $category->id == $cat->id ? 'bg-primary/20 text-primary font-bold' : '' }}
+                                        hover:bg-primary/10 hover:text-primary"
                                         href="{{ route('games.category', $cat->id) }}#picnic-title">
                                         {{ $cat->name }}
                                     </a>
                                     @endforeach
-
-
                                 </div>
-
                             </li>
+
                             <li>
                                 <a href="{{ route('user_shop') }}"
                                     class="{{ Route::currentRouteNamed('user_shop') ? 'text-primary' : 'hover:text-primary' }}">
@@ -290,21 +293,41 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
             <div class="flex justify-center py-6 px-4 sm:px-8 lg:px-10">
                 <div class="w-full max-w-7xl">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-                        <div class="md:col-span-2">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="text-primary text-2xl">
-                                    <span class="material-symbols-outlined" data-icon="nature_people"></span>
+
+                        <!-- 1️⃣ Cột logo + slogan + Google map -->
+                        <div class="md:col-span-2 space-y-5">
+                            <div>
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="text-primary text-2xl">
+                                        <span class="material-symbols-outlined" data-icon="nature_people"></span>
+                                    </div>
+                                    <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                                        <img src="{{ asset('user/images/logouser.png') }}"
+                                            class="w-14 h-14 object-contain rounded-full">
+                                    </div>
                                 </div>
-                                <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center">
-                                    <img src="{{ asset('user/images/logouser.png') }}"
-                                        class="w-14 h-14 object-contain rounded-full">
-                                </div>
-                                <!-- <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">PlayFullOutings</h2> -->
+                                <p class="text-sm text-text-dark/70">
+                                    Creating joyful moments, one picnic at a time.
+                                </p>
                             </div>
-                            <p class="text-sm text-text-dark/70">Creating joyful moments, one picnic at a time.</p>
+
+                            <!-- Google Map  -->
+                            <div>
+                                <h3 class="font-bold mb-3 text-lg">Our Location</h3>
+                                <iframe
+                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31352.01839768961!2d106.64146637431641!3d10.811135099999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752934c609c5bd%3A0x751f71739b98ebc4!2zQXB0ZWNoIENvbXB1dGVyIEVkdWNhdGlvbiAtIEjhu4cgdGjhu5FuZyDEkMOgbyB04bqhbyBM4bqtcCB0csOsbmggdmnDqm4gUXXhu5FjIHThur8gQXB0ZWNo!5e0!3m2!1svi!2s!4v1764916133942!5m2!1svi!2s"
+                                    width="100%"
+                                    height="400"
+                                    style="border:0;"
+                                    allowfullscreen
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"
+                                    class="rounded-lg">
+                                </iframe>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="font-bold mb-4">Quick Links</h3>
+                        <div class="ml-auto">
+                            <h3 class="font-bold mb-4 ">Quick Links</h3>
                             <ul class="space-y-2 text-sm">
                                 <li><a class="text-text-dark/70 hover:text-primary transition-colors" href="#">Games</a></li>
                                 <li><a class="text-text-dark/70 hover:text-primary transition-colors" href="#">Itineraries</a></li>
@@ -312,7 +335,8 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
                                 <li><a class="text-text-dark/70 hover:text-primary transition-colors" href="#">Contact</a></li>
                             </ul>
                         </div>
-                        <div>
+
+                        <div class="ml-auto"> 
                             <h3 class="font-bold mb-4">Follow Us</h3>
                             <div class="flex space-x-4">
                                 <a class="text-text-dark/70 hover:text-primary transition-colors" data-alt="Facebook icon" href="#">
@@ -333,39 +357,32 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
                             </div>
                         </div>
                     </div>
-                    <!-- Google Map Section -->
-                    <div class="mt-6 mb-4">
-                        <h3 class="font-bold mb-4 text-lg">Our Location</h3>
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31352.01839768961!2d106.64146637431641!3d10.811135099999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752934c609c5bd%3A0x751f71739b98ebc4!2zQXB0ZWNoIENvbXB1dGVyIEVkdWNhdGlvbiAtIEjhu4cgdGjhu5FuZyDEkMOgbyB04bqhbyBM4bqtcCB0csOsbmggdmnDqm4gUXXhu5FjIHThur8gQXB0ZWNo!5e0!3m2!1svi!2s!4v1764916133942!5m2!1svi!2s" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-lg"></iframe>
-                    </div>
-                    <!-- <div class="border-t border-border-dark mt-8 pt-6 text-center text-sm text-text-dark/50">
-                        <p>© 2024 PlayFullOutings. All rights reserved.</p>
-                    </div> -->
+
                 </div>
             </div>
         </footer>
     </div>
     </div>
     <div id="zaloModal"
-    class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50 transition">
-    
-    <div class="bg-white w-80 p-5 rounded-xl shadow-xl">
-        <h2 class="text-lg font-bold mb-3">Chat with us on Zalo</h2>
+        class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50 transition">
 
-        <textarea id="zaloMessage"
-            class="w-full border border-gray-300 rounded-lg p-2 h-24"
-            placeholder="Enter your message..."></textarea>
+        <div class="bg-white w-80 p-5 rounded-xl shadow-xl">
+            <h2 class="text-lg font-bold mb-3">Chat with us on Zalo</h2>
 
-        <div class="flex justify-end gap-2 mt-3">
-            <button id="closeZaloModal"
-                class="px-3 py-1 rounded-lg bg-gray-300 hover:bg-gray-400">Close</button>
+            <textarea id="zaloMessage"
+                class="w-full border border-gray-300 rounded-lg p-2 h-24"
+                placeholder="Enter your message..."></textarea>
 
-            <button id="sendZaloMessage"
-                class="px-3 py-1 rounded-lg bg-primary text-white hover:bg-primary/90">Send</button>
+            <div class="flex justify-end gap-2 mt-3">
+                <button id="closeZaloModal"
+                    class="px-3 py-1 rounded-lg bg-gray-300 hover:bg-gray-400">Close</button>
+
+                <button id="sendZaloMessage"
+                    class="px-3 py-1 rounded-lg bg-primary text-white hover:bg-primary/90">Send</button>
+            </div>
         </div>
-    </div>
 
-</div>
+    </div>
 
 
 
@@ -514,102 +531,128 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
                 navbar.classList.remove("scrolled");
             }
         });
-document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", () => {
 
-    const avatarBtn = document.getElementById("avatar-button");
-    const avatarMenu = document.getElementById("avatar-menu");
+            const avatarBtn = document.getElementById("avatar-button");
+            const avatarMenu = document.getElementById("avatar-menu");
 
-    if (avatarBtn && avatarMenu) {
-        avatarBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            avatarMenu.classList.toggle("dropdown-open");
+            if (avatarBtn && avatarMenu) {
+                avatarBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    avatarMenu.classList.toggle("dropdown-open");
+                });
+
+                // Click ra ngoài để đóng
+                document.addEventListener("click", () => {
+                    avatarMenu.classList.remove("dropdown-open");
+                });
+            }
         });
+        document.addEventListener("DOMContentLoaded", () => {
 
-        // Click ra ngoài để đóng
-        document.addEventListener("click", () => {
-            avatarMenu.classList.remove("dropdown-open");
+            const backToTopBtn = document.getElementById("backToTopBtn");
+
+            // 🟢 Hiện nút khi scroll xuống 200px
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 200) {
+                    backToTopBtn.classList.remove("hidden");
+                    backToTopBtn.classList.add("flex");
+                } else {
+                    backToTopBtn.classList.add("hidden");
+                    backToTopBtn.classList.remove("flex");
+                }
+            });
+
+            // 🟢 Cuộn lên đầu trang khi click
+            backToTopBtn.addEventListener("click", () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+
         });
-    }
-});
-document.addEventListener("DOMContentLoaded", () => {
-
-    const backToTopBtn = document.getElementById("backToTopBtn");
-
-    // 🟢 Hiện nút khi scroll xuống 200px
-    window.addEventListener("scroll", () => {
-        if (window.scrollY > 200) {
-            backToTopBtn.classList.remove("hidden");
-            backToTopBtn.classList.add("flex");
-        } else {
-            backToTopBtn.classList.add("hidden");
-            backToTopBtn.classList.remove("flex");
-        }
-    });
-
-    // 🟢 Cuộn lên đầu trang khi click
-    backToTopBtn.addEventListener("click", () => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-    });
-
-});
     </script>
-<button id="backToTopBtn"
-    class="hidden fixed bottom-6 left-6 z-50 
+    <button id="backToTopBtn"
+        class="hidden fixed bottom-6 left-6 z-50 
            w-12 h-12 rounded-full bg-primary text-white shadow-lg 
            hover:bg-primary/90 transition-all flex items-center justify-center">
-    <span class="material-symbols-outlined text-[28px]">arrow_upward</span>
-</button>
-
-<div class="fixed bottom-24 right-6 flex flex-col gap-3 z-[60]">
-
-    <!-- MESSENGER -->
-    <a href="https://m.me/playfulloutings" target="_blank"
-       class="w-12 h-12 bg-[#0084FF] rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition">
-        <span class="material-symbols-outlined text-white text-[28px]">chat</span>
-    </a>
-
-    <!-- ZALO BUTTON -->
-    <button id="openZaloChat"
-        class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg hover:scale-110 transition">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" class="w-7 h-7">
+        <span class="material-symbols-outlined text-[28px]">arrow_upward</span>
     </button>
 
-</div>
+    <div class="fixed bottom-24 right-6 flex flex-col gap-3 z-[60]">
 
-<script>
-document.getElementById("openZaloChat").addEventListener("click", () => {
-    document.getElementById("zaloModal").classList.remove("hidden");
-    document.getElementById("zaloModal").classList.add("flex");
-});
+        <!-- MESSENGER -->
+        <a href="https://m.me/playfulloutings" target="_blank"
+            class="w-12 h-12 bg-[#0084FF] rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition">
+            <span class="material-symbols-outlined text-white text-[28px]">chat</span>
+        </a>
 
-document.getElementById("closeZaloModal").addEventListener("click", () => {
-    document.getElementById("zaloModal").classList.add("hidden");
-    document.getElementById("zaloModal").classList.remove("flex");
-});
+        <!-- ZALO BUTTON -->
+        <button id="openZaloChat"
+            class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg hover:scale-110 transition">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" class="w-7 h-7">
+        </button>
 
-document.getElementById("sendZaloMessage").addEventListener("click", () => {
-    let msg = document.getElementById("zaloMessage").value.trim();
+    </div>
 
-    if (msg === "") {
-        alert("Please enter a message!");
-        return;
-    }
+    <script>
+        document.getElementById("openZaloChat").addEventListener("click", () => {
+            document.getElementById("zaloModal").classList.remove("hidden");
+            document.getElementById("zaloModal").classList.add("flex");
+        });
 
-    // ✔ Sau khi gửi xong → đóng modal
-    const modal = document.getElementById("zaloModal");
-    modal.classList.add("hidden");
-    modal.classList.remove("flex");
+        document.getElementById("closeZaloModal").addEventListener("click", () => {
+            document.getElementById("zaloModal").classList.add("hidden");
+            document.getElementById("zaloModal").classList.remove("flex");
+        });
 
-    // ✔ Xóa nội dung tin nhắn
-    document.getElementById("zaloMessage").value = "";
+        document.getElementById("sendZaloMessage").addEventListener("click", () => {
+            let msg = document.getElementById("zaloMessage").value.trim();
 
-    // (Nếu cần) show thông báo nhỏ
-    alert("Message sent!");
-});
-</script>
+            if (msg === "") {
+                alert("Please enter a message!");
+                return;
+            }
+
+            // ✔ Sau khi gửi xong → đóng modal
+            const modal = document.getElementById("zaloModal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+
+            // ✔ Xóa nội dung tin nhắn
+            document.getElementById("zaloMessage").value = "";
+
+            // (Nếu cần) show thông báo nhỏ
+            alert("Message sent!");
+        });
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const gamesBtn = document.getElementById("games-button");
+            const gamesMenu = document.getElementById("games-menu");
+
+            if (gamesBtn && gamesMenu) {
+
+                // Toggle dropdown
+                gamesBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+
+                    // Đóng avatar nếu mở
+                    const avatarMenu = document.getElementById("avatar-menu");
+                    if (avatarMenu) avatarMenu.classList.remove("dropdown-open");
+
+                    // Toggle games dropdown
+                    gamesMenu.classList.toggle("dropdown-open");
+                });
+
+                // Click ra ngoài → đóng menu
+                document.addEventListener("click", () => {
+                    gamesMenu.classList.remove("dropdown-open");
+                });
+            }
+
+        });
+    </script>
 </body>
 
 </html>

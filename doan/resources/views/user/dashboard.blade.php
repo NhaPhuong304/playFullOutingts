@@ -69,6 +69,7 @@
                         style='background-image:
                         linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%),
                         url("{{ asset($game->image) }}")'>
+                          <img src="{{ $game->image ? asset('storage/games/images/'.$game->image) : asset('storage/games/no-image.jpg') }}">
                     </div>
 
                     {{-- Game Name --}}

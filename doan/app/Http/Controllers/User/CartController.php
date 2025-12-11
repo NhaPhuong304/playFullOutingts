@@ -18,7 +18,7 @@ class CartController extends Controller
         $user = Auth::user();
 
         if (!$user) {
-            return redirect()->route('login.form')
+            return redirect()->route('login')
                 ->with('error', 'Please log in to view your cart');
         }
 
@@ -134,7 +134,7 @@ class CartController extends Controller
     public function checkout()
     {
         if (!Auth::check()) {
-            return redirect()->route('login.form')
+            return redirect()->route('login')
                 ->with('error', 'You need to log in to proceed with the checkout.');
         }
 
