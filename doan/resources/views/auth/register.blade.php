@@ -90,22 +90,27 @@
 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="password">Password</label>
 <div class="relative mt-1">
 <input autocomplete="new-password" class="form-input block w-full rounded-lg border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 shadow-sm focus:border-primary focus:ring-primary sm:text-sm h-12 px-4 pr-10" id="password" name="password" placeholder="Enter your password" required type="password" />
-<button class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 dark:text-gray-400" type="button" onclick="togglePassword('password', this)">
+<button aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 dark:text-gray-400" type="button" onclick="togglePassword('password', this)">
 <span class="material-symbols-outlined text-xl">visibility_off</span>
 </button>
 </div>
 <div class="mt-2 flex items-center gap-2">
-<div class="h-1 flex-1 rounded-full bg-gray-200 dark:bg-gray-700"><div class="h-1 w-1/4 rounded-full bg-error"></div></div>
-<p class="text-xs text-gray-500 dark:text-gray-400">Weak</p>
+  <div class="h-1 flex-1 rounded-full bg-gray-200 dark:bg-gray-700">
+    <div id="password-strength-bar" class="h-1 rounded-full bg-error" style="width:25%"></div>
+  </div>
+  <p id="password-strength-text" class="text-xs text-gray-500 dark:text-gray-400">Weak</p>
 </div>
 </div>
 <div>
 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="confirm-password">Confirm Password</label>
-<div class="mt-1">
-<input autocomplete="new-password" class="form-input block w-full rounded-lg border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 shadow-sm focus:border-primary focus:ring-primary sm:text-sm h-12 px-4" id="confirm-password" name="password_confirmation" placeholder="Confirm your password" required type="password" />
+<div class="relative mt-1">
+<input autocomplete="new-password" class="form-input block w-full rounded-lg border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 shadow-sm focus:border-primary focus:ring-primary sm:text-sm h-12 px-4 pr-10" id="confirm-password" name="password_confirmation" placeholder="Confirm your password" required type="password" />
+<button aria-label="Toggle confirm password visibility" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 dark:text-gray-400" type="button" onclick="togglePassword('confirm-password', this)">
+<span class="material-symbols-outlined text-xl">visibility_off</span>
+</button>
 </div>
-<!-- Example of success message -->
-<p class="mt-2 text-xs text-success hidden">Passwords match.</p>
+<!-- Password match message (updated dynamically, announced to screen readers) -->
+<p id="password-match-text" class="mt-2 text-xs hidden" role="status" aria-live="polite" aria-atomic="true"></p>
 </div>
 <div class="flex items-center">
 <input class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" id="terms" name="terms" type="checkbox" {{ old('terms') ? 'checked' : '' }} />
@@ -158,4 +163,79 @@ function togglePassword(id, btn) {
         btn.querySelector('.material-symbols-outlined').textContent = 'visibility_off';
     }
 }
+
+// Password strength and match checks
+function evaluatePasswordStrength(pw) {
+  if (!pw) return 0;
+  let score = 0;
+  // length
+  if (pw.length >= 8) score += 40;
+  else score += Math.max(0, (pw.length / 8) * 40);
+  // variety: lowercase, uppercase, digits, special
+  const checks = [/[a-z]/, /[A-Z]/, /[0-9]/, /[^A-Za-z0-9]/];
+  let variety = 0;
+  checks.forEach((r) => { if (r.test(pw)) variety++; });
+  score += variety * 15; // up to +60 (but length caps)
+  if (score > 100) score = 100;
+  return Math.round(score);
+}
+
+function updateStrengthUI() {
+  const pw = document.getElementById('password').value;
+  const bar = document.getElementById('password-strength-bar');
+  const text = document.getElementById('password-strength-text');
+  if (!bar || !text) return;
+  const score = evaluatePasswordStrength(pw);
+  bar.style.width = score + '%';
+  // reset classes
+  bar.classList.remove('bg-error', 'bg-secondary', 'bg-success');
+  if (score <= 30) {
+    bar.classList.add('bg-error');
+    text.textContent = 'Weak';
+    text.className = 'text-xs text-gray-500 dark:text-gray-400';
+  } else if (score <= 70) {
+    bar.classList.add('bg-secondary');
+    text.textContent = 'Fair';
+    text.className = 'text-xs text-gray-500 dark:text-gray-400';
+  } else {
+    bar.classList.add('bg-success');
+    text.textContent = 'Strong';
+    text.className = 'text-xs text-gray-500 dark:text-gray-400';
+  }
+}
+
+function updateMatchUI() {
+  const pw = document.getElementById('password').value;
+  const cpw = document.getElementById('confirm-password').value;
+  const msg = document.getElementById('password-match-text');
+  if (!msg) return;
+  if (!cpw) {
+    msg.classList.add('hidden');
+    return;
+  }
+  if (pw === cpw) {
+    msg.classList.remove('hidden');
+    msg.textContent = 'Passwords match.';
+    msg.classList.remove('text-error');
+    msg.classList.add('text-success');
+  } else {
+    msg.classList.remove('hidden');
+    msg.textContent = 'Passwords do not match.';
+    msg.classList.remove('text-success');
+    msg.classList.add('text-error');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  const pwInput = document.getElementById('password');
+  const cpwInput = document.getElementById('confirm-password');
+  if (pwInput) pwInput.addEventListener('input', function () {
+    updateStrengthUI();
+    updateMatchUI();
+  });
+  if (cpwInput) cpwInput.addEventListener('input', updateMatchUI);
+  // initial run
+  updateStrengthUI();
+  updateMatchUI();
+});
 </script>

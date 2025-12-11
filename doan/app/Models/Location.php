@@ -1,24 +1,39 @@
 <?php
 
 namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Location extends Model
 {
-
-    protected $table = 'locations';
+    use HasFactory;
 
     protected $fillable = [
-        'itinerary_id',
         'name',
         'description',
+        'status',
         'image',
-        'is_delete'
+        'is_delete',
     ];
 
-    public function itinerary()
+    public function itineraries()
     {
-        return $this->belongsTo(Itinerary::class);
+        return $this->belongsToMany(
+            Itinerary::class,
+            'location_itinerary',
+            'location_id',
+            'itinerary_id'
+        );
     }
+    public function categoryLocations()
+    {
+        return $this->belongsToMany(
+            CategoryLocation::class,
+            'category_location_location',
+            'location_id',
+            'location_category_id'
+        );
+    }
+
 }

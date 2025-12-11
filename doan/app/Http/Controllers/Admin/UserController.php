@@ -10,24 +10,37 @@ class UserController extends Controller
 {
     public function user(){
         $data = [
-            'users' => User::where('is_delete', 0)->get()
+            'users' => User::where('is_delete', 0)->orderBy('id', 'desc')->get()
         ];
         return view('admin/user')->with($data);
     }
-    public function delete($id){
-        $user = User::findOrFail($id);
-        $user->is_delete = 1;
-        $user->status = 0;
+    public function block(User $user)
+    {
+        $user->status = $user->status == 1 ? 0 : 1;
         $user->save();
 
-        return redirect()->back()->with('success', 'User deleted successfully!');
+        return redirect()->back()->with('success', 'User status updated successfully.');
     }
+    public function unBlock(User $user)
+    {
+        $user->status = $user->status == 1 ? 0 : 1;
+        $user->save();
+        $message = $user->status == 1 
+            ? 'User has been unblocked successfully.' 
+            : 'User has been blocked successfully.';
+
+        return redirect()->back()->with('success', $message);
+    }
+
+
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-
-        $user->name = $request->name;
-        $user->email = $request->email;
+        $user->fullname = $request->fullname;
+        $user->birthday = $request->birthday;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+        $user->gender = $request->gender;
         $user->status = $request->status;
         $user->role_id = $request->role_id;
 
@@ -57,9 +70,11 @@ class UserController extends Controller
     {
     // Validate dữ liệu
     $request->validate([
-        'name' => 'required|string|max:255',
         'username' => 'required|string|max:255|unique:users',
         'email' => 'required|email|unique:users',
+        'phone' => 'required|string|max:15',
+        'address' => 'required|string|max:255',
+        'gender' => 'required|in:male,female,other',
         'password' => 'required|string|min:6',
         'role_id' => 'required|in:1,2',
         'status' => 'required|in:0,1',
@@ -73,9 +88,7 @@ class UserController extends Controller
         $file->move(public_path('storage/avatars'), $photoName);
     }
 
-    // Tạo user mới
     User::create([
-        'name' => $request->name,
         'username' => $request->username,
         'email' => $request->email,
         'password' => bcrypt($request->password),
@@ -83,9 +96,12 @@ class UserController extends Controller
         'status' => $request->status,
         'photo' => $photoName,
         'is_delete' => 0,
+        'phone' => $request->phone,
+        'address' => $request->address,
+        'gender' => $request->gender,
     ]);
 
-    return redirect()->back()->with('success', 'User/Admin added successfully!');
+    return redirect()->back()->with('success', 'Admin added successfully!');
     }
 
 

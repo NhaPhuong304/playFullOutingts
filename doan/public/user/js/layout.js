@@ -79,6 +79,7 @@ function slider() {
     
 }
 // Khi bấm đăng ký hoặc đăng nhập → ẩn nút và hiện avatar
+document.addEventListener("DOMContentLoaded", function () {
     const btnRegister = document.getElementById('btn-register');
     const btnLogin = document.getElementById('btn-login');
     const authButtons = document.getElementById('auth-buttons');
@@ -89,6 +90,12 @@ function slider() {
         avatarDropdown.classList.remove('hidden'); // hiện avatar
     }
 
+<<<<<<< HEAD
     btnRegister.addEventListener('click', loginUser);
     btnLogin.addEventListener('click', loginUser);
+=======
+    if (btnRegister) btnRegister.addEventListener('click', loginUser);
+    if (btnLogin) btnLogin.addEventListener('click', loginUser);
+});
+>>>>>>> 9a08ee46f594c011742fc88caf6c8d0a4ad67be5
 

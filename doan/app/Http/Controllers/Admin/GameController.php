@@ -3,130 +3,126 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Game;
-use Illuminate\Support\Str;
+use App\Models\Material;
+use Illuminate\Support\Facades\Storage;
 
 class GameController extends Controller
 {
-    // Hiển thị danh sách games
-    public function game()
+        public function game()
     {
-        $games = Game::orderBy('id', 'desc')->get();
-        return view('admin.game', compact('games'));
+        $games = Game::with('categories','materials')->orderBy('id','desc')->where('status', '1')->get();
+        $categories = Category::all();
+        $materials = Material::all();
+        return view('admin.game', compact('games','categories','materials'));
     }
 
-    // Thêm game mới
-    public function add(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'image' => 'required|image|max:5120',
-            'video_url' => 'nullable|mimes:mp4,mov,avi|max:102400',
-            'download_file' => 'nullable|mimes:pdf,doc,docx|max:10240',
-            'duration' => 'nullable|integer',
-            'instructions' => 'nullable|string',
-        ]);
+   public function add(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255|unique:games,name',
+        'slug' => 'required|string|max:255|unique:games,slug',
+        'duration' => 'nullable|integer',
+        'instructions' => 'nullable|string',
+        'status' => 'required|boolean',
+        'categories' => 'nullable|array',
+        'players' => 'nullable|integer',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+        'download_file' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+        'video_url' => 'nullable|url'
+    ]);
 
-        $game = new Game();
-        $game->name = $request->name;
-        $game->slug = Str::slug($request->name);
-
-        // Upload Image
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time().'_'.$file->getClientOriginalName();
-            $file->move(public_path('storage/games/images'), $filename);
-            $game->image = $filename;
-        }
-
-        // Upload Video
-
-            if ($request->hasFile('video_url')) {
-                $file = $request->file('video_url');
-                $filename = time().'_'.$file->getClientOriginalName();
-                $file->move(public_path('storage/games/videos'), $filename);
-                $game->video_url = $filename; // lưu tên file vào DB
-            }
+    $game = new Game();
+    $game->name = $request->name;
+    $game->slug = $request->slug;
+    $game->duration = $request->duration;
+    $game->instructions = $request->instructions;
+    $game->players = $request->players;
+    $game->difficulty = $request->difficulty;
+    $game->game_setup = $request->game_setup;
+    $game->game_rules = $request->game_rules;
+    $game->status = $request->status;
+    $game->video_url = $request->video_url ?? null;
 
 
-        // Upload File
-        if ($request->hasFile('download_file')) {
-            $file = $request->file('download_file');
-            $filename = time().'_'.$file->getClientOriginalName();
-            $file->move(public_path('storage/games/files'), $filename);
-            $game->download_file = $filename;
-        }
-
-        $game->duration = $request->duration;
-        $game->instructions = $request->instructions;
-        $game->status = 1;
-        $game->is_delete = 0;
-
-        $game->save();
-
-        return redirect()->back()->with('success', 'Game created successfully!');
+    // Image
+    if($request->hasFile('image')){
+        $filename = time().'_'.$request->image->getClientOriginalName();
+       $request->image->move(public_path('storage/games/images'), $filename);
+        $game->image = $filename;
+    } else {
+        $game->image = 'no-image.jpg';
     }
+
+    if ($request->hasFile('download_file')) {
+
+        // Xóa file cũ
+        if ($game->download_file && Storage::exists('public/games/files/'.$game->download_file)) {
+            Storage::delete('public/games/files/'.$game->download_file);
+        }
+
+        $file = $request->file('download_file');
+        $fileName = time().'_'.$file->getClientOriginalName();
+        $file->storeAs('public/games/files', $fileName);
+
+        $game->download_file = $fileName;
+    }
+
+    // Video
+    $game->video_url = $request->video_url ?? null;
+
+    $game->save();
+
+    // Categories
+    $game->categories()->sync($request->categories ?? []);
+    $game->materials()->sync($request->materials ?? []);
+
+    return redirect()->back()->with('success', 'Game added successfully');
+}
+
 
     // Update game
     public function update(Request $request, $id)
     {
         $game = Game::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'image' => 'nullable|image|max:5120',
-            'video_url' => 'nullable|mimes:mp4,mov,avi|max:102400',
-            'download_file' => 'nullable|mimes:pdf,doc,docx|max:10240',
-            'duration' => 'nullable|integer',
-            'instructions' => 'nullable|string',
-            'status' => 'required|boolean',
-        ]);
-
         $game->name = $request->name;
-        $game->slug = Str::slug($request->name);
+        $game->slug = $request->slug;
         $game->duration = $request->duration;
+        $game->players = $request->players;
+        $game->game_setup = $request->game_setup;
+        $game->game_rules = $request->game_rules;
         $game->instructions = $request->instructions;
+        $game->difficulty = $request->difficulty;
         $game->status = $request->status;
+        $game->video_url = $request->video_url;
+        $game->download_file = $request->download_file;
 
-        // Update Image
         if ($request->hasFile('image')) {
-            if ($game->image && file_exists(public_path('storage/games/images/'.$game->image))) {
-                unlink(public_path('storage/games/images/'.$game->image));
-            }
             $file = $request->file('image');
             $filename = time().'_'.$file->getClientOriginalName();
             $file->move(public_path('storage/games/images'), $filename);
             $game->image = $filename;
         }
 
-        // Update Video
-        if ($request->hasFile('video_url')) {
-            if ($game->video_url && file_exists(public_path('storage/games/videos/'.$game->video_url))) {
-                unlink(public_path('storage/games/videos/'.$game->video_url));
-            }
-            $file = $request->file('video_url');
-            $filename = time().'_'.$file->getClientOriginalName();
-            $file->move(public_path('storage/games/videos'), $filename);
-            $game->video_url = $filename;
+    if($request->hasFile('download_file')){
+            $fileName = time().'_'.$request->download_file->getClientOriginalName();
+            $request->download_file->move(public_path('storage/games/files'), $fileName);
+            $game->download_file = $fileName;
         }
-
-
-        // Update File
-        if ($request->hasFile('download_file')) {
-            if ($game->download_file && file_exists(public_path('storage/games/files/'.$game->download_file))) {
-                unlink(public_path('storage/games/files/'.$game->download_file));
-            }
-            $file = $request->file('download_file');
-            $filename = time().'_'.$file->getClientOriginalName();
-            $file->move(public_path('storage/games/files'), $filename);
-            $game->download_file = $filename;
-        }
-
         $game->save();
 
-        return redirect()->back()->with('success', 'Game updated successfully!');
+        // Sync categories
+         $game->categories()->sync($request->categories ?? []);
+        $game->materials()->sync($request->materials ?? []);
+    $game->video_url = $request->video_url ?? null;
+
+        return redirect()->back()->with('success', 'Game updated successfully.');
     }
+
+
 
     // Xóa game (soft delete)
     public function delete($id)

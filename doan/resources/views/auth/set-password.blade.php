@@ -53,8 +53,8 @@
 </div>
 <div class="w-full flex flex-col items-start">
 <div class="flex w-full flex-col gap-3">
-<p class="text-[#111811] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Đặt Mật Khẩu</p>
-<p class="text-[#618961] dark:text-gray-300 text-base font-normal leading-normal">Vui lòng đặt mật khẩu để có thể đăng nhập lại bằng email.</p>
+<p class="text-[#111811] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Set Password</p>
+<p class="text-[#618961] dark:text-gray-300 text-base font-normal leading-normal">Please set a password to be able to log in again with your email.</p>
 </div>
 </div>
 <div class="w-full mt-8">
@@ -67,7 +67,7 @@
         <div class="text-red-600">{{ $errors->first() }}</div>
     @endif
 <label class="flex flex-col w-full flex-1">
-<p class="text-[#111811] dark:text-white text-base font-medium leading-normal pb-2">Mật Khẩu</p>
+<p class="text-[#111811] dark:text-white text-base font-medium leading-normal pb-2">Password</p>
 <div class="flex w-full flex-1 items-stretch rounded-xl border border-[#dbe6db] dark:border-gray-600 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-primary/50">
 <input name="password" type="password" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-xl text-[#111811] dark:text-white focus:outline-0 focus:ring-0 border-0 bg-transparent h-14 placeholder:text-[#618961] dark:placeholder:text-gray-400 p-[15px] pr-2 text-base font-normal leading-normal" placeholder="Nhập mật khẩu" required />
 <div class="text-[#618961] dark:text-gray-400 flex items-center justify-center pr-[15px]">
@@ -79,7 +79,7 @@
 @enderror
 </label>
 <label class="flex flex-col w-full flex-1">
-<p class="text-[#111811] dark:text-white text-base font-medium leading-normal pb-2">Xác Nhận Mật Khẩu</p>
+<p class="text-[#111811] dark:text-white text-base font-medium leading-normal pb-2">Confirm Password</p>
 <div class="flex w-full flex-1 items-stretch rounded-xl border border-[#dbe6db] dark:border-gray-600 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-primary/50">
 <input name="password_confirmation" type="password" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-xl text-[#111811] dark:text-white focus:outline-0 focus:ring-0 border-0 bg-transparent h-14 placeholder:text-[#618961] dark:placeholder:text-gray-400 p-[15px] pr-2 text-base font-normal leading-normal" placeholder="Xác nhận mật khẩu" required />
 <div class="text-[#618961] dark:text-gray-400 flex items-center justify-center pr-[15px]">
@@ -91,7 +91,7 @@
 @enderror
 </label>
 <button type="submit" class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-5 bg-primary text-[#111811] text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors">
-<span class="truncate">Đặt Mật Khẩu</span>
+<span class="truncate">Set Password</span>
 </button>
 </form>
 </div>
@@ -99,7 +99,7 @@
 <form method="POST" action="{{ route('logout') }}" class="inline">
     @csrf
     <button type="submit" class="text-[#618961] dark:text-gray-300 hover:text-primary dark:hover:text-primary text-sm font-normal underline">
-        Đăng xuất
+        Log Out
     </button>
 </form>
 </div>

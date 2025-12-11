@@ -112,13 +112,13 @@
                                 alt="Logo"
                                 class="w-20 h-20 object-contain">
                         </a>
+                        <!-- cd  -->
 
                         <div class="text-sm font-bold text-text-light dark:text-text-dark mt-0">
-<<<<<<< Updated upstream
-                            Visits: 1,234
-=======
+
+
                             <span>{{ number_format(\DB::table('visits')->first()->counter ?? 0) }} visits</span>
->>>>>>> Stashed changes
+
                         </div>
                     </div>
 
@@ -127,10 +127,11 @@
                         <ul class="flex items-center gap-x-6 lg:gap-x-8 text-sm font-medium">
                             <li>
                                 <a href="{{ url('user/dashboard') }}"
-                                    class="{{ Request::is('user/dashboard') ? 'text-primary' : 'hover:text-primary' }}">
+                                    class="{{ Request::is('user/dashboard*') ? 'text-primary' : 'hover:text-primary' }}">
                                     Home
                                 </a>
                             </li>
+
 
                             <!-- Games Dropdown -->
                             <li class="relative nav-item">
@@ -140,27 +141,33 @@
                                     <span class="material-symbols-outlined text-base">expand_more</span>
                                 </button>
 
-                                <div id="games-menu" class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
-                                    @foreach($categories as $category)
-                                    <a class="block px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary"
-                                        href="{{ route('user.categoryGame', $category->slug) }}#picnic-title">
-                                        {{ $category->name }}
+
+                                <div id="games-menu"
+                                    class="dropdown-menu absolute left-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
+
+                                    @foreach ($categoriesList as $cat)
+                                    <a class="block px-4 py-2 text-sm 
+                                            {{ $category && $category->id == $cat->id ? 'bg-primary/20 text-primary font-bold' : '' }} 
+                                            hover:bg-primary/10 hover:text-primary"
+                                        href="{{ route('games.category', $cat->id) }}#picnic-title">
+                                        {{ $cat->name }}
                                     </a>
                                     @endforeach
+
+
                                 </div>
 
                             </li>
-<<<<<<< Updated upstream
-
-                            <li><a class="hover:text-primary transition-colors" href="{{url('user/itinerary')}}">Itinerary</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="{{url('user/aboutus')}}">About Us</a></li>
-                            <li><a class="hover:text-primary transition-colors" href="{{url('user/contact')}}">Contact Us</a></li>
-=======
                             <li>
-                                <a href="{{ route('user.blog.index') }}"
-                                    class="{{ Route::currentRouteNamed('user.blog.*') ? 'text-primary' : 'hover:text-primary' }}">
-                                    Blogs
+                                <a href="{{ route('user_shop') }}"
+                                    class="{{ Route::currentRouteNamed('user_shop') ? 'text-primary' : 'hover:text-primary' }}">
+                                    Shop
                                 </a>
+                            </li>
+                            <a href="{{ route('user.blog.index') }}"
+                                class="{{ Route::currentRouteNamed('user.blog.*') ? 'text-primary' : 'hover:text-primary' }}">
+                                Blogs
+                            </a>
                             </li>
 
 
@@ -192,47 +199,70 @@
                                 </a>
                             </li>
 
->>>>>>> Stashed changes
                         </ul>
                     </div>
 
                     <div id="header-right" class="flex items-center gap-2">
+                        {{-- CART ICON --}}
+                        <a id="cart-icon" href="{{ route('cart_user') }}"
+                            class="relative flex items-center justify-center w-12 h-12 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition">
+
+
+                            <span class="material-symbols-outlined text-[28px]">
+                                shopping_cart
+                            </span>
+
+                            @auth
+                            @php
+                            $cartCount = \App\Models\Cart::where('user_id', Auth::id())->sum('quantity');
+                            @endphp
+
+                            @if($cartCount > 0)
+                            <span id="cart-count-badge" class="absolute -top-1 -right-1 bg-primary text-white text-[12px] font-bold
+w-5 h-5 flex items-center justify-center rounded-full shadow">
+                                {{ $cartCount }}
+                            </span>
+
+                            @endif
+                            @endauth
+                        </a>
 
                         {{-- HIỆN NÚT REGISTER + LOGIN KHI CHƯA LOGIN --}}
                         @if(!Auth::check() || Auth::user() == null)
                         <div id="auth-buttons" class="flex items-center gap-3">
                             <a href="{{ url('register') }}"
                                 class="px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary/90 transition">
-                                Đăng ký
+                                Sign up
                             </a>
                             <a href="{{ url('login') }}"
                                 class="px-4 py-2 rounded-lg bg-primary/10 text-primary border border-primary hover:bg-primary/20 transition font-medium">
-                                Đăng nhập
+                                Sign in
                             </a>
                         </div>
                         @endif
 
 
-                        {{-- HIỆN AVATAR KHI ĐÃ LOGIN --}}
                         @if(Auth::check() && Auth::user() != null)
                         <div id="avatar-dropdown" class="relative">
                             <button id="avatar-button"
                                 class="flex items-center justify-center size-12 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
-                                <img alt="User avatar" class="w-10 h-10 rounded-full object-cover"
-                                    src="{{ Auth::user()->avatar ?? 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}">
+                                <img id="avatarPreview"
+                                    class="w-12 h-12 rounded-full object-cover"
+                                    src="{{ Auth::user()->photo ? asset('storage/avatars/' . Auth::user()->photo) : asset('storage/avatars/no-image.jpg') }}"
+                                    alt="{{ Auth::user()->name }}">
                             </button>
 
                             <div id="avatar-menu"
                                 class="dropdown-menu absolute right-0 mt-3 w-56 bg-card-light dark:bg-card-dark rounded-lg shadow-xl py-2 border border-border-light dark:border-border-dark">
-                                <a class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary transition"
-                                    href="#">
+                                <a class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary transition nav-link"
+                                    href="{{ route('user.profile') }}">
                                     <span class="material-symbols-outlined text-base">account_circle</span>
                                     {{ Auth::user()->name }}
                                 </a>
                                 <form action="{{ url('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit"
-                                        class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary transition w-full text-left">
+                                        class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-primary/10 hover:text-primary transition w-full text-left nav-link">
                                         <span class="material-symbols-outlined text-base">logout</span>
                                         Logout
                                     </button>
@@ -243,8 +273,6 @@
 
                     </div>
 
-
-
                     <button class="md:hidden text-text-light dark:text-text-dark">
                         <span class="material-symbols-outlined text-2xl" data-icon="menu"></span>
                     </button>
@@ -252,54 +280,26 @@
             </nav>
 
         </header>
-<<<<<<< Updated upstream
-        <main class="flex-1">
-            <div x-data="slider()"
-                class="relative h-96 md:h-[65vh] overflow-hidden rounded-2xl md:rounded-3xl shadow-lg">
 
-
-                <!-- Banner Images -->
-                <template x-for="(banner, index) in banners" :key="index">
-                    <img
-                        x-show="current === index"
-                        x-transition.opacity.duration.700ms
-                        :src="banner"
-                        class="absolute inset-0 w-full h-full object-cover object-center select-none pointer-events-none"
-                        alt="banner">
-                </template>
-
-                <!-- Gradient Overlay giúp banner sâu hơn -->
-                <div class="absolute inset-0 bg-gradient-to-b from-black/10 to-black/40 pointer-events-none"></div>
-
-                <!-- Nút lùi -->
-                <button @click="prev()"
-                    class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full">
-                    ❮
-                </button>
-
-                <!-- Nút tiến -->
-                <button @click="next()"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full">
-                    ❯
-                </button>
-
-            </div>
-=======
         <main class="flex-1 mt-[120px]">
->>>>>>> Stashed changes
+
 
             @yield('content')
         </main>
         <footer class="bg-card-dark text-text-dark">
-            <div class="flex justify-center py-10 px-4 sm:px-8 lg:px-10">
+            <div class="flex justify-center py-6 px-4 sm:px-8 lg:px-10">
                 <div class="w-full max-w-7xl">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
                         <div class="md:col-span-2">
                             <div class="flex items-center gap-4 mb-4">
                                 <div class="text-primary text-2xl">
                                     <span class="material-symbols-outlined" data-icon="nature_people"></span>
                                 </div>
-                                <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">PlayFullOutings</h2>
+                                <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center">
+                                    <img src="{{ asset('user/images/logouser.png') }}"
+                                        class="w-14 h-14 object-contain rounded-full">
+                                </div>
+                                <!-- <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">PlayFullOutings</h2> -->
                             </div>
                             <p class="text-sm text-text-dark/70">Creating joyful moments, one picnic at a time.</p>
                         </div>
@@ -333,17 +333,175 @@
                             </div>
                         </div>
                     </div>
-                    <div class="border-t border-border-dark mt-8 pt-6 text-center text-sm text-text-dark/50">
-                        <p>© 2024 PlayFullOutings. All rights reserved.</p>
+                    <!-- Google Map Section -->
+                    <div class="mt-6 mb-4">
+                        <h3 class="font-bold mb-4 text-lg">Our Location</h3>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31352.01839768961!2d106.64146637431641!3d10.811135099999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752934c609c5bd%3A0x751f71739b98ebc4!2zQXB0ZWNoIENvbXB1dGVyIEVkdWNhdGlvbiAtIEjhu4cgdGjhu5FuZyDEkMOgbyB04bqhbyBM4bqtcCB0csOsbmggdmnDqm4gUXXhu5FjIHThur8gQXB0ZWNo!5e0!3m2!1svi!2s!4v1764916133942!5m2!1svi!2s" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-lg"></iframe>
                     </div>
+                    <!-- <div class="border-t border-border-dark mt-8 pt-6 text-center text-sm text-text-dark/50">
+                        <p>© 2024 PlayFullOutings. All rights reserved.</p>
+                    </div> -->
                 </div>
             </div>
         </footer>
     </div>
     </div>
-<<<<<<< Updated upstream
-=======
+    <div id="zaloModal"
+    class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50 transition">
+    
+    <div class="bg-white w-80 p-5 rounded-xl shadow-xl">
+        <h2 class="text-lg font-bold mb-3">Chat with us on Zalo</h2>
+
+        <textarea id="zaloMessage"
+            class="w-full border border-gray-300 rounded-lg p-2 h-24"
+            placeholder="Enter your message..."></textarea>
+
+        <div class="flex justify-end gap-2 mt-3">
+            <button id="closeZaloModal"
+                class="px-3 py-1 rounded-lg bg-gray-300 hover:bg-gray-400">Close</button>
+
+            <button id="sendZaloMessage"
+                class="px-3 py-1 rounded-lg bg-primary text-white hover:bg-primary/90">Send</button>
+        </div>
+    </div>
+
+</div>
+
+
+
     @include('layouts.user.chat-widget')
+    <script>
+        window.addEventListener("scroll", function() {
+            const header = document.getElementById("main-header");
+
+            if (window.scrollY > 50) {
+                header.classList.remove("header-transparent");
+                header.classList.remove("absolute");
+                header.classList.add("sticky");
+                header.classList.add("header-scrolled");
+            } else {
+                header.classList.add("absolute");
+                header.classList.add("header-transparent");
+                header.classList.remove("sticky");
+                header.classList.remove("header-scrolled");
+            }
+        });
+
+        window.dispatchEvent(new Event("scroll"));
+
+        function showToast(message, isError = false) {
+            const toast = document.createElement("div");
+            toast.className = `
+            fixed left-1/2 top-20 -translate-x-1/2 z-[500] 
+            px-6 py-3 rounded-xl shadow-lg opacity-0 pointer-events-none 
+            transition-all duration-500 font-semibold 
+        `;
+            toast.style.backgroundColor = isError ? "#dc2626" : "#10b981";
+            toast.style.color = "white";
+            toast.textContent = message;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = "1";
+                toast.style.transform = "translate(-50%, -50%) scale(1.05)";
+            }, 10);
+
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translate(-50%, -50%) scale(0.9)";
+            }, 1800);
+
+            setTimeout(() => toast.remove(), 2400);
+        }
+
+        function updateHeaderCartBadge(total) {
+            let badge = document.querySelector("#cart-count-badge");
+            const cartIcon = document.querySelector("#cart-icon");
+
+            if (!cartIcon) return;
+
+            if (!badge) {
+                badge = document.createElement("span");
+                badge.id = "cart-count-badge";
+                badge.className =
+                    "absolute -top-1 -right-1 bg-primary text-white text-[12px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow";
+                cartIcon.appendChild(badge);
+            }
+
+            badge.textContent = total;
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.preventDefault();
+
+                    let form = this.closest("form");
+                    let formData = new FormData(form);
+                    let productCard = this.closest(".product-card") ?? this.closest(".rounded-xl");
+                    let stock = parseInt(productCard.dataset.stock);
+                    let quantity = parseInt(form.querySelector('[name="quantity"]').value);
+
+
+                    if (quantity > stock) {
+                        showToast("⚠ Insufficient stock. Remaining: " + stock, true);
+                        return;
+                    }
+
+                    fetch("{{ route('cart.add') }}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": form.querySelector('input[name="_token"]').value,
+                                "X-Requested-With": "XMLHttpRequest",
+                            },
+                            body: formData
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log("ADD CART RESPONSE:", data);
+
+                            // ❗Case: Stock không đủ từ server
+                            if (data.error === "not_enough_stock") {
+                                showToast("⚠ Insufficient stock. Remaining: " + data.available, true);
+                                return;
+                            }
+
+                            // ✔ Thành công
+                            if (data.success) {
+                                showToast("Added to cart ✔");
+                                updateHeaderCartBadge(data.total);
+                            }
+
+                            // ❗Chưa đăng nhập
+                            else if (data.error === "unauthenticated") {
+                                window.location.href = "{{ url('login') }}";
+                            }
+
+                        })
+                        .catch(err => console.error(err));
+                });
+            });
+        });
+    </script>
+
+
+    <style>
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade {
+            animation: fade .3s ease-out;
+        }
+    </style>
 
     <script>
         document.addEventListener("scroll", function() {
@@ -356,8 +514,102 @@
                 navbar.classList.remove("scrolled");
             }
         });
+document.addEventListener("DOMContentLoaded", () => {
+
+    const avatarBtn = document.getElementById("avatar-button");
+    const avatarMenu = document.getElementById("avatar-menu");
+
+    if (avatarBtn && avatarMenu) {
+        avatarBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            avatarMenu.classList.toggle("dropdown-open");
+        });
+
+        // Click ra ngoài để đóng
+        document.addEventListener("click", () => {
+            avatarMenu.classList.remove("dropdown-open");
+        });
+    }
+});
+document.addEventListener("DOMContentLoaded", () => {
+
+    const backToTopBtn = document.getElementById("backToTopBtn");
+
+    // 🟢 Hiện nút khi scroll xuống 200px
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 200) {
+            backToTopBtn.classList.remove("hidden");
+            backToTopBtn.classList.add("flex");
+        } else {
+            backToTopBtn.classList.add("hidden");
+            backToTopBtn.classList.remove("flex");
+        }
+    });
+
+    // 🟢 Cuộn lên đầu trang khi click
+    backToTopBtn.addEventListener("click", () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+
+});
     </script>
->>>>>>> Stashed changes
+<button id="backToTopBtn"
+    class="hidden fixed bottom-6 left-6 z-50 
+           w-12 h-12 rounded-full bg-primary text-white shadow-lg 
+           hover:bg-primary/90 transition-all flex items-center justify-center">
+    <span class="material-symbols-outlined text-[28px]">arrow_upward</span>
+</button>
+
+<div class="fixed bottom-24 right-6 flex flex-col gap-3 z-[60]">
+
+    <!-- MESSENGER -->
+    <a href="https://m.me/playfulloutings" target="_blank"
+       class="w-12 h-12 bg-[#0084FF] rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition">
+        <span class="material-symbols-outlined text-white text-[28px]">chat</span>
+    </a>
+
+    <!-- ZALO BUTTON -->
+    <button id="openZaloChat"
+        class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg hover:scale-110 transition">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" class="w-7 h-7">
+    </button>
+
+</div>
+
+<script>
+document.getElementById("openZaloChat").addEventListener("click", () => {
+    document.getElementById("zaloModal").classList.remove("hidden");
+    document.getElementById("zaloModal").classList.add("flex");
+});
+
+document.getElementById("closeZaloModal").addEventListener("click", () => {
+    document.getElementById("zaloModal").classList.add("hidden");
+    document.getElementById("zaloModal").classList.remove("flex");
+});
+
+document.getElementById("sendZaloMessage").addEventListener("click", () => {
+    let msg = document.getElementById("zaloMessage").value.trim();
+
+    if (msg === "") {
+        alert("Please enter a message!");
+        return;
+    }
+
+    // ✔ Sau khi gửi xong → đóng modal
+    const modal = document.getElementById("zaloModal");
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+
+    // ✔ Xóa nội dung tin nhắn
+    document.getElementById("zaloMessage").value = "";
+
+    // (Nếu cần) show thông báo nhỏ
+    alert("Message sent!");
+});
+</script>
 </body>
 
 </html>

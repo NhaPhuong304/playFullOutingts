@@ -24,7 +24,7 @@ class RecycleUserController extends Controller
         $user = User::findOrFail($request->id);
 
         $user->is_delete = 0;
-        $user->status = 'active';
+        $user->status = 1;
 
         $user->save();
 

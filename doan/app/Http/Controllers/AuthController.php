@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -33,7 +34,7 @@ class AuthController extends Controller
             'is_delete' => 0,
         ]);
 
-        return redirect()->route('login')->with('success', 'Đăng ký thành công. Vui lòng đăng nhập.');
+        return redirect()->route('login')->with('success', 'Registration successful. Please log in.');
     }
 
     public function showLogin()
@@ -41,34 +42,59 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request)
-    {
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ]);
+public function login(Request $request)
+{
+    $request->validate([
+        'username' => 'required|string',
+        'password' => 'required|string',
+    ]);
 
-        $user = User::where(function ($query) use ($request) {
+
+    $user = User::where(function ($query) use ($request) {
             $query->where('username', $request->username)
                   ->orWhere('email', $request->username);
         })
-        ->where('status', 1)
         ->where('is_delete', 0)
         ->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
-            Auth::login($user, true);
-            $request->session()->regenerate();
-            
-            if ($user->role_id == 2) {
-                return redirect()->route('admin.dashboard');
-            }
-
-            return redirect()->route('user.dashboard');
-        }
-
-        return back()->withErrors(['username' => 'Thông tin đăng nhập không hợp lệ.'])->withInput();
+    if (!$user) {
+        return back()->withErrors(['username' => 'Account does not exist'])->withInput();
     }
+
+    if ($user->status == 0) {
+        return back()->withErrors([
+            'username' => 'Your account has been locked.'
+        ])->withInput();
+    }
+
+
+    if (!Hash::check($request->password, $user->password)) {
+        return back()->withErrors(['password' => 'Incorrect password.'])->withInput();
+    }
+
+
+    Auth::login($user, true);
+    $request->session()->regenerate();
+
+
+    if ($user->role_id == 2 || $user->role_id == 3) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    $user->increment('visits');
+
+    DB::table('visits')->updateOrInsert(
+        [],
+        [
+            'counter' => DB::raw('counter + 1'),
+            'updated_at' => now(),
+        ]
+    );
+
+    return redirect()->route('user.dashboard');
+}
+
+    
 
     public function logout(Request $request)
     {

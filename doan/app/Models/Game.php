@@ -18,12 +18,20 @@ class Game extends Model
         'video_url',
         'download_file',
         'status',
-        'is_delete'
+        'players',
+        'difficulty',
+        'game_setup',
+        'game_rules',
+        'is_delete',
+
     ];
 
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'category_game', 'game_id', 'category_id');
     }
-
+    public function materials()
+    {
+        return $this->belongsToMany(Material::class, 'game_material', 'game_id', 'material_id');
+    }
 }

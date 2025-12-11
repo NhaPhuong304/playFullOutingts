@@ -2,6 +2,22 @@
 @section('page-title', 'User')
 
 @section('content')
+<style>
+.category-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+.category-thumb:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+</style>
 
 <div class="main-content">
     <div class="card mt-4">
@@ -9,6 +25,24 @@
             <h5 class="card-title">User</h5>
         </div>
         <div class="card-body">
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
                 <div class="row g-2 align-items-center mb-4">
                 <div class="col-12 col-md-4 col-lg-3" >
                 <select class="form-select" name="role" id="searchRole">
@@ -28,7 +62,7 @@
             
             <div class="table-responsive" >
                 <table class="table table-hover" id="userTable">
-                    <thead>
+                    <thead class="table-dark">
                         <tr>
                             <th>Photo</th>
                             <th>Name</th>
@@ -78,15 +112,12 @@
                                         data-name="{{ $user->name }}">
                                     <i class="fa fa-close"></i>
                                 </button>
-                                <button  class="btn btn-sm btn-outline-success editUserBtn" data-bs-toggle="tooltip" title="Edit"
+                                <button  class="btn btn-sm btn-outline-success restoreUserBtn" data-bs-toggle="tooltip" title="Restore"
                                         data-id="{{$user->id}}"
-                                        data-name="{{$user->name }}"
-                                        data-email="{{$user->email}}"
-                                        data-photo="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('storage/avatars/no-image.jpg') }}"
-                                        data-role_id="{{$user -> role_id}}"
-                                        data-status="{{ $user->status }}">
-                                    <i class="fa-solid fa-pencil"></i>
+                                        data-name="{{$user->name }}">
+                                    <i class="fa-solid fa-rotate-left"></i>
                                 </button>
+
                                 </div>
                             </td>
                         </tr>
@@ -182,57 +213,32 @@
                 </div>
             </div>
         </div>
-<!-- Edit -->
-        <div class="modal fade" id="editUserModal" tabindex="-1">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header bg-warning text-white">
-                        <h5 class="modal-title">Edit User</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
+            <!-- Restore Modal -->
+            <div class="modal fade" id="restoreUserModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
 
-                    <form id="editUserForm" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body row">
-                        <div class="col-md-4 text-center">
-                            <img id="editPhotoPreview" class="rounded-circle mb-2" style="width:150px;height:150px;">
-                            <input type="file" class="form-control" name="photo" id="editPhotoInput">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title">Confirm Restore</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="col-md-8">
-                            <div class="mb-3">
-                                <label>Name</label>
-                                <input type="text" class="form-control" name="name" id="editName">
-                            </div>
-                            <div class="mb-3">
-                                <label>Email</label>
-                                <input type="email" class="form-control" name="email" id="editEmail">
-                            </div>
-                            <div class="mb-3">
-                                <label>Status</label>
-                                <select class="form-control" name="status" id="editStatus">
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label>Role</label>
-                                <select class="form-control" name="role_id" id="editRole">
-                                    <option value="2">Admin</option>
-                                    <option value="1">User</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-warning">Save Changes</button>
+                        <div class="modal-body">
+                            <p>Are you sure you want to restore <strong id="restoreUserName"></strong>?</p>
+                        </div>
+
+                        <div class="modal-footer">
+                            <form id="restoreUserForm" method="POST" action="">
+                                @csrf
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-success">Yes, Restore</button>
+                            </form>
+                        </div>
+
                     </div>
-                </form>
                 </div>
             </div>
-        </div>
+
         </div>
     </div>
 <script>
@@ -345,25 +351,16 @@ function initUserModals() {
         });
     });
 
-    // edit
-    document.querySelectorAll(".editUserBtn").forEach(btn => {
+    // restore
+    document.querySelectorAll(".restoreUserBtn").forEach(btn => {
         btn.addEventListener("click", function () {
             const id = this.dataset.id;
             const name = this.dataset.name;
-            const email = this.dataset.email;
-            const status = this.dataset.status;
-            const role_id = this.dataset.role_id;
-            const photo = this.dataset.photo;
 
-            document.getElementById("editName").value = name;
-            document.getElementById("editEmail").value = email;
-            document.getElementById("editStatus").value = status;
-            document.getElementById("editRole").value = role_id;
-            document.getElementById("editPhotoPreview").src = photo;
+            document.getElementById("restoreUserName").textContent = name;
+            document.getElementById("restoreUserForm").action = `/admin/recycle-user/restore/${id}`;
 
-            document.getElementById("editUserForm").action = `/admin/user/${id}`;
-
-            new bootstrap.Modal(document.getElementById("editUserModal")).show();
+            new bootstrap.Modal(document.getElementById("restoreUserModal")).show();
         });
     });
 

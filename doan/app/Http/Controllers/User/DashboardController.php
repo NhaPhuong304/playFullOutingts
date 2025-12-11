@@ -7,7 +7,6 @@ use App\Models\Category;
 use App\Models\Itinerary;
 
 class DashboardController extends Controller
-
 {
     
     public function dashboard()
@@ -18,7 +17,7 @@ class DashboardController extends Controller
             $category->limited_games = $category->games()
                 ->where('status', 1)
                 ->orderBy('id', 'asc')
-                ->limit(3)
+                ->limit(1)
                 ->get();
         });
 
@@ -28,7 +27,8 @@ class DashboardController extends Controller
             ->with(['locations' => function ($query) {
                 $query->where('is_delete', 0)->limit(1);
             }])
-            ->limit(6)
+            ->limit(4)
+
             ->get();
 
         // Truyền cả 2 xuống view
