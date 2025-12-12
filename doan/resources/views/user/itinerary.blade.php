@@ -10,8 +10,6 @@
     }
 </style>
 
-
-
 <main class="flex-grow">
     <div class="px-4 sm:px-10 py-5">
         <div class="mx-auto max-w-7xl">

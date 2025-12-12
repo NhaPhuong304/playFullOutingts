@@ -90,12 +90,9 @@ document.addEventListener("DOMContentLoaded", function () {
         avatarDropdown.classList.remove('hidden'); // hiện avatar
     }
 
-<<<<<<< HEAD
-    btnRegister.addEventListener('click', loginUser);
-    btnLogin.addEventListener('click', loginUser);
-=======
+
     if (btnRegister) btnRegister.addEventListener('click', loginUser);
     if (btnLogin) btnLogin.addEventListener('click', loginUser);
 });
->>>>>>> 9a08ee46f594c011742fc88caf6c8d0a4ad67be5
+
 

@@ -538,7 +538,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const backToTopBtn = document.getElementById("backToTopBtn");
 
-    // 🟢 Hiện nút khi scroll xuống 200px
     window.addEventListener("scroll", () => {
         if (window.scrollY > 200) {
             backToTopBtn.classList.remove("hidden");
@@ -549,7 +548,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 🟢 Cuộn lên đầu trang khi click
     backToTopBtn.addEventListener("click", () => {
         window.scrollTo({
             top: 0,
@@ -567,14 +565,11 @@ document.addEventListener("DOMContentLoaded", () => {
 </button>
 
 <div class="fixed bottom-24 right-6 flex flex-col gap-3 z-[60]">
-
-    <!-- MESSENGER -->
     <a href="https://m.me/playfulloutings" target="_blank"
        class="w-12 h-12 bg-[#0084FF] rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition">
         <span class="material-symbols-outlined text-white text-[28px]">chat</span>
     </a>
 
-    <!-- ZALO BUTTON -->
     <button id="openZaloChat"
         class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg hover:scale-110 transition">
         <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" class="w-7 h-7">
@@ -611,32 +606,6 @@ document.getElementById("sendZaloMessage").addEventListener("click", () => {
 
     // (Nếu cần) show thông báo nhỏ
     alert("Message sent!");
-});
-document.addEventListener("DOMContentLoaded", () => {
-
-    const gamesBtn = document.getElementById("games-button");
-    const gamesMenu = document.getElementById("games-menu");
-
-    if (gamesBtn && gamesMenu) {
-
-        // Toggle dropdown
-        gamesBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-
-            // Đóng avatar nếu mở
-            const avatarMenu = document.getElementById("avatar-menu");
-            if (avatarMenu) avatarMenu.classList.remove("dropdown-open");
-
-            // Toggle games dropdown
-            gamesMenu.classList.toggle("dropdown-open");
-        });
-
-        // Click ra ngoài → đóng menu
-        document.addEventListener("click", () => {
-            gamesMenu.classList.remove("dropdown-open");
-        });
-    }
-
 });
 
 </script>
