@@ -186,8 +186,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('admin/contact', [AdminContactController::class, 'index'])->name('admin.contact');
     Route::put('admin/contact/{id}/status', [AdminContactController::class, 'updateStatus'])->name('admin.contact.updateStatus');
     Route::post('admin/contact/{id}/reply', [AdminContactController::class, 'reply'])->name('admin.contact.reply');
-    Route::delete('/admin/contact/{id}', [AdminContactController::class, 'destroy'])->name('admin.contact.destroy');
-
+    
     Route::get('admin/user', [UserController::class, 'user'])->name('admin.user');
     Route::put('admin/user/{id}', [UserController::class, 'update'])->name('admin.user.update');
     Route::put('/admin/user/{user}/block', [UserController::class, 'block'])->name('admin.user.block');

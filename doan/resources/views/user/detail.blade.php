@@ -71,7 +71,6 @@
     Added to cart ✔
 </div>
 
-<!-- ⭐ JS -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
@@ -99,19 +98,16 @@
                 .then(res => res.json())
                 .then(data => {
 
-                    // ❗ If stock is not enough → show error
                     if (data.error === "not_enough_stock") {
                         showToast("⚠ Not enough stock! Only " + data.available + " left", true);
                         return;
                     }
 
-                    // ❗ If other errors
                     if (data.error) {
                         showToast("⚠ " + data.error, true);
                         return;
                     }
 
-                    // ⭐ Success
                     if (data.success) {
                         showToast("Added to cart ✔", false);
                         updateHeaderCartBadge(data.total);
@@ -120,7 +116,6 @@
                 .catch(err => console.error(err));
         });
 
-        // ⭐ Update Header Cart Badge
         function updateHeaderCartBadge(totalQty) {
             let badge = document.querySelector("#cart-count-badge");
             const cartIcon = document.getElementById("header-cart-icon");
@@ -136,24 +131,21 @@
             badge.textContent = totalQty;
         }
 
-        // ⭐ Beautiful toast (supports error)
         function showToast(message, isError = false) {
             const toast = document.getElementById("toast");
 
             toast.textContent = message;
 
-            // ⭐ Change toast color for errors
             if (isError) {
                 toast.style.backgroundColor = "#e11d48"; // red
             } else {
                 toast.style.backgroundColor = "#10b981"; // green
             }
 
-            // Show
+
             toast.classList.remove("opacity-0");
             toast.classList.add("opacity-100");
 
-            // Hide
             setTimeout(() => {
                 toast.classList.remove("opacity-100");
                 toast.classList.add("opacity-0");

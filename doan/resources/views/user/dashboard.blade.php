@@ -60,7 +60,7 @@
                 @foreach ($categories as $cat)
                 @foreach ($cat->limited_games as $game)
 
-                <a href="{{ route('user.detailGame', $game->slug) }}#detail"
+                <a href="{{ route('games.detail', $game->slug) }}#detail"
                     class="relative rounded-xl overflow-hidden aspect-[4/3] group block">
 
                     {{-- Background Image --}}

@@ -91,7 +91,7 @@
 
         {{-- Info --}}
         <div class="space-y-2 text-gray-700 dark:text-gray-300">
-            <p><span class="font-semibold">Full Name:</span> {{ $user->name }}</p>
+            <p><span class="font-semibold">Name:</span> {{ $user->name }}</p>
             <p><span class="font-semibold">Email:</span> {{ $user->email }}</p>
             <p><span class="font-semibold">Phone:</span> {{ $user->phone }}</p>
             <p><span class="font-semibold">Birthday:</span> {{ $user->birthday }}</p>
@@ -192,7 +192,7 @@
 
             {{-- Name --}}
             <div>
-                <label class="font-semibold">Full Name</label>
+                <label class="font-semibold"> Name</label>
                 <input type="text" name="name"
                     value="{{ $user->name }}"
                     class="w-full mt-1 px-4 py-2 rounded-lg border bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
