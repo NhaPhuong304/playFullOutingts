@@ -29,21 +29,45 @@
         class="user-avatar" alt="avatar">
     </a>
 
-    <ul class="dropdown-menu dropdown-menu-end mt-2">
-        <li><h6 class="dropdown-header">Settings</h6></li>
-        <li><a class="dropdown-item" href="{{ route('admin.profile', auth()->user()->id) }}"><i class="fa-regular fa-user"></i> Profile Settings</a></li>
+<ul class="dropdown-menu dropdown-menu-end mt-2">
+    <li>
+        <h6 class="dropdown-header">Settings</h6>
+    </li>
 
-        <li>
-            <a class="dropdown-item text-danger" href="{{ route('logout') }}"
-               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-               <i class="fa-solid fa-right-from-bracket"></i> Sign out
-            </a>
-        </li>
+    <li>
+        <a class="dropdown-item d-flex align-items-center gap-2"
+           href="{{ route('admin.profile', auth()->user()->id) }}">
+            <i class="fa-regular fa-user"></i>
+            <span>Profile Settings</span>
+        </a>
+    </li>
 
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-            @csrf
-        </form>
-    </ul>
+    <li>
+        <a class="dropdown-item d-flex align-items-center gap-2"
+           href="{{ url('user/dashboard') }}">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+    </li>
+
+    <li>
+        <hr class="dropdown-divider">
+    </li>
+
+    <li>
+        <a class="dropdown-item d-flex align-items-center gap-2 text-danger"
+           href="{{ route('logout') }}"
+           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Sign out</span>
+        </a>
+    </li>
+
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
+</ul>
+
 </div>
 
 

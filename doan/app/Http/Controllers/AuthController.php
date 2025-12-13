@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -16,7 +17,7 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function register(Request $request)
+ public function register(Request $request)
     {
         $request->validate([
             'username' => 'required|string|max:255|unique:users,username',
@@ -24,18 +25,33 @@ class AuthController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        User::create([
+        // Lưu lại password gốc trước khi mã hóa (để gửi email)
+        $plainPassword = $request->password;
+
+        $user = User::create([
             'name' => $request->username,
             'username' => $request->username,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($plainPassword),
             'role_id' => 1,
             'status' => 1,
             'is_delete' => 0,
         ]);
 
-        return redirect()->route('login')->with('success', 'Registration successful. Please log in.');
+        // 👉 Gửi email thông báo đăng ký thành công
+        Mail::send('emails.register-success', [
+            'username' => $user->username,
+            'email'    => $user->email,
+            'password' => $plainPassword
+        ], function ($message) use ($user) {
+            $message->to($user->email)
+                ->subject('Welcome to PlayFullOutings – Registration Successful');
+        });
+
+        return redirect()->route('login')
+            ->with('success', 'Registration successful! Please check your email.');
     }
+
 
     public function showLogin()
     {

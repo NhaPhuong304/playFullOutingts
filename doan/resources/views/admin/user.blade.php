@@ -158,7 +158,21 @@
                                     </button>
                                     @endif
 
-                                    @if(Auth::user()->id != $user->id)
+                                    @php
+                                        $canBlock = false;
+
+                                        // SupperAdmin được block tất cả trừ chính mình
+                                        if (Auth::user()->role_id == 3 && Auth::user()->id != $user->id) {
+                                            $canBlock = true;
+                                        }
+
+                                        // Admin chỉ được block User
+                                        if (Auth::user()->role_id == 2 && $user->role_id == 1) {
+                                            $canBlock = true;
+                                        }
+                                    @endphp
+
+                                    @if($canBlock)
                                         @if($user->status == 1)
                                             <button class="btn btn-sm btn-outline-danger blockUserBtn"
                                                 data-bs-toggle="tooltip" title="Block"
@@ -177,6 +191,7 @@
                                             </button>
                                         @endif
                                     @endif
+
 
                                 </div>
                             </td>

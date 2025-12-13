@@ -18,35 +18,35 @@
             <div class="mt-8 flex flex-col gap-4">
                 <div class="flex flex-col md:flex-row gap-4 items-center">
 
-<!-- SEARCH INPUT BEAUTIFUL -->
-<div class="w-full md:w-1/2 lg:w-2/3">
-    <div class="relative group">
+                    <!-- SEARCH INPUT BEAUTIFUL -->
+                    <div class="w-full md:w-1/2 lg:w-2/3">
+                        <div class="relative group">
 
-        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition">
-            search
-        </span>
+                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition">
+                                search
+                            </span>
 
-        <input id="searchInputBox"
-            class="w-full h-12 pl-12 pr-4 rounded-xl bg-white dark:bg-charcoal border border-gray-300 dark:border-gray-700
+                            <input id="searchInputBox"
+                                class="w-full h-12 pl-12 pr-4 rounded-xl bg-white dark:bg-charcoal border border-gray-300 dark:border-gray-700
                    text-charcoal dark:text-off-white placeholder-gray-400 dark:placeholder-gray-500
                    shadow-sm focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-            placeholder="Search itineraries..."
-            type="text">
-    </div>
-</div>
+                                placeholder="Search itineraries..."
+                                type="text">
+                        </div>
+                    </div>
 
 
-    <div class="w-full md:w-auto">
-        <select id="daySelect"
-            class="h-12 px-4 w-40 rounded-xl bg-white dark:bg-charcoal border border-gray-300 dark:border-gray-700
+                    <div class="w-full md:w-auto">
+                        <select id="daySelect"
+                            class="h-12 px-4 w-40 rounded-xl bg-white dark:bg-charcoal border border-gray-300 dark:border-gray-700
                 text-charcoal dark:text-off-white text-sm shadow-sm
                 focus:ring-2 focus:ring-primary/50 focus:border-primary transition">
-            <option value="all">All Days</option>
-            <option value="1-2">1 – 2 Days</option>
-            <option value="3-4">3 – 4 Days</option>
-            <option value="5+">5+ Days</option>
-        </select>
-    </div>
+                            <option value="all">All Days</option>
+                            <option value="1-2">1 – 2 Days</option>
+                            <option value="3-4">3 – 4 Days</option>
+                            <option value="5+">5+ Days</option>
+                        </select>
+                    </div>
 
 
 
@@ -55,25 +55,25 @@
                 <!-- CATEGORY FILTER -->
                 <div class="flex gap-2 flex-wrap">
 
-    <!-- ALL Button -->
-    <div class="category-filter active-category flex h-9 cursor-pointer items-center rounded-full px-4
+                    <!-- ALL Button -->
+                    <div class="category-filter active-category flex h-9 cursor-pointer items-center rounded-full px-4
                 bg-primary/10 text-primary border border-primary/40 font-medium
                 hover:bg-primary/20 transition"
-         data-cat="all">
-        All
-    </div>
+                        data-cat="all">
+                        All
+                    </div>
 
-    @foreach ($categories as $cat)
-        <div class="category-filter flex h-9 cursor-pointer items-center rounded-full px-4
+                    @foreach ($categories as $cat)
+                    <div class="category-filter flex h-9 cursor-pointer items-center rounded-full px-4
                     bg-white dark:bg-charcoal border border-gray-300 dark:border-gray-700
                     text-sm text-charcoal dark:text-off-white hover:bg-primary/10 hover:text-primary
                     transition font-medium"
-            data-cat="{{ strtolower($cat->name) }}">
-            {{ $cat->name }}
-        </div>
-    @endforeach
+                        data-cat="{{ strtolower($cat->name) }}">
+                        {{ $cat->name }}
+                    </div>
+                    @endforeach
 
-</div>
+                </div>
 
 
 
@@ -96,7 +96,6 @@
 
                     @foreach ($itineraries as $itinerary)
 
-                    {{-- Lấy danh mục từ Location → CategoryLocation --}}
                     @php
                     $catNames = $itinerary->locations
                     ->flatMap(fn($loc) => $loc->categoryLocations->pluck('name'))

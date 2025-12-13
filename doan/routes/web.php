@@ -82,6 +82,7 @@ Route::get('/user/shop', [UserProductController::class, 'shop'])->name('user_sho
 
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\GameUserController;
+use App\Http\Controllers\User\LocationController as UserLocationController;
 
 // --------------------Quản lý cart-----------------------------
 Route::get('/cart', [CartController::class, 'index'])->name('cart_user');
@@ -133,10 +134,12 @@ Route::get('user/contact', [UserContactController::class, 'contact'])->name('use
 Route::get('/games/category/{id}', [GameUserController::class, 'category'])
     ->name('games.category');
 
+    Route::get('/location/{id}', [UserLocationController::class, 'detail'])->name('user.location.detail');
 
-// Contact form POST and captcha generation
-Route::post('user/contact', [UserContactController::class, 'send'])->name('user.contact.send');
-Route::get('captcha/generate', [UserContactController::class, 'generateCaptcha'])->name('captcha.generate');
+
+    Route::post('user/contact', [UserContactController::class, 'send'])->name('user.contact.send');
+    // Endpoint to return a fresh image captcha (base64)
+    Route::get('user/contact/captcha', [UserContactController::class, 'captchaImage'])->name('user.contact.captcha');
 
 
     Route::get('/user/game', [GameUserController::class, 'game'])->name('user.game');
@@ -183,7 +186,8 @@ Route::middleware(['role:admin'])->group(function () {
     Route::get('admin/contact', [AdminContactController::class, 'index'])->name('admin.contact');
     Route::put('admin/contact/{id}/status', [AdminContactController::class, 'updateStatus'])->name('admin.contact.updateStatus');
     Route::post('admin/contact/{id}/reply', [AdminContactController::class, 'reply'])->name('admin.contact.reply');
-    
+    Route::delete('/admin/contact/{id}', [AdminContactController::class, 'destroy'])->name('admin.contact.destroy');
+
     Route::get('admin/user', [UserController::class, 'user'])->name('admin.user');
     Route::put('admin/user/{id}', [UserController::class, 'update'])->name('admin.user.update');
     Route::put('/admin/user/{user}/block', [UserController::class, 'block'])->name('admin.user.block');
@@ -199,7 +203,8 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('admin/recycle-location/restore/{id}', [RecycleLocationController::class, 'restore'])->name('admin.recycleLocation.restore');
 
     Route::get('admin/trashProduct', [RecycleProductController::class, 'trash'])->name('admin.trashProduct');
-    Route::delete('admin/recycle-product/delete/{id}', [RecycleProductController::class, 'delete'])->name('admin.recycleProduct.delete');
+   Route::delete('/admin/recycle-product/delete/{id}', [RecycleProductController::class, 'delete'])
+    ->name('admin.recycleProduct.delete');
     Route::post('admin/recycle-product/restore/{id}', [RecycleProductController::class, 'restore'])->name('admin.recycleProduct.restore');
 
 

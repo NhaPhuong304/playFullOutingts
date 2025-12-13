@@ -45,37 +45,42 @@ class ItineraryAdminController extends Controller
         return back()->with('success', 'Added itinerary successfully!');
     }
 
-    public function update(Request $request, $id)
-    {
-        $itinerary = Itinerary::findOrFail($id);
+public function update(Request $request, $id)
+{
+    $itinerary = Itinerary::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required|string|max:255|unique:itineraries,name,' . $id,
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
-            'days' => 'nullable|integer',
-            'status' => 'required|in:0,1',
-        ]);
+    $request->validate([
+        'name' => 'required|string|max:255|unique:itineraries,name,' . $id,
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+        'days' => 'nullable|integer',
+        'status' => 'required|in:0,1',
+    ]);
 
-        $itinerary->update([
-            'name' => $request->name,
-            'image' => $request->image,
-            'description' => $request->description,
-            'days' => $request->days,
-            'status' => $request->status,
-        ]);
-        
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $imageName = time().'_'.$file->getClientOriginalName();
-            $file->move(public_path('storage/itineraries'), $imageName);
-            $itinerary->update(['image' => $imageName]);
-        }   
-$itinerary->locations()->sync($request->location_ids);
+    // Cập nhật các trường không phải hình ảnh
+    $itinerary->update([
+        'name' => $request->name,
+        'description' => $request->description,
+        'days' => $request->days,
+        'status' => $request->status,
+    ]);
 
+    // Xử lý upload ảnh
+    if ($request->hasFile('image')) {
+        $file = $request->file('image');
+        $imageName = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('storage/itineraries'), $imageName);
 
-        return back()->with('success', 'Updated itinerary successfully!');
+        $itinerary->update(['image' => $imageName]);
     }
+
+    // Sync location
+    if ($request->has('location_ids')) {
+        $itinerary->locations()->sync($request->location_ids);
+    }
+
+    return back()->with('success', 'Updated itinerary successfully!');
+}
 
     public function delete($id)
     {
@@ -87,4 +92,5 @@ $itinerary->locations()->sync($request->location_ids);
 
         return back()->with('success', 'Deleted itinerary successfully!');
     }
+    
 }

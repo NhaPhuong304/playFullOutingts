@@ -52,9 +52,10 @@
                         <td>{{ $order->receiver_name }}</td>
                         <td>{{ $order->delivery_phone }}</td>
                         <td>{{ $order->delivery_address }}</td>
-                        <td>{{ $order->payment_method }}</td>
+                        <td>{{ strtoupper($order->payment_method) }}</td>
                         <td>{{ $order->purchase_date->format('d/m/Y') }}</td>
-                        <td>{{ $order->pay }}</td>
+                       <td>${{ number_format($order->pay, 2) }}</td>
+
                         <td><span class="badge bg-success">{{ $order->status }}</span></td>
                         <td class="btn-group">
                             <button class="btn btn-sm btn-outline-info btn-view-order"
@@ -288,12 +289,15 @@ function renderPagination(totalPages) {
                         </td>
                         <td>${product.name}</td>
                         <td>${quantity}</td>
-                        <td>${price.toLocaleString()} đ</td>
-                        <td>${subtotal.toLocaleString()} đ</td>
+                        <td>$${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                        <td>$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+
                     </tr>
                 `;
                 });
-                document.getElementById('orderTotal').textContent = total.toLocaleString() + ' đ';
+                document.getElementById('orderTotal').textContent =
+    '$' + total.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
             });
         });
     });

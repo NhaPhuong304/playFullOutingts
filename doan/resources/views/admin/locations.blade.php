@@ -107,6 +107,7 @@
                                         data-name="{{ $location->name }}"
                                         data-description="{{ $location->description }}"
                                         data-itineraries='@json($location->itineraries->pluck("name"))'
+                                        data-address = "{{$location->address}}"
                                         data-categories='@json($location->categoryLocations->pluck("name"))'
                                         data-status="{{ $location->status }}"
                                         data-image="{{ $location->image ? asset('storage/locations/'.$location->image) : asset('storage/locations/no-image.jpg') }}">
@@ -119,6 +120,7 @@
                                         data-description="{{ $location->description }}"
                                         data-status="{{ $location->status }}"
                                         data-itinerary-id="{{ $location->itinerary_id }}"
+                                        data-address = "{{$location->address}}"
                                         data-category-ids='@json($location->categoryLocations->pluck("name"))'
                                       data-itineraries='@json($location->itineraries->pluck("name"))'
 
@@ -155,6 +157,7 @@
                 <img id="viewLocationImage" style="width:150px;height:150px;object-fit:cover;" class="rounded mb-2">
                 <p><strong>Name:</strong> <span id="viewLocationName"></span></p>
                 <p><strong>Description:</strong> <span id="viewLocationDescription"></span></p>
+                <p><strong>Address:</strong> <span id="viewLocationAddress"></span></p>
                 <p><strong>Status:</strong> <span id="viewLocationStatus"></span></p>
                 <p><strong>Category:</strong> <span id="viewLocationCategory"></span></p>
                 <p><strong>Itinerary:</strong> <span id="viewLocationItinerary"></span></p>
@@ -188,7 +191,11 @@
                             <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                         @endforeach
                     </select>
-
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Address</label>
+                        <input type="text" name="address" class="form-control"
+                            placeholder="Enter location address..." required>
+                    </div>
 
                     <select name="status" class="form-control mb-2">
                         <option value="1">Active</option>
@@ -230,6 +237,11 @@
                             <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                         @endforeach
                     </select>
+                        <div class="mb-3">
+                            <input type="text" name="address" id="editLocationAddress"
+                                class="form-control" placeholder="Enter location address..." required>
+                        </div>
+
                     <select name="status" class="form-control mb-2" id="editLocationStatus">
                         <option value="1">Active</option>
                         <option value="0">Inactive</option>
@@ -343,6 +355,7 @@ function initLocationModals() {
     document.querySelectorAll('.viewLocationBtn').forEach(btn => {
         btn.addEventListener('click', function() {
             document.getElementById('viewLocationName').textContent = this.dataset.name;
+            document.getElementById('viewLocationAddress').textContent = this.dataset.address;
             document.getElementById('viewLocationDescription').textContent = this.dataset.description;
             let itineraries = JSON.parse(this.dataset.itineraries);
             document.getElementById('viewLocationItinerary').innerHTML =
@@ -371,6 +384,7 @@ function initLocationModals() {
             form.action = `/admin/locations/${this.dataset.id}`;
 
             document.getElementById('editLocationName').value = this.dataset.name;
+            document.getElementById('editLocationAddress').value = this.dataset.address;
             document.getElementById('editLocationDescription').value = this.dataset.description;
             document.getElementById('editLocationStatus').value = this.dataset.status;
             document.getElementById('editLocationImagePreview').src = this.dataset.image;

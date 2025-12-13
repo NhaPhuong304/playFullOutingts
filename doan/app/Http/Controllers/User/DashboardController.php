@@ -17,7 +17,7 @@ class DashboardController extends Controller
             $category->limited_games = $category->games()
                 ->where('status', 1)
                 ->orderBy('id', 'asc')
-                ->limit(1)
+                ->take(1)
                 ->get();
         });
 
@@ -25,10 +25,10 @@ class DashboardController extends Controller
         $itineraries = Itinerary::where('status', 1)
             ->where('is_delete', 0)
             ->with(['locations' => function ($query) {
-                $query->where('is_delete', 0)->limit(1);
+                $query->where('is_delete', 0)->take(1);
             }])
             ->limit(4)
-
+            ->orderBy('id','desc')
             ->get();
 
         // Truyền cả 2 xuống view

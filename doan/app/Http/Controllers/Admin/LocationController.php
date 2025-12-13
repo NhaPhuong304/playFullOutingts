@@ -19,12 +19,13 @@ class LocationController extends Controller
         return view('admin.locations')->with($data);
     }
 
-    public function store(Request $request)
+public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:locations,name',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'address' => 'nullable|string|max:255',
             'itinerary_ids' => 'nullable|array',
             'itinerary_ids.*' => 'integer|exists:itineraries,id',
         ]);
@@ -40,6 +41,7 @@ class LocationController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'image' => $imageName,
+            'address' => $request -> address,
             'status' => $request->status ?? 1,
             'is_delete' => 0,
         ]);
@@ -47,7 +49,11 @@ class LocationController extends Controller
         if ($request->has('itinerary_ids')) {
             $location->itineraries()->sync($request->itinerary_ids);
         }
+        if ($request->has('category_ids')) {
+            $location->categoryLocations()->sync($request->category_ids);
+        }
 
+        
         return back()->with('success', 'Location added successfully!');
     }
 
@@ -59,6 +65,7 @@ class LocationController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:locations,name,'.$id,
             'description' => 'nullable|string',
+            'address' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
             'itinerary_ids' => 'nullable|array',
             'itinerary_ids.*' => 'integer|exists:itineraries,id',
@@ -74,25 +81,30 @@ class LocationController extends Controller
         $location->update([
             'name' => $request->name,
             'description' => $request->description,
+            'address' => $request->address,
             'status' => $request->status ?? 1,
         ]);
 
-        if ($request->has('itinerary_ids')) {
-            $location->itineraries()->sync($request->itinerary_ids);
-        } else {
-            $location->itineraries()->sync([]);
+        if ($request->exists('itinerary_ids')) {
+            $location->itineraries()->sync($request->itinerary_ids ?? []);
         }
+
+        if ($request->exists('category_ids')) {
+            $location->categoryLocations()->sync($request->category_ids ?? []);
+        }
+
+
 
         return redirect()->back()->with('success', 'Location updated successfully!');
     }
 
-    // Xóa mềm
+    // SOFT DELETE
     public function delete($id)
     {
         $location = Location::findOrFail($id);
         $location->update([
             'is_delete' => 1,
-            'status' => 0
+            'status'    => 0
         ]);
 
         return back()->with('success', 'Location deleted successfully!');

@@ -21,7 +21,7 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#4CAF50",
+                        "primary": "#13ec13",
                         "background-light": "#FFFFFF",
                         "background-dark": "#102210",
                         "sidebar-light": "#F5F5DC",
@@ -59,7 +59,7 @@
                         <div class="flex flex-wrap gap-2 mb-6">
                             <a class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-medium leading-normal hover:text-primary" href="{{url('user/dashboard')}}">Home</a>
                             <span class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-medium leading-normal">/</span>
-                            <a class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-medium leading-normal hover:text-primary" href="{{url('user/game')}}">Games</a>
+<a class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-medium leading-normal hover:text-primary" href="{{url('user/game')}}">Games</a>
                             <span class="text-text-light-secondary dark:text-text-dark-secondary text-sm font-medium leading-normal">/</span>
                             <span class="text-text-light-primary dark:text-text-dark-primary text-sm font-medium leading-normal">{{$game->name}}</span>
                         </div>
@@ -111,13 +111,29 @@
                         </div>
 
                         <div class="space-y-8 text-text-light-secondary dark:text-text-dark-secondary">
-                            <div>
+<div>
                                 <h2 class="text-text-light-primary dark:text-text-dark-primary text-2xl font-bold leading-tight tracking-[-0.015em] pb-3 border-b border-gray-200 dark:border-gray-700 mb-4">Required Materials</h2>
-                                <ul class="list-disc list-inside space-y-2">
-                                    @foreach($game->materials as $material)
-                                        <li>{{ $material->name }}</li>
-                                    @endforeach
-                                </ul>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+
+                                @foreach($game->materials as $material)
+                                <div class="flex items-center gap-3 p-3 rounded-xl bg-white dark:bg-white/10 
+                                            border border-border-light dark:border-border-dark shadow-sm 
+                                            hover:scale-[1.03] transition-transform">
+
+                                    <img src="{{ $material->image 
+                                                    ? asset('storage/materials/' . $material->image) 
+                                                    : asset('storage/avatars/no-image.jpg') }}"
+                                        class="w-14 h-14 rounded-lg object-cover shadow" />
+
+                                    <p class="font-medium text-text-light-primary dark:text-text-dark-primary">
+                                        {{ $material->name }}
+                                    </p>
+
+                                </div>
+                                @endforeach
+
+                            </div>
+
 
                             </div>
                             <div>
@@ -154,7 +170,7 @@
 
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-3">
+<div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-accent text-3xl">timer</span>
                                     <div>
                                         <p class="text-xs">Estimated Time</p>
@@ -171,18 +187,58 @@
                             </div>
 
                             <!-- Download -->
-                            @if($game->download_file)
-                            <div class="border-t border-gray-300 dark:border-gray-600 pt-6">
-                                <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-                                    Download our printable guide:
-                                </p>
-                                <a href="{{ asset($game->download_file) }}" target="_blank" 
-                                   class="w-full flex items-center justify-center gap-2 rounded-lg h-12 px-4 bg-primary text-white font-bold hover:bg-green-600 transition-colors">
-                                    <span class="material-symbols-outlined">download</span>
-                                    <span class="truncate">Download Guide</span>
-                                </a>
-                            </div>
-                            @endif
+                           @if($game->download_file)
+    @php
+        $file = asset($game->download_file);
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+
+        if (in_array($ext, ['doc', 'docx'])) {
+            $viewerUrl = "https://docs.google.com/viewer?url=" . urlencode($file) . "&embedded=true";
+        } else {
+            $viewerUrl = $file;
+        }
+    @endphp
+
+    <div class="border-t border-gray-300 dark:border-gray-600 pt-6">
+
+        <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
+            Download or preview the game guide:
+        </p>
+
+        <!-- 2 BUTTONS HÀNG NGANG -->
+        <div class="flex flex-col sm:flex-row gap-3 w-full">
+
+            <!-- NÚT DOWNLOAD -->
+            <a href="{{ $file }}" target="_blank"
+                class="flex-1 flex items-center justify-center gap-2 h-12 rounded-lg 
+                       bg-primary text-white font-bold hover:bg-green-600 transition">
+                <span class="material-symbols-outlined">download</span>
+                Download
+            </a>
+
+            <!-- NÚT VIEW -->
+            <button id="togglePreview"
+                class="flex-1 flex items-center justify-center gap-2 h-12 rounded-lg 
+                       bg-primary/10 text-primary border border-primary font-bold hover:bg-primary/20 transition">
+                <span class="material-symbols-outlined">visibility</span>
+                View Guide
+            </button>
+
+        </div>
+
+        <!-- KHUNG PREVIEW (ẨN BAN ĐẦU) -->
+        <div id="previewContainer" class="mt-6 hidden">
+            <iframe 
+                src="{{ $viewerUrl }}" 
+                class="w-full h-[600px] rounded-xl border border-gray-300 dark:border-gray-600 shadow"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+    </div>
+@endif
+
+
 
                         </div>
                     </aside>
@@ -191,7 +247,34 @@
         </div>
     </div>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("togglePreview");
+    const box = document.getElementById("previewContainer");
+
+    if (btn && box) {
+        btn.addEventListener("click", () => {
+            box.classList.toggle("hidden");
+
+            // Đổi tên nút
+            if (box.classList.contains("hidden")) {
+                btn.innerHTML = `
+                    <span class="material-symbols-outlined">visibility</span>
+                    View Guide
+                `;
+            } else {
+                btn.innerHTML = `
+                    <span class="material-symbols-outlined">visibility_off</span>
+                    Hide Guide
+                `;
+            }
+        });
+    }
+});
+
+</script>
 
 </html>
+
 
 @endsection

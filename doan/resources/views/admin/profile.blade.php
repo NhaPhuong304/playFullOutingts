@@ -154,11 +154,17 @@
                         </div>
                         <div class="mb-3">
                             <label class="fw-semibold">Birth Day</label>
-                            <input type="text" class="form-control" name="birthday"
-                                   value="{{ old('birthday', $user->birthday) }}">
-                                   @error('birthday')
-                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                    @enderror
+                            <input
+                                type="date"
+                                name="birthday"
+                                id="birthday"
+                                value="{{ $user->birthday }}"
+                                class="form-control"
+                            >
+
+                            <small id="birthday-error" class="text-danger d-none"></small>
+
+
                         </div>
                         <div class="mb-3">
                             <label class="fw-semibold">Gender</label>
@@ -166,9 +172,13 @@
                                    value="{{ old('gender', $user->gender) }}">
                         </div>
 
-                        <button class="btn btn-primary btn-custom" type="submit">
-                            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                        <button
+                            type="submit"
+                            id="saveProfileBtn"
+                            class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition">
+                            Save
                         </button>
+
                     </form>
                 </div>
 
@@ -246,8 +256,53 @@ document.querySelectorAll('.toggle-password').forEach(icon => {
         }
     });
 });
+document.addEventListener('DOMContentLoaded', function () {
+    const birthdayInput = document.getElementById('birthday');
+    const errorText = document.getElementById('birthday-error');
+    const saveBtn = document.getElementById('saveProfileBtn');
 
+    if (!birthdayInput || !saveBtn) return;
 
+    function validateAge() {
+        if (!birthdayInput.value) {
+            errorText.classList.add('d-none');
+            birthdayInput.classList.remove('is-invalid');
+            saveBtn.disabled = false;
+            return true;
+        }
+
+        const birthday = new Date(birthdayInput.value);
+        const today = new Date();
+
+        let age = today.getFullYear() - birthday.getFullYear();
+        const m = today.getMonth() - birthday.getMonth();
+
+        if (m < 0 || (m === 0 && today.getDate() < birthday.getDate())) {
+            age--;
+        }
+
+        if (age < 16) {
+            errorText.textContent = 'You must be at least 16 years old.';
+            errorText.classList.remove('d-none');
+            birthdayInput.classList.add('is-invalid');
+
+            // 🚫 CHẶN SAVE
+            saveBtn.disabled = true;
+            return false;
+        }
+
+        // ✅ HỢP LỆ
+        errorText.classList.add('d-none');
+        birthdayInput.classList.remove('is-invalid');
+        saveBtn.disabled = false;
+        return true;
+    }
+
+    birthdayInput.addEventListener('change', validateAge);
+
+    // Check ngay khi load (nếu đã có birthday)
+    validateAge();
+});
 </script>
 
 @endsection

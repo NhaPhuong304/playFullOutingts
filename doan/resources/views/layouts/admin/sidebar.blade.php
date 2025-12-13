@@ -19,15 +19,6 @@
 
             <li class="sidebar-label">Main</li>
 
-            <!-- HOME -->
-            <li>
-                <a href="{{ url('user/dashboard') }}" 
-                   class="sidebar-link {{ request()->is('user/dashboard') ? 'active' : '' }}">
-                    <i class="fa-solid fa-house"></i>
-                    <p>Home</p>
-                </a>
-            </li>
-
             <!-- DASHBOARD -->
             <li>
                 <a href="{{ route('admin.dashboard') }}" 
@@ -43,6 +34,13 @@
                    class="sidebar-link {{ request()->routeIs('admin.game*') ? 'active' : '' }}">
                     <i class="fa-solid fa-gamepad"></i>
                     <p>Game</p>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.contact') }}" 
+                   class="sidebar-link {{ request()->routeIs('admin.contact*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-address-book"></i>
+                    <p>Contact</p>
                 </a>
             </li>
 

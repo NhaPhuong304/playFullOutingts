@@ -15,6 +15,7 @@ class Location extends Model
         'status',
         'image',
         'is_delete',
+        'address',
     ];
 
     public function itineraries()

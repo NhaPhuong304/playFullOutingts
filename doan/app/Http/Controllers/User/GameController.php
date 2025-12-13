@@ -12,26 +12,24 @@ class GameController extends Controller
     {
         $categories = Category::where('status', 1)->where('is_delete', 0)->get();
 
-        $gamesByCategory = [];
+            $gamesByCategory = [];
 
-        foreach ($categories as $category) {
-            $gamesByCategory[$category->name] = $category->games()
-                ->where('status', 1)
-                ->where('is_delete', 0)
-                ->take(3)
-                ->get();
-        }
+            foreach ($categories as $category) {
+                $gamesByCategory[$category->name] = $category->games()
+                    ->where('status', 1)
+                    ->where('is_delete', 0)
+                    ->take(3)
+                    ->get();
+            }
 
-        return view('user.game', compact('categories', 'gamesByCategory'));
+            return view('user.dashboard', compact('categories', 'gamesByCategory'));
     }
 
 
     public function detailGame($slug)
     {
-        $game = Game::where('slug', $slug)
-            ->with('categories', 'materials') 
-            ->firstOrFail()
-            ->with('categories', 'materials')
+        $game = Game::with('categories', 'materials')
+            ->where('slug', $slug)
             ->firstOrFail();
 
 
