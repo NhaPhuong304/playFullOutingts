@@ -124,7 +124,6 @@
     <div class="flex justify-center mt-6" id="gamesPagination"></div>
 </div>
 
-{{-- JAVASCRIPT (KHÔNG ĐỤNG, CHỈ GIỮ NGUYÊN) --}}
 <script>
 const gamesPerPage = 9;
 let currentPage = 1;

@@ -101,7 +101,7 @@
 
                                 <td>{{ $product->name }}</td>
                                 <td>{{ Str::limit($product->description, 60) }}</td>
-                                <td>${{ $product->price }}</td>
+                               <td>${{ number_format($product->price, 2) }}</td>
                                 <td>{{ $product->stock }}</td>
 
                                 <td class="btn-group">
@@ -167,9 +167,11 @@
                 </div>
 
                 <div class="mb-3">
-                    <label>Price</label>
-                    <input type="text" name="price" class="form-control" required>
+                    <label>Price (USD)</label>
+                    <input type="number" name="price" class="form-control"
+                        step="0.01" min="0" placeholder="Ex: 19.99" required>
                 </div>
+
 
                 <div class="mb-3">
                     <label>Stock</label>
@@ -219,11 +221,19 @@
 
             <div class="modal-body row">
 
-                <div class="col-md-4 text-center mb-3">
-                    <img id="editProductImagePreview"
-                         src="/storage/images/no-image.jpg"
-                         class="img-thumbnail">
-                </div>
+            <div class="col-md-4 text-center mb-3">
+
+                <img id="editProductImagePreview"
+                    src="/storage/images/no-image.jpg"
+                    class="img-thumbnail mb-2" style="width:150px;height:150px;object-fit:cover;border-radius:10px;">
+
+                <!-- Nút chọn ảnh -->
+                <label class="btn btn-outline-primary btn-sm mt-2" style="cursor:pointer;">
+                    <i class="fa-solid fa-image"></i> Change Photo
+                    <input type="file" name="photo" id="editPhotoInput" class="d-none" accept="image/*">
+                </label>
+
+            </div>
 
                 <div class="col-md-8">
 
@@ -238,9 +248,11 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Price</label>
-                        <input type="text" name="price" id="editPrice" class="form-control">
+                        <label>Price (USD)</label>
+                        <input type="number" name="price" id="editPrice"
+                            class="form-control" step="0.01" min="0">
                     </div>
+
 
                     <div class="mb-3">
                         <label>Stock</label>
@@ -299,6 +311,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderTable();
     document.getElementById("searchInput").addEventListener("input", searchProducts);
+});
+document.getElementById("editPrice").addEventListener("blur", function () {
+    if (this.value) {
+        this.value = parseFloat(this.value).toFixed(2);
+    }
 });
 
 
@@ -368,7 +385,7 @@ function showProductModal(id) {
             <div class="col-md-8">
                 <p><strong>Name:</strong> ${p.name}</p>
                 <p><strong>Description:</strong> ${p.description}</p>
-                <p><strong>Price:</strong> ${p.price}</p>
+                <p><strong>Price:</strong> $${Number(p.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
                 <p><strong>Stock:</strong> ${p.stock}</p>
             </div>
         </div>
@@ -400,6 +417,20 @@ function confirmDelete(id) {
     document.getElementById("deleteProductId").value = id;
     new bootstrap.Modal(document.getElementById("confirmDeleteModal")).show();
 }
+/* PREVIEW ẢNH MỚI KHI CHỌN */
+document.addEventListener("DOMContentLoaded", () => {
+    const photoInput = document.getElementById("editPhotoInput");
+    const previewImg = document.getElementById("editProductImagePreview");
+
+    if (photoInput) {
+        photoInput.addEventListener("change", function () {
+            if (this.files && this.files[0]) {
+                previewImg.src = URL.createObjectURL(this.files[0]);
+            }
+        });
+    }
+});
+
 </script>
 
 

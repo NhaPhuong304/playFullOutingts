@@ -98,7 +98,6 @@
 
                     @foreach ($itineraries as $itinerary)
 
-                    {{-- Lấy danh mục từ Location → CategoryLocation --}}
                     @php
                     $catNames = $itinerary->locations
                     ->flatMap(fn($loc) => $loc->categoryLocations->pluck('name'))

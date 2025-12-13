@@ -14,8 +14,15 @@ class ContactController extends Controller
     public function index(Request $request)
     {
         $perPage = 20;
-        // Show only contacts that have not been replied to yet
-        $messages = Contact::whereNull('replied_at')->orderBy('created_at', 'desc')->paginate($perPage);
+        $status = $request->query('status'); // ví dụ ?status=unread hoặc ?status=all
+
+        $query = Contact::query();
+
+        if ($status === 'unread') {
+            $query->whereNull('replied_at');
+        }
+
+        $messages = $query->orderBy('created_at', 'desc')->paginate($perPage);
         return view('admin.contact', compact('messages'));
     }
 
@@ -51,10 +58,37 @@ class ContactController extends Controller
             $contact->read = 1;
             $contact->save();
 
-            return response()->json(['success' => true, 'message' => 'Reply sent']);
+            // Trả về dữ liệu mới để frontend cập nhật badge, không xóa row
+            return response()->json([
+                'success' => true,
+                'message' => 'Reply sent',
+                'read' => $contact->read,
+                'replied_at' => $contact->replied_at->format('Y-m-d H:i'),
+            ]);
         } catch (\Exception $e) {
             Log::error('Admin reply error: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Failed to send reply'], 500);
+        }
+    }
+    public function destroy($id): JsonResponse
+    {
+        try {
+            $contact = Contact::findOrFail($id);
+
+            // Xóa cứng khỏi DB
+            $contact->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Contact deleted permanently'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Admin delete contact error: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete contact'
+            ], 500);
         }
     }
 }

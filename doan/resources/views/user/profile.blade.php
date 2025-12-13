@@ -211,13 +211,17 @@
             </div>
            <div>
                 <label class="font-semibold">Birthday</label>
-                <input type="date" name="birthday"
-                    value="{{ $user->birthday }}"
-                    class="w-full mt-1 px-4 py-2 rounded-lg border bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+                    <input
+                        type="date"
+                        name="birthday"
+                        id="birthday"
+                        value="{{ $user->birthday }}"
+                        class="w-full mt-1 px-4 py-2 rounded-lg border bg-gray-50 dark:bg-gray-800 dark:border-gray-700"
+                    >
 
-                @error('birthday')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
+                    <small id="birthday-error" class="text-red-500 text-sm hidden"></small>
+
+
             </div>
 
             <div>
@@ -245,10 +249,13 @@
                     Cancel
                 </button>
 
-                <button type="submit"
+                <button
+                    type="submit"
+                    id="saveProfileBtn"
                     class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition">
                     Save
                 </button>
+
             </div>
         </form>
     </div>
@@ -440,6 +447,59 @@
 
         renderTable();
     });
+document.addEventListener('DOMContentLoaded', function () {
+    const birthdayInput = document.getElementById('birthday');
+    const errorText = document.getElementById('birthday-error');
+    const saveBtn = document.getElementById('saveProfileBtn');
+
+    if (!birthdayInput || !saveBtn) return;
+
+    function validateAge() {
+        if (!birthdayInput.value) {
+            errorText.classList.add('hidden');
+            birthdayInput.classList.remove('border-red-500');
+            saveBtn.disabled = false;
+            saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            return true;
+        }
+
+        const birthday = new Date(birthdayInput.value);
+        const today = new Date();
+
+        let age = today.getFullYear() - birthday.getFullYear();
+        const m = today.getMonth() - birthday.getMonth();
+
+        if (m < 0 || (m === 0 && today.getDate() < birthday.getDate())) {
+            age--;
+        }
+
+        if (age < 16) {
+            errorText.textContent = 'You must be at least 16 years old.';
+            errorText.classList.remove('hidden');
+            birthdayInput.classList.add('border-red-500');
+
+            // 🚫 CHẶN SAVE
+            saveBtn.disabled = true;
+            saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            return false;
+        }
+
+        // ✅ HỢP LỆ
+        errorText.classList.add('hidden');
+        birthdayInput.classList.remove('border-red-500');
+        saveBtn.disabled = false;
+        saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+        return true;
+    }
+
+    // Validate khi chọn ngày
+    birthdayInput.addEventListener('change', validateAge);
+
+    // Validate ngay khi mở modal (nếu có birthday cũ)
+    validateAge();
+});
 </script>
 
 @endsection

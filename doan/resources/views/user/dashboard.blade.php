@@ -2,7 +2,6 @@
 
 @section('content')
 
-{{-- ================= BANNER ================= --}}
 <div x-data="slider()" class="relative h-96 md:h-[65vh] overflow-hidden">
     <template x-for="(banner, index) in banners" :key="index">
         <img
@@ -68,9 +67,9 @@
                     <div class="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
                         style='background-image:
                         linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%),
-                        url("{{ asset($game->image) }}")'>
-                          <img src="{{ $game->image ? asset('storage/games/images/'.$game->image) : asset('storage/games/no-image.jpg') }}">
+                        url("{{ $game->image ? asset('storage/games/images/'.$game->image) : asset('storage/games/no-image.jpg') }}")'>
                     </div>
+
 
                     {{-- Game Name --}}
                     <div class="absolute bottom-3 left-3 right-3">
@@ -89,43 +88,6 @@
 
 
 
-        {{-- ================= FEATURE STEPS (giữ nguyên UI) ================= --}}
-        <!-- <section class="py-12 md:py-20 bg-background-light dark:bg-card-dark rounded-xl">
-            <div class="px-4">
-                <h2 class="text-[22px] font-bold text-center md:text-3xl pb-8">
-                    Planning Your Fun is Easy
-                </h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                    <div class="flex flex-col items-center gap-4">
-                        <div class="flex items-center justify-center size-16 bg-primary/20 rounded-full text-primary">
-                            <span class="material-symbols-outlined text-4xl">search</span>
-                        </div>
-                        <h3 class="text-lg font-bold">1. Browse Games</h3>
-                        <p class="text-sm text-text-light/80 dark:text-text-dark/80">Explore our curated list.</p>
-                    </div>
-
-                    <div class="flex flex-col items-center gap-4">
-                        <div class="flex items-center justify-center size-16 bg-primary/20 rounded-full text-primary">
-                            <span class="material-symbols-outlined text-4xl">map</span>
-                        </div>
-                        <h3 class="text-lg font-bold">2. Plan an Outing</h3>
-                        <p class="text-sm text-text-light/80 dark:text-text-dark/80">Simple itineraries included.</p>
-                    </div>
-
-                    <div class="flex flex-col items-center gap-4">
-                        <div class="flex items-center justify-center size-16 bg-primary/20 rounded-full text-primary">
-                            <span class="material-symbols-outlined text-4xl">celebration</span>
-                        </div>
-                        <h3 class="text-lg font-bold">3. Have Fun!</h3>
-                        <p class="text-sm text-text-light/80 dark:text-text-dark/80">Make unforgettable moments.</p>
-                    </div>
-                </div>
-            </div>
-        </section> -->
-
-
-
         {{-- ================= ITINERARY SECTION (DYNAMIC) ================= --}}
         <section class="py-12 md:py-20">
             <h2 class="text-[22px] font-bold text-center md:text-3xl">
@@ -135,15 +97,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-4">
 
                 @foreach ($itineraries as $item)
-                    @php
-                        $firstLocation = $item->locations->first();
-                        $imageUrl = $firstLocation
-                            ? asset($firstLocation->image)
-                            : 'https://via.placeholder.com/600x400?text=No+Image';
-                    @endphp
+                
 
                     <div class="bg-card-light dark:bg-card-dark rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow">
-                        <img class="w-full h-56 object-cover" src="{{ $imageUrl }}" alt="{{ $item->name }}"/>
+                        <img class="w-full h-56 object-cover" src="{{ asset('storage/itineraries/' . ($item->image ?? 'no-image.jpg')) }}" alt="{{ $item->name }}"/>
 
                         <div class="p-6">
                             <h3 class="text-xl font-bold mb-2">{{ $item->name }}</h3>
@@ -153,7 +110,7 @@
                             </p>
 
                             <a class="text-primary font-bold hover:underline"
-                               href="#">
+                               href="{{route('user.itinerary.detail', $item->id)}}">
                                 View Itinerary
                             </a>
                         </div>
