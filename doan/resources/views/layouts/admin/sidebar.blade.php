@@ -55,16 +55,6 @@
                     <p>Category</p>
                 </a>
             </li>
-            <li>
-                <a href="{{ route('admin.contact') }}" 
-                   class="sidebar-link {{
-                        request()->routeIs('admin.contact') ||
-                        request()->routeIs('admin.contact.*')
-                        ? 'active' : '' }}">
-                    <i class="fa-solid fa-list"></i>
-                    <p>Contact</p>
-                </a>
-            </li>
 
             <!-- PRODUCTS -->
             <li>
