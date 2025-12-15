@@ -18,15 +18,16 @@ class Location extends Model
         'address',
     ];
 
-    public function itineraries()
-    {
-        return $this->belongsToMany(
-            Itinerary::class,
-            'location_itinerary',
-            'location_id',
-            'itinerary_id'
-        );
-    }
+public function itineraries()
+{
+    return $this->belongsToMany(
+        Itinerary::class,
+        'location_itinerary',
+        'location_id',
+        'itinerary_id'
+    );
+}
+
     public function categoryLocations()
     {
         return $this->belongsToMany(

@@ -21,7 +21,6 @@ class RecycleProductController extends Controller
 
     public function delete($id)
     {
-        // Kiểm tra xem sản phẩm có nằm trong đơn hàng hay không
         $hasOrder = DB::table('order_details')
             ->where('product_id', $id)
             ->exists();
@@ -29,8 +28,6 @@ class RecycleProductController extends Controller
         if ($hasOrder) {
             return back()->with('error', 'Cannot delete! Product is used in orders.');
         }
-
-        // Xóa vĩnh viễn
         Product::where('id', $id)->delete();
 
         return back()->with('success', 'Product permanently deleted successfully!');

@@ -1,5 +1,5 @@
 @extends('admin.dashboard')
-@section('page-title', 'Itinerary Trash')
+@section('page-title', 'Trash Itineraries ')
 
 @section('content')
 <style>
@@ -213,7 +213,8 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener("click", function(){
             document.getElementById("restoreItineraryName").textContent = this.dataset.name;
             document.getElementById("restoreItineraryForm").action =
-                `/admin/itineraries/${this.dataset.id}/restore`;
+    `/admin/recycle-itineraries/restore/${this.dataset.id}`;
+
             new bootstrap.Modal(document.getElementById("restoreItineraryModal")).show();
         });
     });
@@ -223,7 +224,8 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener("click", function(){
             document.getElementById("deleteItineraryName").textContent = this.dataset.name;
             document.getElementById("deleteItineraryForm").action =
-                `/admin/itineraries/${this.dataset.id}/force-delete`;
+    `/admin/recycle-itineraries/delete/${this.dataset.id}`;
+
             new bootstrap.Modal(document.getElementById("deleteItineraryModal")).show();
         });
     });

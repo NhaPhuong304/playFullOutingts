@@ -1,5 +1,5 @@
 @extends('admin.dashboard')
-@section('page-title', 'Category Location Trash')
+@section('page-title', 'Trash Category Location ')
 
 @section('content')
 <style>
@@ -69,6 +69,7 @@
                             <th>Name</th>
                             <th>Slug</th>
                             <th>Description</th>
+                            <th>Location</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -76,21 +77,20 @@
                     <tbody>
                         @foreach($categoryLocations as $categoryLocation)
                         <tr>
-                            <td>
-                               @if($categoryLocation->image)
-                                <img src="{{asset('storage/categoryLocations/'.$categoryLocation->image)}}?t={{$categoryLocation->updated_at->timestamp}}" class="rounded-circle me-2"  width="40" height="40">
-                                @else
-                                <img src="{{asset('storage/categoryLocations/no-image.jpg')}}" class="rounded-circle me-2"  width="40" height="40">
-                                @endif
-                            </td>
                             <td>{{ $categoryLocation->name }}</td>
+                            <th>{{$categoryLocation->slug}}</th>
                             <td>{{ Str::limit($categoryLocation->description, 60) }}</td>
                             <td>
-                                @forelse($categoryLocation->itineraries as $it)
-                                    <span >{{ $it->name }}</span>
+                                @forelse($categoryLocation->locations as $location)
+                                    @forelse($location->itineraries as $it)
+                                        <span>{{ $it->name }}</span>
+                                    @empty
+                                        <span>No itineraries</span>
+                                    @endforelse
                                 @empty
-                                    <span>None</span>
+                                    <span>No locations</span>
                                 @endforelse
+
                             </td>
                             <td>
                                 <span class="badge {{ $categoryLocation->status ? 'bg-success' : 'bg-danger' }}">
@@ -248,7 +248,7 @@ document.querySelectorAll(".restoreCategoryLocationBtn").forEach(btn => {
         document.getElementById("restoreCategoryLocationName").textContent = this.dataset.name;
 
         document.getElementById("restoreCategoryLocationForm").action =
-            `/admin/recycle-location/restore/${this.dataset.id}`;
+            `/admin/recycle-category-location/restore/${this.dataset.id}`;
 
         new bootstrap.Modal(document.getElementById("restoreCategoryLocationModal")).show();
     });
@@ -260,7 +260,8 @@ document.querySelectorAll(".restoreCategoryLocationBtn").forEach(btn => {
             document.getElementById("deleteCategoryLocationName").textContent = this.dataset.name;
 
             document.getElementById("deleteCategoryLocationForm").action =
-                `/admin/recycle-location/delete/${this.dataset.id}`;
+    `/admin/recycle-category-location/delete/${this.dataset.id}`;
+
 
             new bootstrap.Modal(document.getElementById("deleteCategoryLocationModal")).show();
         });

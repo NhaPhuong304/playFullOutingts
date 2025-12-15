@@ -125,7 +125,7 @@
                         <div class="text-sm font-bold text-text-light dark:text-text-dark mt-0">
 
 
-                            <span>{{ number_format(\DB::table('visits')->first()->counter ?? 0) }} visits</span>
+                           <span>{{ $onlineUsers }} online</span>
 
                         </div>
                     </div>

@@ -18,13 +18,14 @@ class CategoryLocation extends Model
         'is_delete',
     ];
 
-   public function locations()
-        {
-            return $this->belongsToMany(
-                Location::class,
-                'category_location_location',
-                'location_category_id',
-                'location_id'
-            );
-        }
+public function locations()
+    {
+        return $this->belongsToMany(
+            Location::class,
+            'category_location_location',
+            'location_category_id',       
+            'location_id'              
+        );
+    }
+
 }

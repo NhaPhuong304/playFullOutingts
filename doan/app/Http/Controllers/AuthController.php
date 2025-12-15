@@ -87,7 +87,7 @@ public function login(Request $request)
     if (!Hash::check($request->password, $user->password)) {
         return back()->withErrors(['password' => 'Incorrect password.'])->withInput();
     }
-
+ DB::table('sessions')->where('user_id', $user->id)->delete();
 
     Auth::login($user, true);
     $request->session()->regenerate();
@@ -97,15 +97,6 @@ public function login(Request $request)
         return redirect()->route('admin.dashboard');
     }
 
-    $user->increment('visits');
-
-    DB::table('visits')->updateOrInsert(
-        [],
-        [
-            'counter' => DB::raw('counter + 1'),
-            'updated_at' => now(),
-        ]
-    );
 
     return redirect()->route('user.dashboard');
 }
@@ -114,6 +105,9 @@ public function login(Request $request)
 
     public function logout(Request $request)
     {
+        $userId = Auth::id();
+        DB::table('sessions')->where('user_id', $userId)->delete();
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

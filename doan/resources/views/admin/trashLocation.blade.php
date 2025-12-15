@@ -1,5 +1,5 @@
 @extends('admin.dashboard')
-@section('page-title', 'Location Trash')
+@section('page-title', 'Trash Location ')
 
 @section('content')
 <style>

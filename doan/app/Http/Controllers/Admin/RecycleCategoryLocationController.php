@@ -7,11 +7,16 @@ use App\Models\Location;
 class RecycleCategoryLocationController extends Controller
 
 {
-    public function trash()
+public function trash()
     {
-        $categoryLocations = CategoryLocation::where('is_delete', 1)->get();
+        $categoryLocations = CategoryLocation::where('is_delete', 1)
+            ->with('locations.itineraries')
+            ->get();
+
         return view('admin.trashCategoryLocation', compact('categoryLocations'));
     }
+
+
 
     public function restore($id)
     {
@@ -19,16 +24,20 @@ class RecycleCategoryLocationController extends Controller
         return back()->with('success', 'Restored successfully!');
     }
 
-     public function delete($id)
+    public function delete($id)
     {
-        $categoryLocation = CategoryLocation::with('itineraries')->findOrFail($id);
+        $categoryLocation = CategoryLocation::with('locations.itineraries')->findOrFail($id);
 
-        if ($categoryLocation->itineraries->count() > 0) {
-            return redirect()->back()->with('error', 'Cannot delete category location because it has associated itineraries.');
+        if ($categoryLocation->locations->count() > 0) {
+            return redirect()->back()
+                ->with('error', 'Cannot delete category location because it has associated locations or itineraries.');
         }
+        $categoryLocation->locations()->detach();
 
-        $categoryLocation->delete();
-        return redirect()->back()->with('success', 'Category location deleted successfully.');
+        $categoryLocation->forceDelete(); 
+
+        return redirect()->back()->with('success', 'Category location deleted permanently.');
     }
+
         
 }
