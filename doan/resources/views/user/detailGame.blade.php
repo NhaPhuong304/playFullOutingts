@@ -186,57 +186,56 @@
                                 </div>
                             </div>
 
-                            <!-- Download -->
-                           @if($game->download_file)
-    @php
-        $file = asset($game->download_file);
-        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+ @if($game->download_file)
+@php
+    // LINK FILE ĐÚNG
+    $fileUrl = asset('storage/games/files/'.$game->download_file);
+    $ext = strtolower(pathinfo($game->download_file, PATHINFO_EXTENSION));
 
-        if (in_array($ext, ['doc', 'docx'])) {
-            $viewerUrl = "https://docs.google.com/viewer?url=" . urlencode($file) . "&embedded=true";
-        } else {
-            $viewerUrl = $file;
-        }
-    @endphp
+    // GOOGLE VIEWER CHỈ DÙNG CHO WORD
+    $viewerUrl = in_array($ext, ['doc','docx'])
+        ? 'https://docs.google.com/gview?url='.urlencode($fileUrl).'&embedded=true'
+        : $fileUrl;
+@endphp
 
-    <div class="border-t border-gray-300 dark:border-gray-600 pt-6">
+<div class="border-t border-gray-300 dark:border-gray-600 pt-6">
 
-        <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
-            Download or preview the game guide:
-        </p>
+    <p class="text-sm text-text-light-secondary dark:text-text-dark-secondary mb-4">
+        Download or preview the game guide:
+    </p>
 
-        <!-- 2 BUTTONS HÀNG NGANG -->
-        <div class="flex flex-col sm:flex-row gap-3 w-full">
+    <!-- BUTTONS -->
+    <div class="flex flex-col sm:flex-row gap-3 w-full">
 
-            <!-- NÚT DOWNLOAD -->
-            <a href="{{ $file }}" target="_blank"
-                class="flex-1 flex items-center justify-center gap-2 h-12 rounded-lg 
-                       bg-primary text-white font-bold hover:bg-green-600 transition">
-                <span class="material-symbols-outlined">download</span>
-                Download
-            </a>
+        <!-- DOWNLOAD -->
+        <a href="{{ $fileUrl }}"
+           download
+           class="flex-1 flex items-center justify-center gap-2 h-12 rounded-lg 
+                  bg-primary text-white font-bold hover:bg-green-600 transition">
+            <span class="material-symbols-outlined">download</span>
+            Download
+        </a>
 
-            <!-- NÚT VIEW -->
-            <button id="togglePreview"
-                class="flex-1 flex items-center justify-center gap-2 h-12 rounded-lg 
-                       bg-primary/10 text-primary border border-primary font-bold hover:bg-primary/20 transition">
-                <span class="material-symbols-outlined">visibility</span>
-                View Guide
-            </button>
-
-        </div>
-
-        <!-- KHUNG PREVIEW (ẨN BAN ĐẦU) -->
-        <div id="previewContainer" class="mt-6 hidden">
-            <iframe 
-                src="{{ $viewerUrl }}" 
-                class="w-full h-[600px] rounded-xl border border-gray-300 dark:border-gray-600 shadow"
-                allowfullscreen>
-            </iframe>
-        </div>
-
+        <!-- VIEW -->
+        <button id="togglePreview"
+            class="flex-1 flex items-center justify-center gap-2 h-12 rounded-lg 
+                   bg-primary/10 text-primary border border-primary font-bold hover:bg-primary/20 transition">
+            <span class="material-symbols-outlined">visibility</span>
+            View Guide
+        </button>
     </div>
+
+    <!-- PREVIEW -->
+    <div id="previewContainer" class="mt-6 hidden">
+        <iframe
+            src="{{ $viewerUrl }}"
+            class="w-full h-[600px] rounded-xl border border-gray-300 dark:border-gray-600 shadow"
+            allowfullscreen>
+        </iframe>
+    </div>
+</div>
 @endif
+
 
 
 

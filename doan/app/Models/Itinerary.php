@@ -30,5 +30,9 @@ public function locations()
         'location_id'
     );
 }
+    public function games()
+    {
+        return $this->belongsToMany(Game::class, 'itinerary_game');
+    }
 
 }

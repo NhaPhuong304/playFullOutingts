@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Game;
 use App\Models\Itinerary;
 use App\Models\Location;
 use Illuminate\Http\Request;
@@ -10,9 +11,19 @@ class ItineraryAdminController extends Controller
 {
     public function itinerary()
     {
-        $itineraries = Itinerary::where('is_delete', 0)->orderBy('id', 'desc')->get();
-        $locations = Location::where('status', 1)->get();
-        return view('admin.itineraries', compact('itineraries', 'locations'));
+        $itineraries = Itinerary::with(['locations','games'])
+            ->orderByDesc('id')
+            ->where('is_delete', 0)
+            ->get();
+
+        $locations = Location::where('status',1)->get();
+        $games     = Game::where('status',1)->get();
+
+        return view('admin.itineraries', compact(
+            'itineraries',
+            'locations',
+            'games'
+        ));
     }
 
     public function add(Request $request)
@@ -57,7 +68,6 @@ public function update(Request $request, $id)
         'status' => 'required|in:0,1',
     ]);
 
-    // Cập nhật các trường không phải hình ảnh
     $itinerary->update([
         'name' => $request->name,
         'description' => $request->description,
@@ -65,32 +75,41 @@ public function update(Request $request, $id)
         'status' => $request->status,
     ]);
 
-    // Xử lý upload ảnh
     if ($request->hasFile('image')) {
         $file = $request->file('image');
         $imageName = time() . '_' . $file->getClientOriginalName();
         $file->move(public_path('storage/itineraries'), $imageName);
-
         $itinerary->update(['image' => $imageName]);
     }
 
-    // Sync location
     if ($request->has('location_ids')) {
         $itinerary->locations()->sync($request->location_ids);
+    }
+
+    if ($request->has('game_ids')) {
+        $itinerary->games()->sync($request->game_ids);
     }
 
     return back()->with('success', 'Updated itinerary successfully!');
 }
 
-    public function delete($id)
-    {
-        $itinerary = Itinerary::findOrFail($id);
-        $itinerary->update([
-            'is_delete' => 1,
-            'status' => 0
-        ]);
 
-        return back()->with('success', 'Deleted itinerary successfully!');
-    }
+public function delete($id)
+{
+    $itinerary = Itinerary::findOrFail($id);
+
+    // detach pivot trước
+    $itinerary->games()->detach();
+    $itinerary->locations()->detach();
+
+    // soft delete
+    $itinerary->update([
+        'is_delete' => 1,
+        'status' => 0
+    ]);
+
+    return back()->with('success', 'Deleted itinerary successfully!');
+}
+
     
 }

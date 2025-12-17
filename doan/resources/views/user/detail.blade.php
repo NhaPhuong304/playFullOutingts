@@ -2,7 +2,6 @@
 
 @section('content')
 
-<!-- 🌄 HERO SECTION -->
 <section class="w-full pt-32 pb-16 bg-gradient-to-b from-primary/10 to-background-light dark:from-primary/20 dark:to-background-dark">
     <div class="max-w-6xl mx-auto px-6 text-center">
         <h1 class="text-4xl font-bold tracking-tight">Product Details</h1>
@@ -14,7 +13,6 @@
     </div>
 </section>
 
-<!-- 🌟 PRODUCT DETAIL -->
 <div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-10">
 
     <!-- LEFT IMAGE -->
@@ -23,7 +21,6 @@
             class="w-full max-w-lg rounded-2xl shadow-lg object-cover">
     </div>
 
-    <!-- RIGHT INFO -->
     <div class="space-y-6">
 
         <h2 class="text-3xl font-bold">{{ $product->name }}</h2>
@@ -34,7 +31,6 @@
             {{ $product->description }}
         </p>
 
-        <!-- QUANTITY + ADD TO CART -->
         <div class="flex items-center gap-4 pt-4">
 
             <form method="POST" class="add-detail-cart-form flex items-center gap-3">
@@ -65,23 +61,20 @@
     </div>
 </div>
 
-<!-- 🌈 Toast Notification -->
 <div id="toast"
     class="fixed left-1/2 top-20 -translate-x-1/2 z-[500] bg-primary text-white font-semibold px-6 py-3 rounded-xl shadow-lg opacity-0 pointer-events-none transition-all duration-500">
-    Added to cart ✔
+    Added to cart 
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
-        // ⭐ Quantity controls
         const qtyInput = document.querySelector(".qty-input");
         document.querySelector(".qty-plus").onclick = () => qtyInput.value = parseInt(qtyInput.value) + 1;
         document.querySelector(".qty-minus").onclick = () => {
             if (qtyInput.value > 1) qtyInput.value--;
         };
 
-        // ⭐ Add to cart AJAX
         document.querySelector(".add-detail-btn").addEventListener("click", function() {
 
             let form = document.querySelector(".add-detail-cart-form");
@@ -99,17 +92,17 @@
                 .then(data => {
 
                     if (data.error === "not_enough_stock") {
-                        showToast("⚠ Not enough stock! Only " + data.available + " left", true);
+                        showToast("Not enough stock! Only " + data.available + " left", true);
                         return;
                     }
 
                     if (data.error) {
-                        showToast("⚠ " + data.error, true);
+                        showToast( data.error, true);
                         return;
                     }
 
                     if (data.success) {
-                        showToast("Added to cart ✔", false);
+                        showToast("Added to cart", false);
                         updateHeaderCartBadge(data.total);
                     }
                 })
@@ -137,9 +130,9 @@
             toast.textContent = message;
 
             if (isError) {
-                toast.style.backgroundColor = "#e11d48"; // red
+                toast.style.backgroundColor = "#e11d48";
             } else {
-                toast.style.backgroundColor = "#10b981"; // green
+                toast.style.backgroundColor = "#10b981";
             }
 
 

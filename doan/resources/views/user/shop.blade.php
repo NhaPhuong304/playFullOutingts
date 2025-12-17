@@ -2,8 +2,6 @@
 
 @section('content')
 
-{{-- 🌿 HERO BANNER --}}
-
 <section class="w-full pt-32 pb-12 bg-gradient-to-b from-primary/10 to-background-light dark:from-primary/20 dark:to-background-dark">
     <div class="max-w-6xl mx-auto px-6 text-center">
         <h1 class="text-4xl font-bold tracking-tight">Our Shop</h1>
@@ -15,10 +13,8 @@
     </div>
 </section>
 
-{{-- 🌿 MAIN CONTENT --}}
 <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-10">
 
-    {{-- 🔍 SIDEBAR FILTER --}}
     <aside class="bg-card-light dark:bg-card-dark rounded-xl p-6 shadow-md border border-border-light dark:border-border-dark">
 
         <h2 class="text-xl font-semibold mb-4">Filter by Price</h2>
@@ -64,14 +60,12 @@
     </aside>
 
 
-    {{-- 🛒 PRODUCT LIST --}}
     <div class="md:col-span-3">
 
-        {{-- 🔎 SEARCH + SORT --}}
         <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
 
             {{-- Search --}}
-            <form method="GET" action="{{ route('user_shop') }}" class="w-full md:w-1/2">
+            <!-- <form method="GET" action="{{ route('user_shop') }}" class="w-full md:w-1/2">
                 <div class="relative">
                     <input type="text" name="keyword"
                         value="{{ request('keyword') }}"
@@ -81,9 +75,30 @@
                         <span class="material-symbols-outlined">search</span>
                     </button>
                 </div>
+            </form> -->
+            <form method="GET" action="{{ route('user_shop') }}" class="w-full md:w-1/2">
+                <div class="relative">
+
+                    <input
+                        type="text"
+                        name="keyword"
+                        value="{{ request('keyword') }}"
+                        placeholder="Search product..."
+                        class="w-full px-4 py-2 pr-16 rounded-lg border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark" />
+
+                    <span
+                        id="voice-search-product"
+                        class="material-symbols-outlined absolute right-10 top-2.5 cursor-pointer text-gray-400 hover:text-primary">
+                        mic
+                    </span>
+
+                    <button type="submit" class="absolute right-3 top-2.5 text-primary">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+
+                </div>
             </form>
 
-            {{-- ⭐ SORT DROPDOWN Beautiful UI --}}
             <div class="relative group">
                 <button
                     class="flex items-center gap-2 px-4 py-2 bg-card-light dark:bg-card-dark border border-border-light dark:border-border-dark rounded-lg hover:shadow transition">
@@ -126,7 +141,6 @@
         </div>
 
 
-        {{-- 🌿 PRODUCT GRID --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
             @foreach ($products as $p)
@@ -182,5 +196,50 @@
 
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const SpeechRecognition =
+            window.SpeechRecognition || window.webkitSpeechRecognition;
 
+        if (!SpeechRecognition) {
+            console.warn('Speech Recognition not supported');
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        // recognition.lang = 'vi-VN';
+        recognition.lang = 'en-US';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        const mic = document.getElementById('voice-search-product');
+        if (!mic) return;
+
+        const input = mic.closest('form').querySelector('input[name="keyword"]');
+
+        mic.addEventListener('click', function() {
+            recognition.start();
+        });
+
+        recognition.onstart = function() {
+            mic.classList.add('text-primary');
+        };
+
+        recognition.onresult = function(event) {
+            const text =
+                event.results[event.results.length - 1][0].transcript;
+
+            input.value = text.trim();
+        };
+
+        recognition.onend = function() {
+            mic.classList.remove('text-primary');
+        };
+
+        recognition.onerror = function() {
+            mic.classList.remove('text-primary');
+            alert('Unable to recognize speech');
+        };
+    });
+</script>
 @endsection

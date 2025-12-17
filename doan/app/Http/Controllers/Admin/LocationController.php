@@ -12,7 +12,7 @@ class LocationController extends Controller
     public function location()
     {
         $data = [
-            'locations' => Location::where('is_delete', 0)->orderBy('id', 'desc')->get(),
+            'locations' => Location::where('is_delete', 0)->where('status',1)->orderBy('id', 'desc')->get(),
             'itineraries' => Itinerary::where('is_delete', 0)->orderBy('id', 'desc')->get(),
             'categories' => \App\Models\CategoryLocation::where('is_delete', 0)->orderBy('id', 'desc')->get(),
         ];

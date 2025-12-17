@@ -96,13 +96,20 @@
         html.dark #navbar.scrolled {
             background-color: rgba(0, 0, 0, 0.25) !important;
         }
-    @keyframes marquee {
-        0%   { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
-    }
-    .animate-marquee {
-        display: inline-block;
-        animation: marquee 18s linear infinite;
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .animate-marquee {
+            display: inline-block;
+            animation: marquee 18s linear infinite;
         }
     </style>
 </head>
@@ -124,8 +131,8 @@
 
                         <div class="text-sm font-bold text-text-light dark:text-text-dark mt-0">
 
+                            <span>{{ $onlineUsers }} online</span>
 
-                           <span>{{ $onlineUsers }} online</span>
 
                         </div>
                     </div>
@@ -250,7 +257,7 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
                             <button id="avatar-button"
                                 class="flex items-center justify-center size-12 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                                 <img id="avatarPreview"
-                                     class="w-12 h-12 rounded-full object-cover transition-transform duration-300 hover:scale-110 hover:shadow-lg"
+                                    class="w-12 h-12 rounded-full object-cover transition-transform duration-300 hover:scale-110 hover:shadow-lg"
                                     src="{{ Auth::user()->photo ? asset('storage/avatars/' . Auth::user()->photo) : asset('storage/avatars/no-image.jpg') }}"
                                     alt="{{ Auth::user()->name }}">
                             </button>
@@ -289,78 +296,78 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
 
             @yield('content')
         </main>
-<footer class="bg-card-dark text-text-dark pt-10 pb-6">
-    <div class="max-w-7xl mx-auto px-6">
+        <footer class="bg-card-dark text-text-dark pt-10 pb-6">
+            <div class="max-w-7xl mx-auto px-6">
 
-        <!-- GRID 4 CỘT -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <!-- GRID 4 CỘT -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
 
-            <!-- 1️⃣ ABOUT + LOGO -->
-            <div>
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="text-primary text-3xl">
-                        <span class="material-symbols-outlined">nature_people</span>
+                    <!-- 1️⃣ ABOUT + LOGO -->
+                    <div>
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="text-primary text-3xl">
+                                <span class="material-symbols-outlined">nature_people</span>
+                            </div>
+                            <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow">
+                                <img src="{{ asset('user/images/logouser.png') }}"
+                                    class="w-14 h-14 object-contain rounded-full">
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-text-dark/70 leading-relaxed">
+                            PlayFullOutings brings joyful outdoor experiences to families and friends.
+                            Discover picnics, short trips, and fun activities for every occasion.
+                        </p>
                     </div>
-                    <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow">
-                        <img src="{{ asset('user/images/logouser.png') }}"
-                            class="w-14 h-14 object-contain rounded-full">
+
+                    <!-- 2️⃣ QUICK LINKS -->
+                    <div class="">
+                        <h3 class="font-bold mb-4 text-lg">Quick Links</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-primary transition">Games</a></li>
+                            <li><a href="#" class="hover:text-primary transition">Itineraries</a></li>
+                            <li><a href="#" class="hover:text-primary transition">About Us</a></li>
+                            <li><a href="#" class="hover:text-primary transition">Contact</a></li>
+                        </ul>
                     </div>
-                </div>
 
-                <p class="text-sm text-text-dark/70 leading-relaxed">
-                    PlayFullOutings brings joyful outdoor experiences to families and friends.
-                    Discover picnics, short trips, and fun activities for every occasion.
-                </p>
-            </div>
+                    <!-- 3️⃣ CONTACT INFO -->
+                    <div>
+                        <h3 class="font-bold mb-4 text-lg">Contact Info</h3>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex gap-2">
+                                <span class="material-symbols-outlined text-primary text-base">location_on</span>
+                                778/10 Nguyễn Kiệm, Phú Nhuận, HCM
+                            </li>
+                            <li class="flex gap-2">
+                                <span class="material-symbols-outlined text-primary text-base">mail</span>
+                                support@playfulloutings.com
+                            </li>
+                            <li class="flex gap-2">
+                                <span class="material-symbols-outlined text-primary text-base">call</span>
+                                0123 456 789
+                            </li>
+                        </ul>
+                    </div>
 
-            <!-- 2️⃣ QUICK LINKS -->
-            <div class="">
-                <h3 class="font-bold mb-4 text-lg">Quick Links</h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-primary transition">Games</a></li>
-                    <li><a href="#" class="hover:text-primary transition">Itineraries</a></li>
-                    <li><a href="#" class="hover:text-primary transition">About Us</a></li>
-                    <li><a href="#" class="hover:text-primary transition">Contact</a></li>
-                </ul>
-            </div>
+                    <!-- 4️⃣ FOLLOW US + NEWSLETTER -->
+                    <div>
+                        <h3 class="font-bold mb-4 text-lg">Follow Us</h3>
+                        <div class="flex space-x-4 mb-6">
 
-            <!-- 3️⃣ CONTACT INFO -->
-            <div>
-                <h3 class="font-bold mb-4 text-lg">Contact Info</h3>
-                <ul class="space-y-3 text-sm">
-                    <li class="flex gap-2">
-                        <span class="material-symbols-outlined text-primary text-base">location_on</span>
-                        778/10 Nguyễn Kiệm, Phú Nhuận, HCM
-                    </li>
-                    <li class="flex gap-2">
-                        <span class="material-symbols-outlined text-primary text-base">mail</span>
-                        support@playfulloutings.com
-                    </li>
-                    <li class="flex gap-2">
-                        <span class="material-symbols-outlined text-primary text-base">call</span>
-                        0123 456 789
-                    </li>
-                </ul>
-            </div>
-
-            <!-- 4️⃣ FOLLOW US + NEWSLETTER -->
-<div>
-    <h3 class="font-bold mb-4 text-lg">Follow Us</h3>
-    <div class="flex space-x-4 mb-6">
-
-        <!-- Facebook -->
-        <a class="hover:text-primary transition" href="#">
-            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 320 512">
-                <path d="M279.14 288l14.22-92.66h-88.91V127.58c0-25.35 
+                            <!-- Facebook -->
+                            <a class="hover:text-primary transition" href="#">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 320 512">
+                                    <path d="M279.14 288l14.22-92.66h-88.91V127.58c0-25.35 
                 12.42-50.06 52.24-50.06H293V6.26S259.5 0 225.36 0c-73.22 
-                0-121.17 44.38-121.17 124.72V195.3H22.89V288h81.3v224h100.2V288z"/>
-            </svg>
-        </a>
+                0-121.17 44.38-121.17 124.72V195.3H22.89V288h81.3v224h100.2V288z" />
+                                </svg>
+                            </a>
 
-        <!-- Instagram -->
-        <a class="hover:text-primary transition" href="#">
-            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 448 512">
-                <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9S160.5 
+                            <!-- Instagram -->
+                            <a class="hover:text-primary transition" href="#">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 448 512">
+                                    <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9S160.5 
                 370.9 224.1 370.9 339 319.6 339 255.9 287.7 141 224.1 
                 141zm146.4-41c0 14.9-12 26.9-26.9 26.9s-26.9-12-26.9-26.9 
                 12-26.9 26.9-26.9 26.9 12 26.9 26.9zM224.1 338.3c-45.5 
@@ -369,14 +376,14 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
                 0 256.3 0 224 0S135.3 0 109.7 17.5 51.6 70.9 40.7 100c-11 29.1-11 85.5-11 
                 118.8s0 89.7 11 118.8c11 29.1 31.4 51.6 60.5 62.5 26.6 
                 10.7 83 10.7 115.3 10.7s88.7 0 115.3-10.7c29.1-10.9 49.5-33.4 
-                60.5-62.5 10.9-29.1 10.9-85.5 10.9-118.8S409.7 109.1 398.8 80z"/>
-            </svg>
-        </a>
+                60.5-62.5 10.9-29.1 10.9-85.5 10.9-118.8S409.7 109.1 398.8 80z" />
+                                </svg>
+                            </a>
 
-        <!-- Twitter -->
-        <a class="hover:text-primary transition" href="#">
-            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 512 512">
-                <path d="M459.37 151.716c.325 4.548 
+                            <!-- Twitter -->
+                            <a class="hover:text-primary transition" href="#">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 512 512">
+                                    <path d="M459.37 151.716c.325 4.548 
                 .325 9.097.325 13.645 0 138.72-105.583 
                 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 
                 8.447.974 16.568 1.299 25.34 1.299 49.055 0 
@@ -390,65 +397,47 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
                 0 57.502 12.67 76.67 33.137 23.715-4.548 
                 46.456-13.32 66.599-25.34-7.798 24.366-24.366 
                 44.833-46.132 57.827 21.117-2.273 41.584-8.122 
-                60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/>
-            </svg>
-        </a>
-    </div>
-</div>
+                60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
 
-        </div>
+                </div>
 
-        <!-- MAP FULL WIDTH -->
-        <div class="mt-10">
-            <h3 class="font-bold mb-4 text-lg">Our Location</h3>
+                <!-- MAP FULL WIDTH -->
+                <div class="mt-10">
+                    <h3 class="font-bold mb-4 text-lg">Our Location</h3>
 
-        <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.113845338381!2d106.67799917465458!3d10.801927589348335!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752934c609c5bd%3A0x751f71739b98ebc4!2sAptech%20Computer%20Education%20-%20H%E1%BB%87%20th%E1%BB%91ng%20%C4%90%C3%A0o%20t%E1%BA%A1o%20L%E1%BA%ADp%20tr%C3%ACnh%20vi%C3%AAn%20Qu%E1%BB%91c%20t%E1%BA%BF%20Aptech!5e0!3m2!1svi!2s!4v1704916133942!5m2!1svi!2s"
-            class="w-full h-80 rounded-lg border border-white/20 shadow"
-            style="border:0;"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.113845338381!2d106.67799917465458!3d10.801927589348335!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752934c609c5bd%3A0x751f71739b98ebc4!2sAptech%20Computer%20Education%20-%20H%E1%BB%87%20th%E1%BB%91ng%20%C4%90%C3%A0o%20t%E1%BA%A1o%20L%E1%BA%ADp%20tr%C3%ACnh%20vi%C3%AAn%20Qu%E1%BB%91c%20t%E1%BA%BF%20Aptech!5e0!3m2!1svi!2s!4v1704916133942!5m2!1svi!2s"
+                        class="w-full h-80 rounded-lg border border-white/20 shadow"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
 
-        </div>
-    <div id="ticker"
-        class="fixed bottom-0 left-0 w-full backdrop-blur-md bg-black/20 dark:bg-white/10 text-white dark:text-text-dark py-1.5 z-[999] overflow-hidden border-t border-white/20 dark:border-white/10">
+                </div>
+                <div id="ticker"
+                    class="fixed bottom-0 left-0 w-full backdrop-blur-md bg-black/20 dark:bg-white/10 text-white dark:text-text-dark py-1.5 z-[999] overflow-hidden border-t border-white/20 dark:border-white/10">
 
-        <div class="animate-marquee whitespace-nowrap px-4 text-sm tracking-wide flex items-center gap-6">
-            <span id="ticker-text">Loading location...</span>
-        </div>
-    </div>
-        <!-- COPYRIGHT -->
-        <div class="text-center text-sm text-text-dark/60 mt-10 border-t border-white/10 pt-4">
-            © 2025 PlayFullOutings. All rights reserved.
-        </div>
+                    <div class="animate-marquee whitespace-nowrap px-4 text-sm tracking-wide flex items-center gap-6">
+                        <span id="ticker-text">Loading location...</span>
+                    </div>
+                </div>
+                <!-- COPYRIGHT -->
+                <div class="text-center text-sm text-text-dark/60 mt-10 border-t border-white/10 pt-4">
+                    © 2025 PlayFullOutings. All rights reserved.
+                </div>
 
-    </div>
-</footer>
-
-    </div>
-    </div>
-    <div id="zaloModal"
-        class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50 transition">
-
-        <div class="bg-white w-80 p-5 rounded-xl shadow-xl">
-            <h2 class="text-lg font-bold mb-3">Chat with us on Zalo</h2>
-
-            <textarea id="zaloMessage"
-                class="w-full border border-gray-300 rounded-lg p-2 h-24"
-                placeholder="Enter your message..."></textarea>
-
-            <div class="flex justify-end gap-2 mt-3">
-                <button id="closeZaloModal"
-                    class="px-3 py-1 rounded-lg bg-gray-300 hover:bg-gray-400">Close</button>
-
-                <button id="sendZaloMessage"
-                    class="px-3 py-1 rounded-lg bg-primary text-white hover:bg-primary/90">Send</button>
             </div>
-        </div>
+        </footer>
 
     </div>
+    </div>
+   
+      
 
 
 
@@ -626,30 +615,29 @@ w-5 h-5 flex items-center justify-center rounded-full shadow">
         document.addEventListener("click", () => {
             avatarMenu.classList.remove("dropdown-open");
         });
-    
-document.addEventListener("DOMContentLoaded", () => {
 
-    const backToTopBtn = document.getElementById("backToTopBtn");
+        document.addEventListener("DOMContentLoaded", () => {
 
-    window.addEventListener("scroll", () => {
-        if (window.scrollY > 200) {
-            backToTopBtn.classList.remove("hidden");
-            backToTopBtn.classList.add("flex");
-        } else {
-            backToTopBtn.classList.add("hidden");
-            backToTopBtn.classList.remove("flex");
-        }
-    });
+            const backToTopBtn = document.getElementById("backToTopBtn");
 
-    backToTopBtn.addEventListener("click", () => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 200) {
+                    backToTopBtn.classList.remove("hidden");
+                    backToTopBtn.classList.add("flex");
+                } else {
+                    backToTopBtn.classList.add("hidden");
+                    backToTopBtn.classList.remove("flex");
+                }
+            });
+
+            backToTopBtn.addEventListener("click", () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+
         });
-    });
-
-});
-
     </script>
     <button id="backToTopBtn"
         class="hidden fixed bottom-6 left-6 z-50 
@@ -657,30 +645,37 @@ document.addEventListener("DOMContentLoaded", () => {
            hover:bg-primary/90 transition-all flex items-center justify-center">
         <span class="material-symbols-outlined text-[28px]">arrow_upward</span>
     </button>
-<div class="fixed bottom-24 right-6 flex flex-col gap-3 z-[60]">
+    <div class="fixed bottom-24 right-6 flex flex-col gap-3 z-[60]">
 
 
 
-    <!-- MESSENGER -->
-<!-- MESSENGER -->
-<a href="https://m.me/playfulloutings" target="_blank"
-   class="w-14 h-14 bg-[#0084FF] rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-all">
-        <img
-        alt="facebook"
-        src="https://vutruso.com/wp-content/uploads/2024/08/facebook.svg"
-        />
-</a>
+        <!-- MESSENGER -->
+        <!-- MESSENGER -->
+        <a href="https://m.me/Playfulloutings" target="_blank"
+            class="w-14 h-14 bg-[#0084FF] rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-all">
+            <img src="https://vutruso.com/wp-content/uploads/2024/08/facebook.svg" alt="Messenger">
+        </a>
 
 
 
-    <!-- ZALO -->
-    <button id="openZaloChat"
-        class="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center 
+
+
+
+        <!-- ZALO -->
+        <button id="openZaloChat"
+            class="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center 
                shadow-xl hover:scale-110 transition-all">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" class="w-8 h-8">
-    </button>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" class="w-8 h-8">
+        </button>
 
-</div>
+        <script>
+            document.getElementById('openZaloChat').addEventListener('click', function() {
+                // Thay YOUR_ZALO_ID bằng ID/Zalo username của bạn
+                window.open('https://zalo.me/0941222916', '_blank');
+            });
+        </script>
+
+    </div>
 
 
     <script>
@@ -689,100 +684,75 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("zaloModal").classList.add("flex");
         });
 
-        document.getElementById("closeZaloModal").addEventListener("click", () => {
-            document.getElementById("zaloModal").classList.add("hidden");
-            document.getElementById("zaloModal").classList.remove("flex");
-        });
+        function updateTicker() {
+            const el = document.getElementById("ticker-text");
+            const d = new Date();
 
-        document.getElementById("sendZaloMessage").addEventListener("click", () => {
-            let msg = document.getElementById("zaloMessage").value.trim();
+            let date = d.toLocaleDateString();
+            let time = d.toLocaleTimeString();
 
-            if (msg === "") {
-                alert("Please enter a message!");
+            if (!navigator.geolocation) {
+                el.textContent = `📅 ${date} | ⏰ ${time} | ❌ Location unavailable`;
                 return;
             }
 
-            // ✔ Sau khi gửi xong → đóng modal
-            const modal = document.getElementById("zaloModal");
-            modal.classList.add("hidden");
-            modal.classList.remove("flex");
+            navigator.geolocation.getCurrentPosition(async pos => {
+                    const lat = pos.coords.latitude;
+                    const lon = pos.coords.longitude;
 
-            // ✔ Xóa nội dung tin nhắn
-            document.getElementById("zaloMessage").value = "";
+                    try {
+                        const res = await fetch(
+                            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
+                        );
+                        const data = await res.json();
 
+
+                        const loc = data.address.city ??
+                            data.address.town ??
+                            data.address.village ??
+                            data.address.state ??
+                            "Unknown location";
+
+                        el.textContent = `📅 ${date} | ⏰ ${time} | 📍 ${loc}`;
+                    } catch {
+                        el.textContent = `📅 ${date} | ⏰ ${time} | 📍 ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+                    }
+                },
+                () => {
+                    el.textContent = `📅 ${date} | ⏰ ${time} | ❌ Location denied`;
+                });
+        }
+
+        updateTicker();
+        setInterval(updateTicker, 5000);
+        document.addEventListener("DOMContentLoaded", () => {
+            const gamesBtn = document.getElementById("games-button");
+            const gamesMenu = document.getElementById("games-menu");
+
+            let open = false;
+
+            gamesBtn.addEventListener("click", (e) => {
+                // Nếu menu đang đóng → mở menu và chặn chuyển trang
+                if (!open) {
+                    e.preventDefault(); // ❗ Không reload trang
+                    open = true;
+                    gamesMenu.classList.add("dropdown-open");
+                } else {
+                    // Nếu menu đang mở → cho phép click đi tới trang Games
+                    open = false;
+                    gamesMenu.classList.remove("dropdown-open");
+                    // Không preventDefault → đi tới route user.game
+                }
+            });
+
+            // Click ra ngoài đóng menu
+            document.addEventListener("click", (e) => {
+                if (!gamesBtn.contains(e.target) && !gamesMenu.contains(e.target)) {
+                    open = false;
+                    gamesMenu.classList.remove("dropdown-open");
+                }
+            });
         });
-function updateTicker() {
-    const el = document.getElementById("ticker-text");
-    const d = new Date();
-
-    let date = d.toLocaleDateString();
-    let time = d.toLocaleTimeString();
-
-    if (!navigator.geolocation) {
-        el.textContent = `📅 ${date} | ⏰ ${time} | ❌ Location unavailable`;
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(async pos => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-
-        try {
-            const res = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
-            );
-            const data = await res.json();
-
-
-            const loc = data.address.city ??
-                        data.address.town ??
-                        data.address.village ??
-                        data.address.state ??
-                        "Unknown location";
-
-            el.textContent = `📅 ${date} | ⏰ ${time} | 📍 ${loc}`;
-        } catch {
-            el.textContent = `📅 ${date} | ⏰ ${time} | 📍 ${lat.toFixed(2)}, ${lon.toFixed(2)}`;
-        }
-    }, 
-    () => {
-        el.textContent = `📅 ${date} | ⏰ ${time} | ❌ Location denied`;
-    });
-}
-
-updateTicker();
-setInterval(updateTicker, 5000);
-document.addEventListener("DOMContentLoaded", () => {
-    const gamesBtn = document.getElementById("games-button");
-    const gamesMenu = document.getElementById("games-menu");
-
-    let open = false;
-
-    gamesBtn.addEventListener("click", (e) => {
-        // Nếu menu đang đóng → mở menu và chặn chuyển trang
-        if (!open) {
-            e.preventDefault();   // ❗ Không reload trang
-            open = true;
-            gamesMenu.classList.add("dropdown-open");
-        } 
-        else {
-            // Nếu menu đang mở → cho phép click đi tới trang Games
-            open = false;
-            gamesMenu.classList.remove("dropdown-open");
-            // Không preventDefault → đi tới route user.game
-        }
-    });
-
-    // Click ra ngoài đóng menu
-    document.addEventListener("click", (e) => {
-        if (!gamesBtn.contains(e.target) && !gamesMenu.contains(e.target)) {
-            open = false;
-            gamesMenu.classList.remove("dropdown-open");
-        }
-    });
-});
-
-
     </script>
 </body>
 

@@ -42,7 +42,7 @@
                     </ul>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-            @endif
+            @endif 
             <div class="row g-2 align-items-center mb-4">
                 <!-- Dropdown Role -->
                 <div class="col-auto">
@@ -118,7 +118,7 @@
                                 <div class="btn-group" role="group">
                                     <button class="btn btn-sm btn-outline-info viewUserBtn" data-bs-toggle="tooltip" title="View"
                                             data-id="{{ $user->id }}"
-                                            data-name="{{ $user->username }}"
+                                            data-username="{{ $user->username }}"
                                             data-phone="{{ $user->phone }}"
                                             data-address="{{ $user->address }}"
 
@@ -128,7 +128,7 @@
                                             data-email="{{ $user->email }}"
                                             data-photo="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('storage/avatars/no-image.jpg') }}"
                                             data-status="{{ $user->status }}"
-                                            data-role_id="{{ $user->role_id == 1 ? 'User' : ($user->role_id == 2 ? 'Admin' : 'SupperAdmin') }}">
+                                            data-role="{{ $user->role_id }}">
                                         <i class="fa-regular fa-eye"></i>
                                     </button>
 
@@ -144,7 +144,7 @@
                                     @if($canEdit)
                                     <button class="btn btn-sm btn-outline-success editUserBtn" data-bs-toggle="tooltip" title="Edit"
                                             data-id="{{ $user->id }}"
-                                            data-name="{{ $user->username }}"
+                                            data-username="{{ $user->username }}"
                                             data-phone="{{ $user->phone }}"
                                             data-address="{{ $user->address }}"
                                             data-fullname="{{ $user->fullname }}"
@@ -153,7 +153,7 @@
                                             data-email="{{ $user->email }}"
                                             data-photo="{{ $user->photo ? asset('storage/avatars/'.$user->photo) : asset('storage/avatars/no-image.jpg') }}"
                                             data-status="{{ $user->status }}"
-                                            data-role_id="{{ $user->role_id == 1 ? 'User' : ($user->role_id == 2 ? 'Admin' : 'SupperAdmin') }}">
+                                            data-role="{{ $user->role_id }}">
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
                                     @endif
@@ -177,7 +177,7 @@
                                             <button class="btn btn-sm btn-outline-danger blockUserBtn"
                                                 data-bs-toggle="tooltip" title="Block"
                                                 data-id="{{ $user->id }}"
-                                                data-name="{{ $user->username }}"
+                                                data-username="{{ $user->username }}"
                                                 data-status="{{ $user->status }}">
                                                 <i class="fa fa-ban"></i>
                                             </button>
@@ -185,7 +185,7 @@
                                             <button class="btn btn-sm btn-outline-success blockUserBtn"
                                                 data-bs-toggle="tooltip" title="Unblock"
                                                 data-id="{{ $user->id }}"
-                                                data-name="{{ $user->username }}"
+                                                data-username="{{ $user->username }}"
                                                 data-status="{{ $user->status }}">
                                                 <i class="fa fa-unlock"></i>
                                             </button>
@@ -413,7 +413,11 @@
                                 <label>Phone</label>
                                 <input type="text" class="form-control" name="phone" id="editPhone">
                             </div>
-                                        
+                                        <div class="mb-3">
+                                <label>Address</label>
+                                <input type="text" class="form-control" name="address" id="editAddress">
+                            </div>
+
                             <div class="mb-3">
                                 <label>Gender</label>
                                 <select class="form-control" name="gender" id="editGender">
@@ -554,10 +558,14 @@ function initUserModals() {
     btn.addEventListener("click", function () {
         const photo = this.dataset.photo;
         const status = this.dataset.status == 1 ? 'Active' : 'Inactive';
-        let roleName = 'Unknown';
-        if(this.dataset.role_id == 1) roleName = 'User';
-        else if(this.dataset.role_id == 2) roleName = 'Admin';
-        else if(this.dataset.role_id == 3) roleName = 'SupperAdmin';
+        const roleMap = {
+    1: 'User',
+    2: 'Admin',
+    3: 'SupperAdmin'
+};
+
+document.getElementById("viewRole").textContent =
+    roleMap[this.dataset.role] || '-';
 
         document.getElementById("viewId").textContent = this.dataset.id;
         document.getElementById("viewPhone").textContent = this.dataset.phone || '-';
@@ -568,7 +576,6 @@ function initUserModals() {
         document.getElementById("viewGender").textContent = this.dataset.gender;
         document.getElementById("viewEmail").textContent = this.dataset.email;
         document.getElementById("viewStatus").textContent = status;
-        document.getElementById("viewRole").textContent = this.dataset.role_id;
         document.getElementById("viewPhoto").src = photo;
 
         new bootstrap.Modal(document.getElementById("viewUserModal")).show();
@@ -580,7 +587,7 @@ function initUserModals() {
         document.querySelectorAll(".blockUserBtn").forEach(btn => {
     btn.addEventListener("click", function () {
         const id = this.dataset.id;
-        const username = this.dataset.name;  
+        const username = this.dataset.username;  
         const status = this.dataset.status;
 
         document.getElementById("blockUserName").textContent = username;
@@ -607,7 +614,7 @@ function initUserModals() {
             const gender = this.dataset.gender;
             const email = this.dataset.email;
             const status = this.dataset.status;
-            const role_id = this.dataset.role_id;
+            const role_id = this.dataset.role;
             const photo = this.dataset.photo;
 
             document.getElementById("editUserName").value = username;

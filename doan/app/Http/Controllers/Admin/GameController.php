@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Game;
+use App\Models\Itinerary;
 use App\Models\Material;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,7 +17,8 @@ class GameController extends Controller
         $games = Game::with('categories','materials')->orderBy('id','desc')->where('status', '1')->get();
         $categories = Category::all();
         $materials = Material::all();
-        return view('admin.game', compact('games','categories','materials'));
+          $itineraries = Itinerary::all();
+        return view('admin.game', compact('games','categories','materials','itineraries'));
     }
 
    public function add(Request $request)
@@ -78,6 +80,7 @@ class GameController extends Controller
     // Categories
     $game->categories()->sync($request->categories ?? []);
     $game->materials()->sync($request->materials ?? []);
+    $game->itineraries()->sync($request->itineraries ?? []);
 
     return redirect()->back()->with('success', 'Game added successfully');
 }
@@ -135,6 +138,8 @@ class GameController extends Controller
         // Sync categories & materials
         $game->categories()->sync($request->categories ?? []);
         $game->materials()->sync($request->materials ?? []);
+        $game->itineraries()->sync($request->itineraries ?? []);
+
 
         return redirect()->back()->with('success', 'Game updated successfully.');
     }

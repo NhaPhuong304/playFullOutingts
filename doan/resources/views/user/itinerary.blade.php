@@ -68,7 +68,7 @@
                     bg-white dark:bg-charcoal border border-gray-300 dark:border-gray-700
                     text-sm text-charcoal dark:text-off-white hover:bg-primary/10 hover:text-primary
                     transition font-medium"
-                        data-cat="{{ strtolower($cat->name) }}">
+                        data-cat="{{ Str::slug($cat->name) }}">
                         {{ $cat->name }}
                     </div>
                     @endforeach
@@ -82,7 +82,7 @@
             <!-- BREADCRUMB -->
             <div class="mt-10">
                 <div class="flex flex-wrap gap-2 p-4 bg-white/50 dark:bg-charcoal/50 rounded-lg">
-                    <a class="text-primary font-medium" href="#">Home</a>
+                    <a class="text-primary font-medium" href="{{route('user.dashboard')}}">Home</a>
                     <span class="text-charcoal/50">/</span>
                     <span class="text-charcoal dark:text-off-white font-medium">Itineraries</span>
                 </div>
@@ -98,11 +98,12 @@
 
                     @php
                     $catNames = $itinerary->locations
-                    ->flatMap(fn($loc) => $loc->categoryLocations->pluck('name'))
-                    ->unique()
-                    ->map(fn($name) => strtolower($name))
-                    ->implode(',');
+                        ->flatMap(fn($loc) => $loc->categoryLocations->pluck('name'))
+                        ->unique()
+                        ->map(fn($name) => Str::slug($name))
+                        ->implode(',');
                     @endphp
+
 
                     <div class="itinerary-card bg-white dark:bg-charcoal rounded-xl overflow-hidden shadow-md 
                         transition-transform hover:scale-105 hover:shadow-xl flex flex-col"
@@ -197,26 +198,29 @@
         return true;
     }
 
-    // Apply All Filters
-    function applyFilters() {
-        document.querySelectorAll(".itinerary-card").forEach(card => {
+function applyFilters() {
+    document.querySelectorAll(".itinerary-card").forEach(card => {
 
-            let name = card.dataset.name;
-            let days = parseInt(card.dataset.days);
-            let categories = card.dataset.category.split(",");
+        let name = card.dataset.name || "";
+        let days = parseInt(card.dataset.days || 0);
 
-            let matchKeyword = filterKeyword === "" || name.includes(filterKeyword);
-            let matchDayRange = matchDays(days);
+        let categories = (card.dataset.category || "")
+            .split(",")
+            .map(c => c.trim());
 
-            let matchCategory =
-                filterCategory === "all" ||
-                categories.includes(filterCategory);
+        let matchKeyword = filterKeyword === "" || name.includes(filterKeyword);
+        let matchDayRange = matchDays(days);
 
-            card.style.display = (matchKeyword && matchDayRange && matchCategory) ?
-                "block" :
-                "none";
-        });
-    }
+        let matchCategory =
+            filterCategory === "all" ||
+            categories.includes(filterCategory);
+
+        card.style.display =
+            (matchKeyword && matchDayRange && matchCategory)
+                ? "block"
+                : "none";
+    });
+}
 </script>
 
 @endsection

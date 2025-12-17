@@ -2,7 +2,6 @@
 
 @section('content')
 
-<!-- 🌄 HERO -->
 <section class="w-full pt-32 pb-12 bg-gradient-to-b from-primary/10 to-background-light dark:from-primary/20 dark:to-background-dark">
     <div class="max-w-6xl mx-auto px-6 text-center">
         <h1 class="text-4xl font-bold tracking-tight">Checkout</h1>
@@ -14,10 +13,8 @@
     </div>
 </section>
 
-<!-- 🌟 MAIN CHECKOUT SECTION -->
 <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
 
-    <!-- 🧾 BILLING FORM -->
     <div class="lg:col-span-2 space-y-6">
 
         <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl shadow border border-border-light dark:border-border-dark">
@@ -71,7 +68,6 @@
         </div>
     </div>
 
-    <!-- 🛒 ORDER SUMMARY -->
     <div class="space-y-6">
 
         <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl shadow border border-border-light dark:border-border-dark">
@@ -100,7 +96,6 @@
             </div>
         </div>
 
-        <!-- 💳 PayPal Button -->
         <div class="bg-card-light dark:bg-card-dark p-6 rounded-xl shadow border border-border-light dark:border-border-dark">
             <h2 class="text-xl font-semibold mb-4">Payment</h2>
             <div id="paypal-button-container"></div>
@@ -111,11 +106,9 @@
 </div>
 
 
-<!-- PAYPAL -->
 <script src="https://www.paypal.com/sdk/js?client-id={{ config('services.paypal.client_id') }}&currency=USD"></script>
 
 <script>
-    // 🛑 Validate Billing Form before allowing PayPal payment
     function validateBilling() {
         const fields = ["full_name", "email", "phone", "address"];
         for (let f of fields) {
@@ -130,11 +123,7 @@
 
     paypal.Buttons({
 
-        // ============================
-        // CREATE ORDER
-        // ============================
         createOrder: function(data, actions) {
-            // 🛑 Prevent order creation if the form is incomplete
             if (!validateBilling()) return;
 
             return fetch("{{ route('paypal.createOrder') }}", {
@@ -149,11 +138,7 @@
                 .then(data => data.id);
         },
 
-        // ============================
-        // CAPTURE ORDER
-        // ============================
         onApprove: function(data, actions) {
-            // 🛑 Double-check the form (to ensure completeness)
             if (!validateBilling()) return;
 
             return fetch("{{ route('paypal.captureOrder') }}", {
@@ -185,8 +170,6 @@
 </script>
 
 
-
-{{-- 🎨 Custom Tailwind Utilities --}}
 <style>
     .input-style {
         @apply px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark focus:ring-primary focus:border-primary transition;

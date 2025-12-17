@@ -39,7 +39,7 @@ class RecycleCategoryController extends Controller
             return redirect()->back()->with('error', 'Cannot delete category because it has associated games.');
         }
 
-        $category->delete();
+        $category->forceDelete();
         return redirect()->back()->with('success', 'Category deleted successfully.');
     }
 }

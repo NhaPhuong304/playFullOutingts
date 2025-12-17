@@ -1,5 +1,5 @@
 @extends('admin.dashboard')
-
+@section('page-title', 'Product')
 @section('content')
 
 <style>
@@ -27,112 +27,111 @@
 
 
 
-<div class="row mt-4">
-    <div class="col-md-12">
-        <h3>Product List</h3>
-    </div>
 
-    <div class="col-md-12">
-        <div class="card mt-4">
-            <div class="card-header">
-                <h5 class="card-title">Products</h5>
-            </div>
 
-            <div class="card-body">
+<div class="main-content">
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="card-title">Products</h5>
+        </div>
 
-                {{-- SUCCESS --}}
-                @if(session('success'))
+        <div class="card-body">
+
+            {{-- ALERT --}}
+            @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show">
                     {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-                @endif
+            @endif
 
-                {{-- ERROR --}}
-                @if ($errors->any())
+            @if($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show">
-                    <strong>Error:</strong>
                     <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
+                        @foreach($errors->all() as $e)
+                            <li>{{ $e }}</li>
                         @endforeach
                     </ul>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-                @endif
+            @endif
 
-
-                <div class="row g-2 align-items-center mb-4">
-                    <div class="col-auto">
-                        <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                            Add Product
-                        </a>
-                    </div>
-
-                    <div class="col-auto ms-auto">
-                        <input type="text" id="searchInput" class="form-control"
-                               placeholder="Search Products...">
-                    </div>
+            {{-- ACTION BAR --}}
+            <div class="row g-2 align-items-center mb-4">
+                <div class="col-auto">
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                        Add
+                    </button>
                 </div>
 
+                <div class="col-auto ms-auto">
+                    <div class="position-relative">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search product...">
+                        <i class="fa fa-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+                    </div>
+                </div>
+            </div>
 
-
-                {{-- TABLE --}}
-                <div class="table-responsive">
-                    <table class="table table-hover text-center align-middle" id="productTable">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Image</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Price</th>
-                                <th>Stock</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach($products as $product)
-                            <tr>
-                                <td>
-                                    <img src="{{ $product->photo ? asset('storage/images/'.$product->photo) : asset('storage/images/no-image.jpg') }}"
-                                         class="product-thumb">
-                                </td>
-
-                                <td>{{ $product->name }}</td>
-                                <td>{{ Str::limit($product->description, 60) }}</td>
-                               <td>${{ number_format($product->price, 2) }}</td>
-                                <td>{{ $product->stock }}</td>
-
-                                <td class="btn-group">
-                                    <button class="btn btn-sm btn-outline-info"
-                                            onclick="showProductModal({{ $product->id }})">
+            {{-- TABLE --}}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center" id="productTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th width="90">Image</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th width="120">Price</th>
+                            <th width="90">Stock</th>
+                            <th width="140">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($products as $p)
+                        <tr>
+                            <td>
+                                <img src="{{ $p->photo ? asset('storage/images/'.$p->photo) : asset('storage/images/no-image.jpg') }}"
+                                     class="product-thumb">
+                            </td>
+                            <td>{{ $p->name }}</td>
+                            <td>{{ Str::limit($p->description,60) }}</td>
+                            <td>${{ number_format($p->price,2) }}</td>
+                            <td>{{ $p->stock }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-info"
+                                            onclick="showProductModal({{ $p->id }})">
                                         <i class="fa-regular fa-eye"></i>
                                     </button>
 
-                                    <button class="btn btn-sm btn-outline-success"
-                                            onclick="showEditModal({{ $product->id }})">
-                                        <i class="fa-solid fa-pencil"></i>
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-success"
+                                            onclick="showEditModal({{ $p->id }})">
+                                        <i class="fa fa-pencil"></i>
                                     </button>
 
-                                    <button class="btn btn-sm btn-outline-danger"
-                                            onclick="confirmDelete({{ $product->id }})">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="confirmDelete({{ $p->id }})">
                                         <i class="fa fa-trash"></i>
                                     </button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
 
-                    </table>
-                </div>
-
-                <ul class="pagination justify-content-center" id="pagination"></ul>
-
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
+
+            <nav>
+                <ul class="pagination justify-content-center" id="pagination"></ul>
+            </nav>
+
         </div>
     </div>
 </div>
+
 
 
 
@@ -211,6 +210,7 @@
         <form id="editProductForm" action="{{ route('admin.product.update') }}" method="POST" enctype="multipart/form-data"
               class="modal-content">
             @csrf
+            @method('PUT')
 
             <input type="hidden" name="id" id="editProductId">
 
@@ -271,7 +271,7 @@
 </div>
 
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <form action="{{ route('admin.product.delete') }}" method="POST" class="modal-content">
             @csrf
 

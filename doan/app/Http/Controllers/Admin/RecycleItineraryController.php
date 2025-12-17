@@ -15,9 +15,15 @@ class RecycleItineraryController extends Controller
 
     public function restore($id)
     {
-        Itinerary::where('id', $id)->update(['is_delete' => 0]);
-        return back()->with('success', 'Restore Itinerary Sussess!');
+        $itinerary = Itinerary::findOrFail($id);
+        $itinerary->is_delete = 0;
+        $itinerary->status = 1;
+        $itinerary->save();
+
+        return back()->with('success', 'Restore Itinerary Success!');
     }
+
+
 
     public function delete($id)
     {

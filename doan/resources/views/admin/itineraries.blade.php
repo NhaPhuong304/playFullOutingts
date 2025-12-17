@@ -57,8 +57,8 @@
                 <div class="col-auto">
                     <select id="searchStatus" class="form-select">
                         <option value="">All</option>
-                        <option value="1">Active</option>
-                        <option value="0">Inactive</option>
+                        <option value="0">Active</option>
+                        <option value="1">Inactive</option>
                     </select>
                 </div>
 
@@ -81,6 +81,7 @@
                             <th>Img</th>
                             <th>Name</th>
                             <th>Description</th>
+                            <th>Games</th>
                             <th>Days</th>
                             <th>Status</th>
                             <th style="width:120px;">Actions</th>
@@ -100,6 +101,12 @@
 
                             <td>{{ $it->name }}</td>
                             <td>{{ Str::limit($it->description, 50) }}</td>
+                            <td>
+                                @foreach($it->games as $g)
+                                    <span>{{ $g->name }}</span>
+                                @endforeach
+                            </td>
+
                             <td>{{ $it->days }}</td>
 
                             <td>
@@ -116,6 +123,7 @@
                                     data-days="{{ $it->days }}"
                                     data-status="{{ $it->status }}"
                                     data-image="{{ $it->image }}"
+                                     data-games='@json($it->games)'
                                     data-locations='@json($it->locations)'>
                                     <i class="fa-regular fa-eye"></i>
                                 </button>
@@ -127,6 +135,7 @@
                                     data-days="{{ $it->days }}"
                                     data-status="{{ $it->status }}"
                                     data-image="{{ $it->image }}"
+                                     data-games='@json($it->games)'
                                     data-locations='@json($it->locations)'>
                                     <i class="fa-solid fa-pencil"></i>
                                 </button>
@@ -168,6 +177,7 @@
                 <p><label>Name:</label> <span id="viewName"></span></p>
                 <p><label>Description:</label> <span id="viewDescription"></span></p>
                 <p><label>Days:</label> <span id="viewDays"></span></p>
+                <p><label>Games:</label> <span id="viewGames"></span></p>
                 <p><label>Status:</label> <span id="viewStatus"></span></p>
 
                 <hr>
@@ -202,6 +212,13 @@
                     <textarea name="description" class="form-control mb-2"></textarea>
 
                     <label>Days</label>
+                    <label>Games</label>
+<select name="game_ids[]" id="addGames" class="form-control mb-2" multiple>
+    @foreach($games as $g)
+        <option value="{{ $g->id }}">{{ $g->name }}</option>
+    @endforeach
+</select>
+
                     <input type="number" name="days" class="form-control mb-2" required>
                     <label>Locations</label>
                         <select name="location_ids[]" class="form-control mb-2" multiple>
@@ -254,6 +271,14 @@
 
                     <label>Description</label>
                     <textarea id="editDescription" name="description" class="form-control mb-2"></textarea>
+                    <label>Games</label>
+<select name="game_ids[]" id="editGames" class="form-control mb-2" multiple>
+    @foreach($games as $g)
+        <option value="{{ $g->id }}">{{ $g->name }}</option>
+    @endforeach
+</select>
+
+
 
                     <label>Days</label>
                     <input id="editDays" name="days" type="number" class="form-control mb-2">
@@ -407,6 +432,13 @@ function initModals() {
                         ${loc.image ? `<img src="/storage/locations/${loc.image}" width="120">` : ""}
                     </div>`;
             });
+            let games = JSON.parse(btn.dataset.games || "[]");
+            let ghtml = "";
+            games.forEach(g => {
+                ghtml += `<span class="badge bg-primary me-1">${g.name}</span>`;
+            });
+            document.getElementById("viewGames").innerHTML = ghtml || "No games";
+
 
             document.getElementById("viewLocations").innerHTML = html;
 
@@ -433,6 +465,13 @@ function initModals() {
             [...document.getElementById('editLocations').options].forEach(opt => {
                 opt.selected = selectedLocations.includes(parseInt(opt.value));
             });
+            let games = JSON.parse(btn.dataset.games || "[]");
+            let gameIds = games.map(g => g.id);
+
+            [...document.getElementById("editGames").options].forEach(o => {
+                o.selected = gameIds.includes(parseInt(o.value));
+            });
+
 
 
             document.getElementById("editItineraryForm").action = `/admin/itineraries/update/${id}`;

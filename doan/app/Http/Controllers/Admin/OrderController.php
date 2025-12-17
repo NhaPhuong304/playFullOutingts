@@ -56,7 +56,6 @@ class OrderController extends Controller
 
         $order = Order::with('orderDetails.product')->findOrFail($request->id);
 
-        // ⭐ Trả stock lại nếu lần đầu tiên chuyển sang canceled
         if ($request->status === 'canceled' && $order->status !== 'canceled') {
 
             foreach ($order->orderDetails as $detail) {

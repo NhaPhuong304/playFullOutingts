@@ -39,14 +39,10 @@ Route::get('/', [DashboardController::class, 'dashboard'])->name('user.dashboard
 
 Route::get('user/dashboard', [DashboardController::class, 'dashboard'])->name('user.dashboard');
 
-
-
-// Route hiển thị giao diện quản lý sản phẩm (admin - tĩnh)
 Route::get('/product', function () {
     return view('admin.product');
-})->name('product_admin'); // Đặt tên route là product_admin
+})->name('product_admin');
 
-// -------------------- QUẢN LÝ SẢN PHẨM (ADMIN) --------------------
 
 use App\Http\Controllers\Admin\ProductController;
 
@@ -54,7 +50,7 @@ Route::get('/admin/product', [ProductController::class, 'index'])->name('product
 
 Route::post('/admin/product/store', [ProductController::class, 'store'])->name('product_admin.store');
 
-Route::post('/admin/product/update', [ProductController::class, 'update'])->name('admin.product.update');
+Route::put('/admin/product/update', [ProductController::class, 'update'])->name('admin.product.update');
 Route::post('/admin/product/delete', [ProductController::class, 'delete'])->name('admin.product.delete');
 
 //--------------------Quản lý Order-----------------------------
@@ -250,6 +246,14 @@ Route::middleware(['role:admin'])->group(function () {
     Route::put('admin/material/{id}', [MaterialController::class, 'update'])->name('admin.material.update');
     Route::delete('admin/material/{id}', [MaterialController::class, 'delete'])->name('admin.material.delete');
 
+
+    // routes/web.php
+Route::get(
+    '/admin/game/download/{filename}',
+    [GameController::class, 'download']
+)->name('admin.game.download');
+
+
     Route::get('/admin/profile/{id}', [ProfileController::class, 'profile'])->name('admin.profile');
     Route::post('/admin/profile/{id}/update', [ProfileController::class, 'updateProfile'])->name('admin.profile.update');
     Route::post('/admin/profile/{id}/photo', [ProfileController::class, 'updatePhoto'])->name('admin.profile.updatePhoto');
@@ -276,6 +280,8 @@ Route::middleware(['role:admin'])->group(function () {
     Route::post('admin/blog', [BlogController::class, 'store'])->name('admin.blog.store');
     Route::get('admin/blog/{id}/edit', [BlogController::class, 'edit'])->name('admin.blog.edit');
     Route::put('admin/blog/{id}', [BlogController::class, 'update'])->name('admin.blog.update');
+    Route::delete('admin/blog/delete/{id}', [BlogController::class, 'destroy'])
+            ->name('delete');
     Route::delete('admin/blog/{id}', [BlogController::class, 'destroy'])->name('admin.blog.delete');
     Route::get('admin/blog/{id}', [BlogController::class, 'show'])->name('admin.blog.show');
 

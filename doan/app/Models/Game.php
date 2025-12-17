@@ -34,4 +34,9 @@ class Game extends Model
     {
         return $this->belongsToMany(Material::class, 'game_material', 'game_id', 'material_id');
     }
+    
+    public function itineraries()
+    {
+        return $this->belongsToMany(Itinerary::class, 'itinerary_game');
+    }
 }

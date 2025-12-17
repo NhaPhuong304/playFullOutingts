@@ -75,6 +75,7 @@
                             <th>Players</th>
                             <th>Category</th>
                             <th>Material</th>
+                            <th>Itinerary</th>
                             <th>Video</th>
                             <th>File</th>
                             <th>Status</th>
@@ -101,6 +102,12 @@
                                     <span>{{ $material->name }}</span>
                                 @endforeach
                             </td>
+                            <td>
+                                @foreach($game->itineraries as $itinerary)
+                                    <span>{{ $itinerary->name }}</span>
+                                @endforeach
+                            </td>
+
                             <td>@if($game->video_url)<a href="{{ $game->video_url }}" target="_blank">View Video</a>@endif</td>
                             <td>@if($game->download_file)<a href="{{ asset('storage/games/files/'.$game->download_file) }}" download>Download</a>@endif</td>
                             <td>
@@ -124,6 +131,8 @@
                                         data-players="{{ $game->players }}"
                                         data-file="{{ $game->download_file }}"
                                         data-difficulty="{{ $game->difficulty }}"
+                                        data-itineraries='@json($game->itineraries->pluck("id"))'
+
                                         data-categories='@json($game->categories->pluck("id"))'
                                         data-materials='@json($game->materials->pluck("id"))'>
                                         <i class="fa-regular fa-eye"></i>
@@ -142,6 +151,8 @@
                                         data-status="{{ $game->status }}"
                                         data-image="{{ $game->image ? asset('storage/games/images/'.$game->image) : asset('storage/games/no-image.jpg') }}"
                                         data-video="{{ $game->video_url }}"
+                                        data-itineraries='@json($game->itineraries->pluck("id"))'
+
                                         data-file="{{ $game->download_file }}"
                                         data-categories='@json($game->categories->pluck("id"))'
                                         data-materials='@json($game->materials->pluck("id"))'>
@@ -192,6 +203,8 @@
                     <p><strong>Instructions:</strong> <span id="viewGameInstructions"></span></p>
                     <p><strong>Categories:</strong> <span id="viewGameCategories"></span></p>
                     <p><strong>Materials:</strong> <span id="viewGameMaterials"></span></p>
+                    <p><strong>Itineraries:</strong> <span id="viewGameItineraries"></span></p>
+
                     <div id="viewGameVideoContainer" class="mb-3" style="display:none;"></div>
                     <div id="viewGameFileContainer" class="mb-2" style="display:none;"></div>
                     <p><strong>Status:</strong> <span id="viewGameStatus"></span></p>
@@ -243,6 +256,13 @@
                                 <option value="{{ $material->id }}">{{ $material->name }}</option>
                             @endforeach
                         </select>
+                        <label>Itineraries</label>
+                            <select name="itineraries[]" id="addGameItineraries" class="form-control mb-2" multiple>
+                                @foreach($itineraries as $itinerary)
+                                    <option value="{{ $itinerary->id }}">{{ $itinerary->name }}</option>
+                                @endforeach
+                            </select>
+
 
                         <label>Status</label>
                         <select class="form-control" name="status">
@@ -303,6 +323,13 @@
                                 <option value="{{ $material->id }}">{{ $material->name }}</option>
                             @endforeach
                         </select>
+                        <label>Itineraries</label>
+                            <select name="itineraries[]" id="editGameItineraries" class="form-control mb-2" multiple>
+                                @foreach($itineraries as $itinerary)
+                                    <option value="{{ $itinerary->id }}">{{ $itinerary->name }}</option>
+                                @endforeach
+                            </select>
+
 
                         <label>Status</label>
                         <select class="form-control" name="status" id="editGameStatus">
@@ -415,11 +442,19 @@ function initGameModals() {
         document.getElementById('viewGameDuration').textContent = this.dataset.duration;
         document.getElementById('viewGamePlayers').textContent = this.dataset.players;
         document.getElementById('viewGameDifficulty').textContent = this.dataset.difficulty;
+        document.getElementById('editGameItineraries').value = this.dataset.itineraries;
         document.getElementById('viewGameSetup').textContent = this.dataset.game_setup;
         document.getElementById('viewGameRules').textContent = this.dataset.game_rules;
         document.getElementById('viewGameInstructions').textContent = this.dataset.instructions;
         document.getElementById('viewGameStatus').textContent = this.dataset.status == '1' ? 'Active' : 'Inactive';
         document.getElementById('viewGameImage').src = this.dataset.image;
+    // Itineraries
+    const itiIds = JSON.parse(this.dataset.itineraries || '[]');
+    const itiNames = itiIds
+        .map(id => document.querySelector(`#addGameItineraries option[value='${id}']`)?.textContent)
+        .filter(Boolean);
+
+    document.getElementById('viewGameItineraries').textContent = itiNames.join(', ');
 
         // Categories
         const catIds = JSON.parse(this.dataset.categories || '[]');
@@ -475,10 +510,18 @@ function initGameModals() {
         document.getElementById('editGameDifficulty').value = this.dataset.difficulty;
         document.getElementById('editGameSetup').value = this.dataset.game_setup;
         document.getElementById('editGameRules').value = this.dataset.game_rules;
+        document.getElementById('editGameItineraries').value = this.dataset.itineraries;
         document.getElementById('editGameInstructions').value = this.dataset.instructions;
         document.getElementById('editGameStatus').value = this.dataset.status;
         document.getElementById('editGameImagePreview').src = this.dataset.image || "{{ asset('storage/games/no-image.jpg') }}";
         document.getElementById('editGameVideo').value = this.dataset.video || "";
+        // Itineraries
+        const selectIti = document.getElementById('editGameItineraries');
+        const selectedItis = JSON.parse(this.dataset.itineraries || '[]');
+        Array.from(selectIti.options).forEach(opt => {
+            opt.selected = selectedItis.includes(parseInt(opt.value));
+        });
+
         
 
         // Categories

@@ -6,7 +6,6 @@
 $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
 @endphp
 
-<!-- ⭐ PAGE TITLE -->
 <section class="w-full pt-32 pb-12 bg-gradient-to-b from-primary/10 to-background-light dark:from-primary/20 dark:to-background-dark">
     <div class="max-w-6xl mx-auto px-6 text-center">
         <h1 class="text-4xl font-bold tracking-tight">Your Shopping Cart</h1>
@@ -16,10 +15,8 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
     </div>
 </section>
 
-<!-- ⭐ CART MAIN LAYOUT -->
 <div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
 
-    <!-- ⭐ LEFT: CART ITEMS -->
     <div class="lg:col-span-2 bg-card-light dark:bg-card-dark rounded-2xl shadow-md p-6">
         <h2 class="text-2xl font-bold mb-6">Items in Cart</h2>
 
@@ -30,13 +27,11 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
             data-stock="{{ $cart->product->stock }}">
 
 
-            <!-- 🖼️ Image -->
             <div class="col-span-2 flex justify-center">
                 <img src="{{ asset('storage/images/' . $cart->product->photo) }}"
                     class="w-20 h-20 rounded-xl object-cover shadow">
             </div>
 
-            <!-- 📝 Name -->
             <div class="col-span-4">
                 <h3 class="font-semibold text-lg">{{ $cart->product->name }}</h3>
                 <p class="text-primary font-bold text-lg">
@@ -44,7 +39,6 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
                 </p>
             </div>
 
-            <!-- 🔢 Quantity -->
             <div class="col-span-3">
                 <form action="{{ route('cart.update', $cart->id) }}"
                     method="POST"
@@ -65,15 +59,13 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
                 </form>
             </div>
 
-            <!-- 💲 Price -->
             <div class="col-span-2">
-                <!-- ⭐ Total price of item -->
                 <p class="item-total font-bold mt-1">
                     ${{ number_format($cart->product->price * $cart->quantity, 2) }}
                 </p>
             </div>
 
-            <!-- ❌ Remove -->
+
             <div class="col-span-1 flex justify-end">
                 <form action="{{ route('cart.remove', $cart->id) }}" method="POST">
                     @csrf
@@ -98,15 +90,13 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
 
     </div>
 
-    <!-- ⭐ RIGHT: CART SUMMARY -->
     <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-md p-6 h-fit sticky top-28">
 
         <h2 class="text-2xl font-bold mb-4">Order Summary</h2>
 
-        <!-- ⭐ Container for JS to render -->
+
         <div id="summaryItems" class="space-y-4"></div>
 
-        <!-- ⭐ Subtotal -->
         <div class="flex justify-between items-center pt-4 border-t border-border-light dark:border-border-dark mt-4">
             <h3 class="text-xl font-bold">Subtotal</h3>
             <h3 class="text-xl font-bold" id="summarySubtotal">$0.00</h3>
@@ -125,7 +115,6 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
 <script>
     document.addEventListener("DOMContentLoaded", function() {
 
-        // ⭐ Common Toast
         function showToast(message, isError = false) {
             let toast = document.getElementById("toast");
 
@@ -148,8 +137,6 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
                 toast.classList.add("opacity-0");
             }, 1500);
         }
-
-        // ⭐ Update Header Cart Badge
         function updateHeaderCartBadge() {
             let totalQty = 0;
 
@@ -171,7 +158,6 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
             badge.textContent = totalQty;
         }
 
-        // ⭐ Update Summary on the right
         function updateSummary() {
             let subtotal = 0;
             const summaryItems = document.getElementById("summaryItems");
@@ -197,8 +183,6 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
 
             document.getElementById("summarySubtotal").textContent = "$" + subtotal.toFixed(2);
         }
-
-        // ⭐ AJAX update cart
         function updateCartAJAX(form, qtyInput, cartItem) {
             fetch(form.action, {
                     method: "POST",
@@ -214,14 +198,11 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
                 .then(res => res.json())
                 .then(data => {
 
-                    // ❗ Stock error case
                     if (data.error === "not_enough_stock") {
-                        showToast("⚠ Not enough stock. Only " + data.available + " left", true);
+                        showToast("Not enough stock. Only " + data.available + " left", true);
 
-                        // Reset quantity to the previous value
                         qtyInput.value = data.available;
 
-                        // Update UI
                         const price = parseFloat(cartItem.dataset.price);
                         cartItem.querySelector(".item-total").textContent = "$" + (price * data.available).toFixed(2);
 
@@ -229,10 +210,8 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
                         updateHeaderCartBadge();
                         return;
                     }
-
-                    // ⭐ Success
                     if (data.success) {
-                        showToast("Updated ✔");
+                        showToast("Updated ");
 
                         const price = parseFloat(cartItem.dataset.price);
                         const total = price * parseInt(qtyInput.value);
@@ -244,19 +223,17 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
                 });
         }
 
-        // ⭐ Attach increase/decrease events
         document.querySelectorAll(".cart-item").forEach(cartItem => {
 
             const form = cartItem.querySelector(".update-cart-form");
             const qtyInput = cartItem.querySelector(".qty-input");
             const stock = parseInt(cartItem.dataset.stock);
 
-            // ➕ Increase quantity
             cartItem.querySelector(".btn-plus").addEventListener("click", function() {
                 let newQty = parseInt(qtyInput.value) + 1;
 
                 if (newQty > stock) {
-                    showToast("⚠ Not enough stock. Maximum: " + stock, true);
+                    showToast("Not enough stock. Maximum: " + stock, true);
                     return;
                 }
 
@@ -264,7 +241,6 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
                 updateCartAJAX(form, qtyInput, cartItem);
             });
 
-            // ➖ Decrease quantity
             cartItem.querySelector(".btn-minus").addEventListener("click", function() {
                 if (qtyInput.value > 1) {
                     qtyInput.value = parseInt(qtyInput.value) - 1;
@@ -273,10 +249,8 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
             });
         });
 
-        // ⭐ Load initial summary
         updateSummary();
     });
-    // ⭐ CHECK STOCK BEFORE CHECKOUT
     document.getElementById("btnCheckout").addEventListener("click", function(e) {
         e.preventDefault();
 
@@ -287,14 +261,12 @@ $subtotal = $carts->sum(fn($c) => $c->product->price * $c->quantity);
             const qty = parseInt(item.querySelector(".qty-input").value);
 
             if (qty > stock) {
-                showToast(`⚠ Product "${item.dataset.name}" only has ${stock} left in stock`, true);
+                showToast(`Product "${item.dataset.name}" only has ${stock} left in stock`, true);
                 hasError = true;
             }
         });
 
-        if (hasError) return; // ⛔ Prevent proceeding if there's an error
-
-        // ✔ If valid → redirect to checkout
+        if (hasError) return; 
         window.location.href = "{{ route('checkout_user') }}";
     });
 </script>

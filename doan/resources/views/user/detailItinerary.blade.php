@@ -17,7 +17,7 @@
                                     <div class="flex flex-wrap gap-2 p-4 bg-white/40 dark:bg-white/10 
                                                 backdrop-blur-md rounded-xl border border-border-light/40 
                                                 dark:border-white/10 shadow-sm">
-                                        <a class="text-primary font-medium hover:underline" href="#">
+                                        <a class="text-primary font-medium hover:underline" href="{{route('user.itinerary')}}">
                                             Itineraries
                                         </a>
 
@@ -51,12 +51,13 @@
                                         <h2 class="text-3xl font-bold text-center mt-16 mb-10">
                                             SUGGESTED LOCATIONS
                                         </h2>
-
 @php
-    // ✔ Chia cột an toàn tránh lỗi foreach(null)
-    $locations = $locations ?? collect();
+    $locations = $itinerary->locations ?? collect();
 
-    $chunks = $locations->chunk(ceil(max($locations->count(), 1) / 2));
+    $chunks = $locations->chunk(
+        ceil(max($locations->count(), 1) / 2)
+    );
+
     $leftColumn  = $chunks->get(0) ?? collect();
     $rightColumn = $chunks->get(1) ?? collect();
 @endphp
@@ -118,6 +119,60 @@
     </div>
 
 </div> {{-- END GRID --}}
+{{-- SUGGESTED GAMES --}}
+<h2 class="text-3xl font-bold text-center mt-20 mb-10">
+    SUGGESTED GAMES FOR THIS JOURNEY
+</h2>
+
+@if($itinerary->games->count())
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+    @foreach($itinerary->games as $game)
+        <a href="{{ route('games.detail', $game->id) }}"
+           class="group p-6 rounded-2xl bg-white dark:bg-white/10 
+                  border border-border-light/40 dark:border-white/10 
+                  shadow-md hover:shadow-xl hover:-translate-y-1 
+                  transition-all duration-300">
+
+            {{-- IMAGE --}}
+            <div class="w-full h-44 rounded-xl overflow-hidden mb-4">
+                <img src="{{ $game->image 
+    ? asset('storage/games/images/' . $game->image)
+    : asset('storage/avatars/no-image.jpg') }}"
+
+                    class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            </div>
+
+            {{-- TITLE --}}
+            <h3 class="text-lg font-semibold mb-2">
+                {{ $game->name }}
+            </h3>
+
+            {{-- DESCRIPTION --}}
+            <p class="text-sm opacity-70 line-clamp-3">
+                {{ $game->description }}
+            </p>
+
+            {{-- META --}}
+            <div class="mt-4 flex items-center justify-between text-xs text-primary font-medium">
+                <span>
+                    {{ $game->category->name ?? 'General' }}
+                </span>
+                <span>
+                    {{ $game->duration }} mins
+                </span>
+            </div>
+        </a>
+    @endforeach
+
+</div>
+@else
+    <p class="text-center text-sm opacity-60">
+        No games suggested for this journey yet.
+    </p>
+@endif
+
+
 
                                     </div>
                                 </div>
